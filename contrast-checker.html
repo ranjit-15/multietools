@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Contrast Checker - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 15% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 80% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
+		.wrap{max-width:860px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
+		.row{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;}
+		input[type=color]{width:80px;height:80px;border:none;border-radius:12px;cursor:pointer;}
+		.preview{padding:1rem;border-radius:12px;border:1px solid var(--border);} .preview .box{height:140px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.4rem;}
+		.stat{display:flex;align-items:center;gap:0.5rem;font-weight:700;} .badge{padding:0.25rem 0.6rem;border-radius:999px;font-size:0.85rem;}
+		.pass{background:#10b98133;color:#34d399;} .fail{background:#ef444433;color:#f87171;} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		button{padding:0.75rem 1rem;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);} 
+	</style>
+</head>
+<body>
+  
+
+  
+
+	<!-- Adsterra Ad -->
+	<div class="wrap">
+		<header>
+			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+			<h1><i class="fas fa-adjust"></i> Contrast Checker</h1>
+			<p class="muted">Check WCAG contrast between foreground and background colors.</p>
+		</header>
+		<main>
+			<div class="panel">
+				<div class="row">
+					<div>
+						<div class="muted">Text Color</div>
+						<input type="color" id="fg" value="#ffffff">
+					</div>
+					<div>
+						<div class="muted">Background Color</div>
+						<input type="color" id="bg" value="#0f172a">
+					</div>
+					<button onclick="swap()"><i class="fas fa-exchange-alt"></i> Swap</button>
+				</div>
+				<div class="preview">
+					<div class="box" id="box">Aa</div>
+				</div>
+				<div class="row">
+					<div class="stat">Contrast Ratio: <span id="ratio">0</span></div>
+					<div class="stat">Normal Text: <span id="aa" class="badge"></span></div>
+					<div class="stat">Large Text: <span id="aaa" class="badge"></span></div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<script>
+		const fg = document.getElementById('fg');
+		const bg = document.getElementById('bg');
+		const box = document.getElementById('box');
+		const ratioEl = document.getElementById('ratio');
+		const aa = document.getElementById('aa');
+		const aaa = document.getElementById('aaa');
+
+		function hexToRgb(hex){
+			const res = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex);
+			return res ? res.slice(1).map(h=>parseInt(h,16)/255) : [1,1,1];
+		}
+		function luminance([r,g,b]){
+			const map = [r,g,b].map(v=>{
+				return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+			});
+			return 0.2126*map[0] + 0.7152*map[1] + 0.0722*map[2];
+		}
+		function contrast(c1, c2){
+			const l1 = luminance(c1), l2 = luminance(c2);
+			const bright = Math.max(l1,l2), dark = Math.min(l1,l2);
+			return (bright + 0.05) / (dark + 0.05);
+		}
+
+		function update(){
+			const fgRgb = hexToRgb(fg.value), bgRgb = hexToRgb(bg.value);
+			const ratio = contrast(fgRgb, bgRgb);
+			ratioEl.textContent = ratio.toFixed(2);
+			box.style.color = fg.value; box.style.background = bg.value;
+			setBadge(aa, ratio >= 4.5 ? 'Pass AA' : 'Fail AA', ratio >= 4.5);
+			setBadge(aaa, ratio >= 7 ? 'Pass AAA' : 'Fail AAA', ratio >= 7);
+		}
+
+		function setBadge(el, text, pass){
+			el.textContent = text;
+			el.className = 'badge ' + (pass ? 'pass' : 'fail');
+		}
+
+		function swap(){
+			const tmp = fg.value; fg.value = bg.value; bg.value = tmp; update();
+		}
+
+		fg.addEventListener('input', update);
+		bg.addEventListener('input', update);
+		update();
+	</script>
+<div class="ad-container" style="width:100%;display:block;aspect-ratio:4/1;color:#6b4f4f;font-size:inherit;text-align:center;margin:1.5rem auto 0.5rem;">
+<script
+  async="async"
+  data-cfasync="false"
+  src="https://pl26892689.effectivegatecpm.com/672e1724e271544ad3988d71421d013b/invoke.js"
+></script>
+<div id="container-672e1724e271544ad3988d71421d013b" style="width:100%;aspect-ratio:4/1;font-size:inherit;color:#6b4f4f;display:block;"></div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multietools - Modern Toolkit</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0b1021;
+            --card: #11172b;
+            --accent: #61dafb;
+            --accent-2: #8b5cf6;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --border: #1f2937;
+            --radius: 16px;
+            --shadow: 0 30px 80px rgba(0,0,0,0.35);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: radial-gradient(circle at 20% 20%, rgba(97,218,251,0.12), transparent 25%),
+                        radial-gradient(circle at 80% 0%, rgba(139,92,246,0.15), transparent 25%),
+                        var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(12px);
+            background: rgba(11,16,33,0.8);
+            z-index: 10;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+        }
+
+        .brand i {
+            color: var(--accent);
+        }
+
+        nav a {
+            color: var(--muted);
+            text-decoration: none;
+            margin-left: 1.25rem;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        nav a:hover, nav a.active { color: var(--accent); }
+
+        .hero {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2.5rem 1.5rem 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            background: rgba(97,218,251,0.08);
+            font-weight: 600;
+        }
+
+        h1 { font-size: clamp(2.2rem, 4vw, 3rem); line-height: 1.15; margin: 1rem 0; }
+        .lead { color: var(--muted); font-size: 1.05rem; }
+
+        .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+
+        .btn {
+            padding: 0.9rem 1.2rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            transition: transform 0.15s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary { background: linear-gradient(135deg, var(--accent), #4dc4ff); color: #0b1021; box-shadow: var(--shadow); }
+        .btn-ghost { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); }
+        .btn:hover { transform: translateY(-1px); }
+
+        .hero-card {
+            background: linear-gradient(145deg, rgba(97,218,251,0.12), rgba(139,92,246,0.12));
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .grid {
+            max-width: 1200px;
+            margin: 1rem auto 3rem;
+            padding: 0 1.5rem;
+            display: grid;
+            gap: 1.25rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .card:hover { transform: translateY(-3px); border-color: var(--accent); }
+        .icon-badge { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: rgba(97,218,251,0.12); color: var(--accent); }
+        .muted { color: var(--muted); }
+
+        .section-title { max-width: 1200px; margin: 0 auto 1rem; padding: 0 1.5rem; display: flex; align-items: center; gap: 0.75rem; color: var(--muted); font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; font-size: 0.9rem; }
+
+        .cta {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, rgba(97,218,251,0.16), rgba(139,92,246,0.2));
+            border: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        footer { border-top: 1px solid var(--border); padding: 1.25rem 1.5rem 2rem; color: var(--muted); text-align: center; }
+        .ad-container { width: 100%; display: block; aspect-ratio: 4/1; color: #6b4f4f; font-size: inherit; text-align: center; margin: 0.75rem auto 1.25rem; }
+        #container-672e1724e271544ad3988d71421d013b { width: 100%; aspect-ratio: 4/1; font-size: inherit; color: #6b4f4f; display: block; }
+        </style>
+</head>
+<body>
+  
+
+  
+
+    <header>
+        <div class="nav">
+            <a class="brand" href="index.html"><i class="fas fa-meteor"></i>Multietools</a>
+            <nav>
+                <a href="index.html" class="active">Home</a>
+                <a href="tools.html">Tools</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div>
+            <span class="pill"><i class="fas fa-sparkles"></i> Modern tool stack</span>
+            <h1>Work faster with 50+ focused utilities</h1>
+            <p class="lead">Convert, optimize, and generate in seconds. Camera, audio, and text tools in one clean workspace—light ads keep everything free.</p>
+            <div class="actions">
+                <a class="btn btn-primary" href="tools.html"><i class="fas fa-compass"></i> Explore Tools</a>
+                <a class="btn btn-ghost" href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+            </div>
+        </div>
+        <div class="hero-card">
+            <p class="muted">Popular today</p>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem;">
+                <div class="card" style="padding: 1rem;">
+                    <div class="icon-badge"><i class="fas fa-qrcode"></i></div>
+                    <div><strong>QR Scanner</strong><div class="muted">Camera + image upload</div></div>
+                </div>
+                <div class="card" style="padding: 1rem;">
+                    <div class="icon-badge"><i class="fas fa-microphone"></i></div>
+                    <div><strong>Speech to Text</strong><div class="muted">Real-time transcription</div></div>
+                </div>
+                <div class="card" style="padding: 1rem;">
+                    <div class="icon-badge"><i class="fas fa-file-code"></i></div>
+                    <div><strong>Markdown → HTML</strong><div class="muted">Clean previews instantly</div></div>
+                </div>
+                <div class="card" style="padding: 1rem;">
+                    <div class="icon-badge"><i class="fas fa-file-pdf"></i></div>
+                    <div><strong>PDF Toolkit</strong><div class="muted">Merge, compress, convert</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-title"><i class="fas fa-layer-group"></i>What you can do</div>
+    <div class="grid">
+        <div class="card">
+            <div class="icon-badge"><i class="fas fa-image"></i></div>
+            <h3>Image utilities</h3>
+            <p class="muted">Resize, compress, convert formats, extract colors, and batch process assets quickly.</p>
+        </div>
+        <div class="card">
+            <div class="icon-badge"><i class="fas fa-language"></i></div>
+            <h3>Audio & speech</h3>
+            <p class="muted">Capture speech to text, generate natural speech, and keep captions synced.</p>
+        </div>
+        <div class="card">
+            <div class="icon-badge"><i class="fas fa-code"></i></div>
+            <h3>Developer tools</h3>
+            <p class="muted">Format JSON, hash strings, minify code, test regex, and generate UUIDs.</p>
+        </div>
+        <div class="card">
+            <div class="icon-badge"><i class="fas fa-calculator"></i></div>
+            <h3>Calculators</h3>
+            <p class="muted">BMI, GST, EMI, percentages, scientific calculations, and more in one place.</p>
+        </div>
+    </div>
+
+    <div class="cta">
+        <div>
+            <h2 style="margin-bottom: 0.35rem;">Jump into the toolbox</h2>
+            <p class="muted">Browse the full collection of 50+ tools tailored for creators, marketers, and developers.</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <a class="btn btn-primary" href="tools.html"><i class="fas fa-rocket"></i> Go to Tools Hub</a>
+            <a class="btn btn-ghost" href="contact.html"><i class="fas fa-comments"></i> Talk to us</a>
+        </div>
+    </div>
+
+    <footer>
+        <div style="margin-bottom: 0.35rem;">© 2025 Multietools. Built for fast daily workflows.</div>
+        <div>Ads across the site help keep every tool free to use.</div>
+    </footer>
+    <div class="ad-container" style="width:100%;display:block;aspect-ratio:4/1;color:#6b4f4f;font-size:inherit;text-align:center;margin:1.5rem auto 0.5rem;">
+<script
+  async="async"
+  data-cfasync="false"
+  src="https://pl26892689.effectivegatecpm.com/672e1724e271544ad3988d71421d013b/invoke.js"
+></script>
+<div id="container-672e1724e271544ad3988d71421d013b" style="width:100%;aspect-ratio:4/1;font-size:inherit;color:#6b4f4f;display:block;"></div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+

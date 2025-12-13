@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner - Tools Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            transition: all 0.3s;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .ad-container {
+            text-align: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .scanner-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        #video {
+            width: 100%;
+            display: block;
+        }
+
+        .scanner-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
+            border: 3px solid #667eea;
+            border-radius: 12px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+        }
+
+        .scanner-corner {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #667eea;
+        }
+
+        .scanner-corner.top-left {
+            top: -4px;
+            left: -4px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .scanner-corner.top-right {
+            top: -4px;
+            right: -4px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .scanner-corner.bottom-left {
+            bottom: -4px;
+            left: -4px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .scanner-corner.bottom-right {
+            bottom: -4px;
+            right: -4px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #dc2626;
+        }
+
+        .result-container {
+            display: none;
+            background: #f0fdf4;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 2px solid #10b981;
+            margin-bottom: 2rem;
+        }
+
+        .result-container h3 {
+            color: #10b981;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-text {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            margin-bottom: 1rem;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .result-actions button {
+            padding: 0.5rem 1rem;
+        }
+
+        .file-input-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .file-input-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #e2e8f0;
+            border-color: #667eea;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .instructions {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .instructions h4 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .instructions ul {
+            margin-left: 1.5rem;
+            color: #475569;
+        }
+
+        .instructions li {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+  
+
+  
+
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Home
+            </a>
+            <h1><i class="fas fa-qrcode"></i> QR Code Scanner</h1>
+            <p>Scan QR codes using your camera or upload an image</p>
+        </div>
+
+        <div class="content">
+            <!-- Adsterra Ad -->
+            <div class="scanner-container" id="scanner-container" style="display: none;">
+                <video id="video" autoplay playsinline></video>
+                <div class="scanner-overlay">
+                    <div class="scanner-corner top-left"></div>
+                    <div class="scanner-corner top-right"></div>
+                    <div class="scanner-corner bottom-left"></div>
+                    <div class="scanner-corner bottom-right"></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" id="start-btn" onclick="startScanner()">
+                    <i class="fas fa-camera"></i> Start Camera Scanner
+                </button>
+                <button class="btn btn-secondary" id="stop-btn" onclick="stopScanner()" style="display: none;">
+                    <i class="fas fa-stop"></i> Stop Scanner
+                </button>
+            </div>
+
+            <div class="file-input-section">
+                <label for="file-input" class="file-input-label">
+                    <i class="fas fa-upload"></i>
+                    <span>Or Upload QR Code Image</span>
+                </label>
+                <input type="file" id="file-input" class="file-input" accept="image/*">
+            </div>
+
+            <div class="result-container" id="result">
+                <h3><i class="fas fa-check-circle"></i> Scanned Result:</h3>
+                <div class="result-text" id="result-text"></div>
+                <div class="result-actions">
+                    <button class="btn btn-primary" onclick="copyResult()">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                    <button class="btn btn-primary" onclick="openResult()" id="open-btn" style="display: none;">
+                        <i class="fas fa-external-link-alt"></i> Open Link
+                    </button>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <h4><i class="fas fa-info-circle"></i> How to Use:</h4>
+                <ul>
+                    <li>Click "Start Camera Scanner" to use your device camera</li>
+                    <li>Position the QR code within the scanning frame</li>
+                    <li>The scanner will automatically detect and decode the QR code</li>
+                    <li>Or upload an image containing a QR code</li>
+                    <li>Allow camera permissions when prompted</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script>
+        let stream = null;
+        let scanning = false;
+        const video = document.getElementById('video');
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        async function startScanner() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' } 
+                });
+                video.srcObject = stream;
+                document.getElementById('scanner-container').style.display = 'block';
+                document.getElementById('start-btn').style.display = 'none';
+                document.getElementById('stop-btn').style.display = 'inline-flex';
+                scanning = true;
+                requestAnimationFrame(tick);
+            } catch (err) {
+                alert('Unable to access camera. Please ensure you have granted camera permissions.');
+                console.error('Error accessing camera:', err);
+            }
+        }
+
+        function stopScanner() {
+            scanning = false;
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            document.getElementById('scanner-container').style.display = 'none';
+            document.getElementById('start-btn').style.display = 'inline-flex';
+            document.getElementById('stop-btn').style.display = 'none';
+        }
+
+        function tick() {
+            if (!scanning) return;
+
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: "dontInvert",
+                });
+
+                if (code) {
+                    displayResult(code.data);
+                    stopScanner();
+                    return;
+                }
+            }
+            requestAnimationFrame(tick);
+        }
+
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    context.drawImage(img, 0, 0);
+                    
+                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height);
+                    
+                    if (code) {
+                        displayResult(code.data);
+                    } else {
+                        alert('No QR code found in the image. Please try another image.');
+                    }
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function displayResult(data) {
+            document.getElementById('result-text').textContent = data;
+            document.getElementById('result').style.display = 'block';
+            
+            // Show open button if it's a URL
+            if (data.startsWith('http://') || data.startsWith('https://')) {
+                document.getElementById('open-btn').style.display = 'inline-flex';
+            } else {
+                document.getElementById('open-btn').style.display = 'none';
+            }
+        }
+
+        function copyResult() {
+            const text = document.getElementById('result-text').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            });
+        }
+
+        function openResult() {
+            const text = document.getElementById('result-text').textContent;
+            if (text.startsWith('http://') || text.startsWith('https://')) {
+                window.open(text, '_blank');
+            }
+        }
+    </script>
+<div class="ad-container" style="width:100%;display:block;aspect-ratio:4/1;color:#6b4f4f;font-size:inherit;text-align:center;margin:1.5rem auto 0.5rem;">
+<script
+  async="async"
+  data-cfasync="false"
+  src="https://pl26892689.effectivegatecpm.com/672e1724e271544ad3988d71421d013b/invoke.js"
+></script>
+<div id="container-672e1724e271544ad3988d71421d013b" style="width:100%;aspect-ratio:4/1;font-size:inherit;color:#6b4f4f;display:block;"></div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+

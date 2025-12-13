@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Image Compressor - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
+		.wrap{max-width:960px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
+		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} input[type=range]{width:180px;} label{color:var(--muted);font-weight:600;} 
+		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
+		.preview{display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-start;} img,canvas{max-width:100%;border-radius:12px;border:1px solid var(--border);} .badge{padding:0.35rem 0.65rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--muted);} 
+		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+	</style>
+</head>
+<body>
+  
+
+  
+
+	<!-- Adsterra Ad -->
+	<div class="wrap">
+		<header>
+			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+			<h1><i class="fas fa-compress"></i> Image Compressor</h1>
+			<p class="muted">Adjust quality and download compressed JPEG/WEBP.</p>
+		</header>
+		<main>
+			<div class="panel">
+				<div class="row">
+					<input type="file" id="file" accept="image/*">
+					<label>Quality: <span id="qVal">0.7</span></label><input type="range" id="quality" min="0.1" max="1" step="0.05" value="0.7">
+					<select id="format">
+						<option value="image/jpeg">JPEG</option>
+						<option value="image/webp">WEBP</option>
+					</select>
+					<button onclick="compress()">Compress</button>
+					<button onclick="downloadImg()">Download</button>
+				</div>
+				<div class="row">
+					<span class="badge" id="stats">No file</span>
+				</div>
+				<div class="preview">
+					<img id="original" alt="Original">
+					<canvas id="canvas"></canvas>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<script>
+		const file = document.getElementById('file');
+		const quality = document.getElementById('quality');
+		const qVal = document.getElementById('qVal');
+		const format = document.getElementById('format');
+		const original = document.getElementById('original');
+		const canvas = document.getElementById('canvas');
+		const ctx = canvas.getContext('2d');
+		const stats = document.getElementById('stats');
+		let img = new Image();
+		let originalSize = 0;
+
+		quality.addEventListener('input', ()=> qVal.textContent = quality.value);
+
+		file.addEventListener('change', e=>{
+			const f = e.target.files[0];
+			if(!f) return;
+			originalSize = f.size;
+			const url = URL.createObjectURL(f);
+			img = new Image();
+			img.onload = () => { original.src = url; canvas.width = img.width; canvas.height = img.height; ctx.drawImage(img,0,0); updateStats(); };
+			img.src = url;
+		});
+
+		function compress(){
+			if(!img.src) return;
+			canvas.width = img.width; canvas.height = img.height;
+			ctx.clearRect(0,0,canvas.width,canvas.height);
+			ctx.drawImage(img,0,0);
+			updateStats();
+		}
+
+		function updateStats(){
+			const data = canvas.toDataURL(format.value, parseFloat(quality.value));
+			const compressedSize = Math.round((data.length * 3/4));
+			stats.textContent = `Original: ${(originalSize/1024).toFixed(1)} KB | Compressed: ${(compressedSize/1024).toFixed(1)} KB`;
+		}
+
+		function downloadImg(){
+			if(!canvas.width) return;
+			const link = document.createElement('a');
+			link.download = 'compressed.' + (format.value === 'image/webp' ? 'webp' : 'jpg');
+			link.href = canvas.toDataURL(format.value, parseFloat(quality.value));
+			link.click();
+		}
+	</script>
+<div class="ad-container" style="width:100%;display:block;aspect-ratio:4/1;color:#6b4f4f;font-size:inherit;text-align:center;margin:1.5rem auto 0.5rem;">
+<script
+  async="async"
+  data-cfasync="false"
+  src="https://pl26892689.effectivegatecpm.com/672e1724e271544ad3988d71421d013b/invoke.js"
+></script>
+<div id="container-672e1724e271544ad3988d71421d013b" style="width:100%;aspect-ratio:4/1;font-size:inherit;color:#6b4f4f;display:block;"></div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+

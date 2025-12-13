@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Multietools</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0b1021;
+            --card: #11172b;
+            --accent: #61dafb;
+            --accent-2: #8b5cf6;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --border: #1f2937;
+            --radius: 16px;
+            --shadow: 0 30px 80px rgba(0,0,0,0.35);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: radial-gradient(circle at 20% 20%, rgba(97,218,251,0.12), transparent 25%),
+                        radial-gradient(circle at 80% 0%, rgba(139,92,246,0.15), transparent 25%),
+                        var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(12px);
+            background: rgba(11,16,33,0.8);
+            border-bottom: 1px solid var(--border);
+            z-index: 10;
+        }
+
+        .nav {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .brand i { color: var(--accent); }
+
+        nav a {
+            color: var(--muted);
+            text-decoration: none;
+            margin-left: 1.25rem;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        nav a:hover, nav a.active { color: var(--accent); }
+
+        .page {
+            max-width: 960px;
+            margin: 2rem auto 3rem;
+            padding: 0 1.5rem;
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .header-card {
+            background: linear-gradient(145deg, rgba(97,218,251,0.14), rgba(139,92,246,0.14));
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+        }
+
+        h1 { font-size: clamp(2rem, 3vw, 2.6rem); margin-bottom: 0.35rem; }
+        .muted { color: var(--muted); }
+
+        .grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            box-shadow: var(--shadow);
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: rgba(97,218,251,0.12); color: var(--accent); }
+
+        .form-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .form-group { margin-bottom: 1rem; display: grid; gap: 0.4rem; }
+        label { font-weight: 700; color: var(--text); }
+        input, textarea {
+            width: 100%;
+            padding: 0.85rem 0.9rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #0f1528;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+        input:focus, textarea:focus { outline: none; border-color: var(--accent); }
+        textarea { min-height: 140px; resize: vertical; }
+
+        .btn {
+            width: 100%;
+            padding: 0.95rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--accent), #4dc4ff);
+            color: #0b1021;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+            box-shadow: var(--shadow);
+            transition: transform 0.15s ease;
+        }
+        .btn:hover { transform: translateY(-1px); }
+
+        .status {
+            margin-top: 0.75rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .ad-container { width: 100%; display: block; aspect-ratio: 4/1; color: #6b4f4f; font-size: inherit; text-align: center; margin: 0.75rem auto 1.25rem; }
+        #container-672e1724e271544ad3988d71421d013b { width: 100%; aspect-ratio: 4/1; font-size: inherit; color: #6b4f4f; display: block; }
+        footer { text-align: center; color: var(--muted); padding: 1.5rem; border-top: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+  
+
+  
+
+    <header>
+        <div class="nav">
+            <a class="brand" href="index.html"><i class="fas fa-meteor"></i>Multietools</a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="tools.html">Tools</a>
+                <a href="contact.html" class="active">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="header-card">
+            <p class="muted">We're here to help</p>
+            <h1>Contact the Multietools team</h1>
+            <p class="muted">Light ads keep these tools free. Send a message and we'll reply within 24–48 hours.</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <div class="icon"><i class="fas fa-envelope"></i></div>
+                <div>
+                    <h3>Email</h3>
+                    <p class="muted"><a href="mailto:ranjityadav982577rd@gmail.com" style="color: var(--accent); text-decoration: none;">ranjityadav982577rd@gmail.com</a></p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="icon"><i class="fas fa-clock"></i></div>
+                <div>
+                    <h3>Response time</h3>
+                    <p class="muted">Typically within 24–48 hours.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="icon"><i class="fas fa-location-arrow"></i></div>
+                <div>
+                    <h3>Need tools fast?</h3>
+                    <p class="muted">Head back to the Tools Hub for instant use.</p>
+                    <a href="index.html" style="color: var(--accent); font-weight: 700; text-decoration: none;">Open Tools Hub →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <form id="contact-form" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="name">Your Name *</label>
+                    <input type="text" id="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Your Email *</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject *</label>
+                    <input type="text" id="subject" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    <textarea id="message" required></textarea>
+                </div>
+
+                <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> Send Message</button>
+                <div id="status" class="status" aria-live="polite"></div>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        Ads help keep every tool free. For quick help, email us anytime.
+    </footer>
+
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            const status = document.getElementById('status');
+
+            // Simulate send without redirect; replace with backend endpoint if needed
+            status.textContent = 'Message saved locally. We will reach out soon.';
+            setTimeout(() => status.textContent = '', 4000);
+            document.getElementById('contact-form').reset();
+        }
+    </script>
+<div class="ad-container" style="width:100%;display:block;aspect-ratio:4/1;color:#6b4f4f;font-size:inherit;text-align:center;margin:1.5rem auto 0.5rem;">
+<script
+  async="async"
+  data-cfasync="false"
+  src="https://pl26892689.effectivegatecpm.com/672e1724e271544ad3988d71421d013b/invoke.js"
+></script>
+<div id="container-672e1724e271544ad3988d71421d013b" style="width:100%;aspect-ratio:4/1;font-size:inherit;color:#6b4f4f;display:block;"></div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Scientific Calculator - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
+		.wrap{max-width:520px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+		header{padding:1.5rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.6rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.25rem;display:grid;gap:1rem;} .calc{display:grid;gap:0.8rem;} 
+		.display{background:#0f192b;border:1px solid var(--border);border-radius:12px;padding:0.75rem 1rem;text-align:right;min-height:64px;word-break:break-all;font-family:'JetBrains Mono','Cascadia Code',monospace;font-size:1.2rem;}
+		.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem;} button{padding:0.9rem;border-radius:12px;border:1px solid var(--border);background:#0b1224;color:var(--text);font-weight:700;cursor:pointer;box-shadow:var(--shadow);transition:transform 0.12s ease,background 0.12s ease;} button:hover{transform:translateY(-1px);background:#111b30;} .action{background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;border:none;} .wide{grid-column:span 2;}
+		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+	</style>
+</head>
+<body>
+  
+
+  
+
+	<!-- Adsterra Ad -->
+	<div class="wrap">
+		<header>
+			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+			<h1><i class="fas fa-square-root-variable"></i> Scientific Calculator</h1>
+			<p class="muted">Standard + scientific functions (sin, cos, tan, log, sqrt, p, e).</p>
+		</header>
+		<main>
+			<div class="calc">
+				<div class="display" id="display">0</div>
+				<div class="grid">
+					<button onclick="clearAll()">AC</button>
+					<button onclick="delChar()">DEL</button>
+					<button onclick="insert('(')">(</button>
+					<button onclick="insert(')')">)</button>
+					<button onclick="func('sin')">sin</button>
+					<button onclick="func('cos')">cos</button>
+					<button onclick="func('tan')">tan</button>
+					<button onclick="func('log')">log</button>
+					<button onclick="insert('7')">7</button>
+					<button onclick="insert('8')">8</button>
+					<button onclick="insert('9')">9</button>
+					<button onclick="insert('/')">÷</button>
+					<button onclick="insert('4')">4</button>
+					<button onclick="insert('5')">5</button>
+					<button onclick="insert('6')">6</button>
+					<button onclick="insert('*')">×</button>
+					<button onclick="insert('1')">1</button>
+					<button onclick="insert('2')">2</button>
+					<button onclick="insert('3')">3</button>
+					<button onclick="insert('-')">-</button>
+					<button onclick="insert('0')">0</button>
+					<button onclick="insert('.')">.</button>
+					<button onclick="insert('+')">+</button>
+					<button class="action" onclick="equals()">=</button>
+					<button onclick="insert('pi')">p</button>
+					<button onclick="insert('e')">e</button>
+					<button onclick="func('sqrt')">v</button>
+					<button onclick="func('pow2')">x²</button>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<script>
+		const display = document.getElementById('display');
+		let expr = '';
+
+		const map = { 'pi': Math.PI, 'e': Math.E };
+
+		function render(){ display.textContent = expr || '0'; }
+		function insert(val){
+			if(val==='pi' || val==='e'){ expr += map[val].toString(); }
+			else { expr += val; }
+			render();
+		}
+		function clearAll(){ expr=''; render(); }
+		function delChar(){ expr = expr.slice(0,-1); render(); }
+		function func(name){
+			if(name==='sqrt') expr = `Math.sqrt(${expr||0})`;
+			else if(name==='pow2') expr = `Math.pow(${expr||0},2)`;
+			else if(name==='log') expr = `Math.log10(${expr||0})`;
+			else expr = `Math.${name}(${expr||0})`;
+			render();
+		}
+		function equals(){
+			try{
+				const safe = expr.replace(/[^-+/*().0-9eE Math\.PI Math\.E]/g,'');
+				const result = Function('return ' + expr)();
+				expr = (result===undefined || Number.isNaN(result)) ? '' : result.toString();
+			}catch(e){ expr = 'Error'; }
+			render();
+		}
+	</script>
+<div class="ad-container" style="width:100%;display:block;aspect-ratio:4/1;color:#6b4f4f;font-size:inherit;text-align:center;margin:1.5rem auto 0.5rem;">
+<script
+  async="async"
+  data-cfasync="false"
+  src="https://pl26892689.effectivegatecpm.com/672e1724e271544ad3988d71421d013b/invoke.js"
+></script>
+<div id="container-672e1724e271544ad3988d71421d013b" style="width:100%;aspect-ratio:4/1;font-size:inherit;color:#6b4f4f;display:block;"></div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+

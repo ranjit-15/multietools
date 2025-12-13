@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>BMI Calculator - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		:root { --bg: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); --card:#0f172a; --accent:#22c55e; --text:#e2e8f0; --muted:#94a3b8; --border:#1f2937; --radius:16px; --shadow:0 18px 50px rgba(0,0,0,0.35);} 
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,-apple-system,sans-serif;min-height:100vh;background:var(--bg);color:var(--text);padding:1.5rem;}
+		.shell{max-width:760px;margin:0 auto;background:rgba(15,23,42,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,197,94,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.1rem;} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		.panel{background:#0b1224;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:0.75rem;}
+		label{font-weight:700;color:var(--text);} input{width:100%;padding:0.85rem 0.9rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} 
+		button{padding:0.9rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#4ade80);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;}
+		button:hover{transform:translateY(-1px);} 
+		.result{background:#0f192b;border:1px solid var(--border);border-radius:12px;padding:1rem;font-weight:800;display:grid;gap:0.35rem;}
+	</style>
+</head>
+<body>
+  
+
+  
+
+	<!-- Adsterra Ad -->
+	<div class="shell">
+		<header>
+			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+			<h1><i class="fas fa-weight"></i> BMI Calculator</h1>
+			<p class="muted">Calculate Body Mass Index and category.</p>
+		</header>
+
+		<main>
+			<div class="panel">
+				<label for="weight">Weight (kg)</label>
+				<input type="number" id="weight" placeholder="e.g. 70" step="0.1">
+				<label for="height">Height (cm)</label>
+				<input type="number" id="height" placeholder="e.g. 175" step="0.1">
+				<button onclick="calc()"><i class="fas fa-calculator"></i> Calculate BMI</button>
+				<div class="result" id="result">
+					<div>BMI: —</div>
+					<div>Category: —</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<script>
+		function calc(){
+			const w = parseFloat(document.getElementById('weight').value);
+			const h = parseFloat(document.getElementById('height').value);
+			if(!w || !h) return;
+			const bmi = w / ((h/100)*(h/100));
+			let cat = 'Normal';
+			if (bmi < 18.5) cat = 'Underweight';
+			else if (bmi < 25) cat = 'Normal';
+			else if (bmi < 30) cat = 'Overweight';
+			else cat = 'Obese';
+			document.getElementById('result').innerHTML = `<div>BMI: ${bmi.toFixed(2)}</div><div>Category: ${cat}</div>`;
+		}
+	</script>
+<div class="ad-container" style="width:100%;display:block;aspect-ratio:4/1;color:#6b4f4f;font-size:inherit;text-align:center;margin:1.5rem auto 0.5rem;">
+<script
+  async="async"
+  data-cfasync="false"
+  src="https://pl26892689.effectivegatecpm.com/672e1724e271544ad3988d71421d013b/invoke.js"
+></script>
+<div id="container-672e1724e271544ad3988d71421d013b" style="width:100%;aspect-ratio:4/1;font-size:inherit;color:#6b4f4f;display:block;"></div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+

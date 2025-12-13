@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Image Color Picker - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
+		.wrap{max-width:960px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
+		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} .preview{background:#0f192b;border:1px solid var(--border);border-radius:12px;min-height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+		canvas{max-width:100%;border-radius:12px;} .info{display:flex;flex-wrap:wrap;gap:0.75rem;} .chip{display:flex;align-items:center;gap:0.5rem;background:#0f192b;border:1px solid var(--border);padding:0.75rem 1rem;border-radius:12px;font-family:'JetBrains Mono','Cascadia Code',monospace;} .swatch{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);} 
+		button{padding:0.75rem 1rem;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);} 
+		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+	</style>
+</head>
+<body>
+  
+
+  
+
+	<!-- Adsterra Ad -->
+	<div class="wrap">
+		<header>
+			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+			<h1><i class="fas fa-eye-dropper"></i> Image Color Picker</h1>
+			<p class="muted">Upload an image and click to grab pixel colors.</p>
+		</header>
+		<main>
+			<div class="panel">
+				<div class="row">
+					<input type="file" id="file" accept="image/*">
+					<button onclick="downloadSwatch()">Copy Color</button>
+				</div>
+				<div class="preview">
+					<canvas id="canvas"></canvas>
+				</div>
+				<div class="info">
+					<div class="chip"><div class="swatch" id="swatch"></div><span id="hex">#22d3ee</span></div>
+					<div class="chip">RGB: <span id="rgb">34, 211, 238</span></div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<script>
+		const file = document.getElementById('file');
+		const canvas = document.getElementById('canvas');
+		const ctx = canvas.getContext('2d');
+		const swatch = document.getElementById('swatch');
+		const hexEl = document.getElementById('hex');
+		const rgbEl = document.getElementById('rgb');
+		let currentColor = '#22d3ee';
+
+		function loadImage(fileObj){
+			const img = new Image();
+			img.onload = () => {
+				canvas.width = img.width; canvas.height = img.height;
+				ctx.drawImage(img, 0, 0, img.width, img.height);
+			};
+			img.src = URL.createObjectURL(fileObj);
+		}
+
+		function pickColor(e){
+			const rect = canvas.getBoundingClientRect();
+			const x = Math.floor((e.clientX - rect.left) * canvas.width / rect.width);
+			const y = Math.floor((e.clientY - rect.top) * canvas.height / rect.height);
+			const data = ctx.getImageData(x, y, 1, 1).data;
+			const [r,g,b] = data;
+			currentColor = rgbToHex(r,g,b);
+			updateDisplay(r,g,b);
+		}
+
+		function rgbToHex(r,g,b){ return '#' + [r,g,b].map(v=>v.toString(16).padStart(2,'0')).join(''); }
+
+		function updateDisplay(r,g,b){
+			hexEl.textContent = currentColor;
+			rgbEl.textContent = `${r}, ${g}, ${b}`;
+			swatch.style.background = currentColor;
+		}
+
+		function downloadSwatch(){ navigator.clipboard.writeText(currentColor); }
+
+		file.addEventListener('change', e=>{ const f=e.target.files[0]; if(f) loadImage(f); });
+		canvas.addEventListener('click', pickColor);
+		updateDisplay(34,211,238);
+	</script>
+<div class="ad-container" style="width:100%;display:block;aspect-ratio:4/1;color:#6b4f4f;font-size:inherit;text-align:center;margin:1.5rem auto 0.5rem;">
+<script
+  async="async"
+  data-cfasync="false"
+  src="https://pl26892689.effectivegatecpm.com/672e1724e271544ad3988d71421d013b/invoke.js"
+></script>
+<div id="container-672e1724e271544ad3988d71421d013b" style="width:100%;aspect-ratio:4/1;font-size:inherit;color:#6b4f4f;display:block;"></div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+

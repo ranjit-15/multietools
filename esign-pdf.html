@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>eSign PDF - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<style>
+		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
+		.wrap{max-width:1000px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
+		canvas{width:100%;max-height:640px;border:1px dashed var(--border);border-radius:12px;background:#0f192b;}
+		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} input,button{padding:0.85rem 1rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} button{border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} .badge{padding:0.4rem 0.7rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--muted);} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		label{display:flex;flex-direction:column;color:var(--muted);font-size:0.9rem;gap:0.35rem;}
+	</style>
+</head>
+<body>
+  
+
+  
+
+	<!-- Adsterra Ad -->
+	<div class="wrap">
+		<header>
+			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
+			<h1><i class="fas fa-signature"></i> eSign PDF</h1>
+			<p class="muted">Draw a signature and place it on pages, then download the signed PDF. Client-side only.</p>
+		</header>
+		<main>
+			<div class="panel">
+				<div class="row">
+					<input type="file" id="file" accept="application/pdf">
+					<label>Page<input type="number" id="page" min="1" value="1" style="width:90px;"></label>
+					<label>X<input type="number" id="posX" value="50" style="width:90px;"></label>
+					<label>Y<input type="number" id="posY" value="50" style="width:90px;"></label>
+					<label>Width<input type="number" id="sigW" value="180" style="width:90px;"></label>
+					<button onclick="addSignature()">Place Signature</button>
+					<button onclick="downloadPdf()">Download Signed</button>
+					<span class="badge" id="status">Waiting</span>
+				</div>
+				<div class="row">
+					<label style="flex:1;">Draw Signature (white on transparent)
+						<canvas id="sigPad" width="500" height="140"></canvas>
+					</label>
+				</div>
+				<div class="row">
+					<button onclick="clearSig()">Clear Signature</button>
+					<button onclick="prevPage()">Prev Page</button>
+					<button onclick="nextPage()">Next Page</button>
+				</div>
+				<canvas id="pdfCanvas"></canvas>
+			</div>
+		</main>
+	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+	<script>
+		const fileInput = document.getElementById('file');
+		const canvas = document.getElementById('pdfCanvas');
+		const ctx = canvas.getContext('2d');
+		const sigPad = document.getElementById('sigPad');
+		const sigCtx = sigPad.getContext('2d');
+		const pageInput = document.getElementById('page');
+		const posX = document.getElementById('posX');
+		const posY = document.getElementById('posY');
+		const sigW = document.getElementById('sigW');
+		const status = document.getElementById('status');
+		let pdfDoc = null; let currentPage = 1; let pdfData = null;
+
+		// Signature drawing
+		let drawing = false;
+		sigCtx.fillStyle = 'rgba(0,0,0,0)';
+		sigCtx.fillRect(0,0,sigPad.width,sigPad.height);
+		sigCtx.strokeStyle = '#fff';
+		sigCtx.lineWidth = 3;
+		sigPad.addEventListener('mousedown',start); sigPad.addEventListener('mouseup',end); sigPad.addEventListener('mouseleave',end); sigPad.addEventListener('mousemove',draw);
+		sigPad.addEventListener('touchstart',start); sigPad.addEventListener('touchend',end); sigPad.addEventListener('touchmove',draw);
+		function getPos(e){ const rect = sigPad.getBoundingClientRect(); const clientX = e.touches?e.touches[0].clientX:e.clientX; const clientY = e.touches?e.touches[0].clientY:e.clientY; return {x:clientX-rect.left,y:clientY-rect.top}; }
+		function start(e){ e.preventDefault(); drawing=true; const p=getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x,p.y); }
+		function end(e){ e.preventDefault(); drawing=false; }
+		function draw(e){ if(!drawing) return; e.preventDefault(); const p=getPos(e); sigCtx.lineTo(p.x,p.y); sigCtx.stroke(); }
+		function clearSig(){ sigCtx.clearRect(0,0,sigPad.width,sigPad.height); sigCtx.fillRect(0,0,sigPad.width,sigPad.height); }
+
+		function setStatus(msg){ status.textContent = msg; }
+
+		fileInput.addEventListener('change', async () => {
+			const file = fileInput.files?.[0];
+			if(!file){ return; }
+			setStatus('Loading PDF...');
+			pdfData = new Uint8Array(await file.arrayBuffer());
+			pdfDoc = await pdfjsLib.getDocument({data: pdfData}).promise;
+			currentPage = 1; pageInput.value = 1; await renderPage(); setStatus('Loaded');
+		});
+
+		async function renderPage(){
+			if(!pdfDoc) return;
+			const page = await pdfDoc.getPage(currentPage);
+			const viewport = page.getViewport({scale:1.5});
+			canvas.width = viewport.width; canvas.height = viewport.height;
+			const renderContext = {canvasContext: ctx, viewport};
+			await page.render(renderContext).promise;
+			pageInput.value = currentPage;
+		}
+
+		function prevPage(){ if(!pdfDoc) return; if(currentPage<=1) return; currentPage--; renderPage(); }
+		function nextPage(){ if(!pdfDoc) return; if(currentPage>=pdfDoc.numPages) return; currentPage++; renderPage(); }
+
+		async function addSignature(){
+			if(!pdfData){ setStatus('Load a PDF first'); return; }
+			const pdfDocLib = await PDFLib.PDFDocument.load(pdfData);
+			const pages = pdfDocLib.getPages();
+			const pageIndex = Math.max(1, Math.min(parseInt(pageInput.value||'1'), pages.length)) - 1;
+			const sigImg = sigPad.toDataURL('image/png');
+			const pngImage = await pdfDocLib.embedPng(sigImg);
+			const page = pages[pageIndex];
+			const { width, height } = page.getSize();
+			const drawWidth = parseFloat(sigW.value||'180');
+			const scale = drawWidth / pngImage.width;
+			const drawHeight = pngImage.height * scale;
+			const x = parseFloat(posX.value||'0');
+			const y = parseFloat(posY.value||'0');
+			page.drawImage(pngImage, { x, y: height - y - drawHeight, width: drawWidth, height: drawHeight });
+			pdfData = await pdfDocLib.save();
+			setStatus('Signature placed');
+			await reloadPreview();
+		}
+
+		async function reloadPreview(){
+			if(!pdfData) return;
+			pdfDoc = await pdfjsLib.getDocument({data: pdfData}).promise;
+			const target = Math.max(1, Math.min(currentPage, pdfDoc.numPages));
+			currentPage = target; await renderPage();
+		}
+
+		async function downloadPdf(){
+			if(!pdfData){ setStatus('Nothing to download'); return; }
+			const blob = new Blob([pdfData], {type:'application/pdf'});
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a'); a.href = url; a.download = 'signed.pdf'; a.click(); URL.revokeObjectURL(url);
+			setStatus('Downloaded');
+		}
+	</script>
+<div class="ad-container" style="width:100%;display:block;aspect-ratio:4/1;color:#6b4f4f;font-size:inherit;text-align:center;margin:1.5rem auto 0.5rem;">
+<script
+  async="async"
+  data-cfasync="false"
+  src="https://pl26892689.effectivegatecpm.com/672e1724e271544ad3988d71421d013b/invoke.js"
+></script>
+<div id="container-672e1724e271544ad3988d71421d013b" style="width:100%;aspect-ratio:4/1;font-size:inherit;color:#6b4f4f;display:block;"></div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+

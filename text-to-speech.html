@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech - Tools Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            transition: all 0.3s;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .ad-container {
+            text-align: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .input-section {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #11998e;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-group {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .option-group label {
+            font-size: 0.9rem;
+        }
+
+        .option-group select,
+        .option-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1.25rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(17, 153, 142, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #d97706;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .playback-indicator {
+            display: none;
+            text-align: center;
+            padding: 1.5rem;
+            background: #ecfdf5;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 2px solid #10b981;
+        }
+
+        .playback-indicator.active {
+            display: block;
+        }
+
+        .playback-indicator i {
+            font-size: 2rem;
+            color: #10b981;
+            animation: pulse-icon 1.5s infinite;
+        }
+
+        @keyframes pulse-icon {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+  
+
+  
+
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Home
+            </a>
+            <h1><i class="fas fa-volume-up"></i> Text to Speech</h1>
+            <p>Convert text to natural-sounding speech</p>
+        </div>
+
+        <div class="content">
+            <!-- Adsterra Ad -->
+            <div class="input-section">
+                <label for="text-input">Enter Text to Convert:</label>
+                <textarea id="text-input" placeholder="Type or paste your text here...">Welcome to Text to Speech converter! This tool can read any text aloud using natural-sounding voices.</textarea>
+            </div>
+
+            <div class="options-grid">
+                <div class="option-group">
+                    <label for="voice-select">Voice:</label>
+                    <select id="voice-select"></select>
+                </div>
+
+                <div class="option-group">
+                    <label for="rate">Speed: <span id="rate-value">1.0x</span></label>
+                    <input type="range" id="rate" min="0.5" max="2" step="0.1" value="1">
+                </div>
+
+                <div class="option-group">
+                    <label for="pitch">Pitch: <span id="pitch-value">1.0</span></label>
+                    <input type="range" id="pitch" min="0.5" max="2" step="0.1" value="1">
+                </div>
+
+                <div class="option-group">
+                    <label for="volume">Volume: <span id="volume-value">100%</span></label>
+                    <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
+                </div>
+            </div>
+
+            <div class="playback-indicator" id="playback-indicator">
+                <i class="fas fa-volume-up"></i>
+                <p style="margin-top: 0.5rem; color: #10b981; font-weight: 600;">Playing...</p>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" onclick="speakText()">
+                    <i class="fas fa-play"></i> Play
+                </button>
+                <button class="btn btn-secondary" onclick="pauseSpeech()">
+                    <i class="fas fa-pause"></i> Pause
+                </button>
+                <button class="btn btn-secondary" onclick="resumeSpeech()">
+                    <i class="fas fa-play-circle"></i> Resume
+                </button>
+                <button class="btn btn-danger" onclick="stopSpeech()">
+                    <i class="fas fa-stop"></i> Stop
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let voices = [];
+        let currentUtterance = null;
+
+        function loadVoices() {
+            voices = speechSynthesis.getVoices();
+            const voiceSelect = document.getElementById('voice-select');
+            voiceSelect.innerHTML = '';
+
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+            });
+        }
+
+        speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices();
+
+        document.getElementById('rate').addEventListener('input', function() {
+            document.getElementById('rate-value').textContent = this.value + 'x';
+        });
+
+        document.getElementById('pitch').addEventListener('input', function() {
+            document.getElementById('pitch-value').textContent = this.value;
+        });
+
+        document.getElementById('volume').addEventListener('input', function() {
+            document.getElementById('volume-value').textContent = Math.round(this.value * 100) + '%';
+        });
+
+        function speakText() {
+            const text = document.getElementById('text-input').value;
+
+            if (!text.trim()) {
+                alert('Please enter some text to convert to speech');
+                return;
+            }
+
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+
+            currentUtterance = new SpeechSynthesisUtterance(text);
+
+            const voiceIndex = document.getElementById('voice-select').value;
+            if (voiceIndex && voices[voiceIndex]) {
+                currentUtterance.voice = voices[voiceIndex];
+            }
+
+            currentUtterance.rate = parseFloat(document.getElementById('rate').value);
+            currentUtterance.pitch = parseFloat(document.getElementById('pitch').value);
+            currentUtterance.volume = parseFloat(document.getElementById('volume').value);
+
+            currentUtterance.onstart = function() {
+                document.getElementById('playback-indicator').classList.add('active');
+            };
+
+            currentUtterance.onend = function() {
+                document.getElementById('playback-indicator').classList.remove('active');
+            };
+
+            currentUtterance.onerror = function(event) {
+                console.error('Speech synthesis error:', event);
+                document.getElementById('playback-indicator').classList.remove('active');
+            };
+
+            speechSynthesis.speak(currentUtterance);
+        }
+
+        function pauseSpeech() {
+            if (speechSynthesis.speaking && !speechSynthesis.paused) {
+                speechSynthesis.pause();
+            }
+        }
+
+        function resumeSpeech() {
+            if (speechSynthesis.paused) {
+                speechSynthesis.resume();
+            }
+        }
+
+        function stopSpeech() {
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+                document.getElementById('playback-indicator').classList.remove('active');
+            }
+        }
+    </script>
+<div class="ad-container" style="width:100%;display:block;aspect-ratio:4/1;color:#6b4f4f;font-size:inherit;text-align:center;margin:1.5rem auto 0.5rem;">
+<script
+  async="async"
+  data-cfasync="false"
+  src="https://pl26892689.effectivegatecpm.com/672e1724e271544ad3988d71421d013b/invoke.js"
+></script>
+<div id="container-672e1724e271544ad3988d71421d013b" style="width:100%;aspect-ratio:4/1;font-size:inherit;color:#6b4f4f;display:block;"></div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+
