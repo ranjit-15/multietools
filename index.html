@@ -212,6 +212,39 @@
             .hero { padding: 3rem 1.5rem 2rem; }
             .hero-previews { gap: 0.75rem; }
             .preview-chip { font-size: 0.8rem; padding: 0.5rem 0.9rem; }
+            .features { grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1rem 1rem 2rem; }
+            .feature-card { padding: 1.25rem; }
+            .feature-card h3 { font-size: 1.05rem; }
+            .feature-card p { font-size: 0.88rem; }
+            .stats-inner { grid-template-columns: 1fr 1fr; padding: 1.5rem; }
+            .cta-inner { padding: 2rem 1.25rem; }
+            .section-label h2 { font-size: 1.4rem; }
+            .section-label p { font-size: 0.92rem; }
+        }
+        @media (max-width: 480px) {
+            .hero { padding: 2rem 1rem 1.5rem; }
+            .hero h1 { font-size: 1.75rem; }
+            .hero .lead { font-size: 0.92rem; margin-bottom: 1.25rem; }
+            .hero-actions { flex-direction: column; align-items: center; }
+            .btn { width: 100%; justify-content: center; padding: 0.85rem 1.2rem; font-size: 0.92rem; }
+            .hero-previews { gap: 0.5rem; margin-top: 2rem; }
+            .preview-chip { font-size: 0.75rem; padding: 0.4rem 0.75rem; gap: 0.4rem; }
+            .preview-chip i { width: 28px; height: 28px; font-size: 0.8rem; }
+            .features { grid-template-columns: 1fr; gap: 0.85rem; padding: 0.75rem 1rem 1.5rem; }
+            .stats-inner { grid-template-columns: 1fr 1fr; padding: 1.25rem; gap: 0.75rem; }
+            .stat .num { font-size: 1.5rem; }
+            .stat .label { font-size: 0.8rem; }
+            .cta-inner { padding: 1.75rem 1rem; }
+            .cta-inner h2 { font-size: 1.3rem; }
+            .section-label { padding: 2rem 1rem 0.75rem; }
+            footer .footer-links { gap: 0.75rem; }
+            footer .footer-links a { font-size: 0.82rem; }
+        }
+        @media (max-width: 360px) {
+            .hero h1 { font-size: 1.5rem; }
+            .hero-badge { font-size: 0.8rem; padding: 0.4rem 0.85rem; }
+            .features { padding: 0.5rem 0.75rem 1rem; }
+            .stats-bar { padding: 0 0.75rem; }
         }
     </style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
