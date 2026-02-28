@@ -343,3 +343,61 @@ body.dark select {
 body.dark .muted { color: var(--muted) !important; }
 body.dark .back { color: var(--text) !important; }
 body.dark h1, body.dark h2, body.dark h3 { color: var(--text) !important; }
+
+/* ---------- Accessibility: Focus Styles ---------- */
+*:focus-visible {
+  outline: 2.5px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+.nav-links a:focus-visible,
+.nav-theme-toggle:focus-visible,
+.nav-mobile-btn:focus-visible,
+.btn-gradient:focus-visible,
+button:focus-visible {
+  outline: 2.5px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+/* Skip to content link */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 0.9rem;
+  z-index: 9999;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 0.75rem;
+}
+
+/* ---------- Share Button ---------- */
+.share-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.share-tool-btn:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--primary-glow);
+}
+.share-tool-btn i { font-size: 0.9rem; }

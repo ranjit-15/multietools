@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/index.html</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/tools.html</loc><priority>0.9</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/contact.html</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <!-- Image Tools -->
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/image-converter.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/image-compressor.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/image-resizer.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/image-cropper.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/image-rotator-tool.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/image-ocr-tool.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/image-color-picker.html</loc><priority>0.7</priority></url>
+  <!-- PDF Tools -->
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/pdf-merger-splitter.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/pdf-compressor-tool.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/pdf-converter-tool.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/pdf-to-word.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/pdf-to-image.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/pdf-lock-unlock.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/pdf-page-deleter.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/esign-pdf.html</loc><priority>0.8</priority></url>
+  <!-- Color Tools -->
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/color-picker.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/hex-rgb.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/contrast-checker.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/gradient-generator.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/palette-generator.html</loc><priority>0.7</priority></url>
+  <!-- Calculators -->
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/age-calculator.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/bmi-calculator.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/percentage-calculator.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/gst-calculator.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/loan-emi-calculator.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/scientific-calculator.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/currency-converter.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/unit-converter.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/stopwatch-timer.html</loc><priority>0.7</priority></url>
+  <!-- Text Tools -->
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/word-counter.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/case-converter.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/text-reverser.html</loc><priority>0.6</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/lorem-ipsum-generator.html</loc><priority>0.6</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/text-shorter.html</loc><priority>0.6</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/speech-to-text.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/text-to-speech.html</loc><priority>0.8</priority></url>
+  <!-- Developer Tools -->
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/JSON-Formatter.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/regex-tester.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/Minifier.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/markdown-to-html.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/Base-Encoder.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/hash-generator.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/url-encoder.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/csv-json-converter.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/Encryptor-Decryptor.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/binary-converter.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/password-generator.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/uuid-generator.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/remove-duplicate.html</loc><priority>0.6</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/ip-lookup.html</loc><priority>0.7</priority></url>
+  <!-- AI Tools -->
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/ai-detector.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/ai-paraphraser.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/ai-grammar-checker.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/ai-summarizer.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/ai-chatbot.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/ai-sentiment.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/ai-story-generator.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/keyword-density-checker.html</loc><priority>0.7</priority></url>
+  <!-- Utility Tools -->
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/qr-scanner.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/barcode-scanner.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/qr-barcode-generator.html</loc><priority>0.8</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/time-zone-converter.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/notepad.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/invoice-generator.html</loc><priority>0.7</priority></url>
+  <url><loc>https://ranjit-15.github.io/multietools/htdocs/json-to-csv.html</loc><priority>0.7</priority></url>
+</urlset>

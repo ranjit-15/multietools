@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ranjit-15.github.io/multietools/htdocs/sitemap.xml

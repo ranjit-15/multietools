@@ -187,11 +187,54 @@
     }
   }
 
+  /* ---------- Skip-to-Content Link (Accessibility) ---------- */
+  function injectSkipLink() {
+    var main = document.querySelector('main, .wrap, .shell');
+    if (!main) return;
+    if (!main.id) main.id = 'main-content';
+    var skip = document.createElement('a');
+    skip.className = 'skip-link';
+    skip.href = '#' + main.id;
+    skip.textContent = 'Skip to content';
+    document.body.insertBefore(skip, document.body.firstChild);
+  }
+
+  /* ---------- Share Button for Tool Pages ---------- */
+  function injectShareButton() {
+    if (!isToolPage) return;
+    var header = document.querySelector('header');
+    if (!header) return;
+
+    var btn = document.createElement('button');
+    btn.className = 'share-tool-btn';
+    btn.innerHTML = '<i class="fas fa-share-alt"></i> Share';
+    btn.setAttribute('aria-label', 'Share this tool');
+
+    btn.addEventListener('click', function () {
+      var shareData = { title: document.title, url: location.href };
+      if (navigator.share) {
+        navigator.share(shareData).catch(function () {});
+      } else {
+        // Fallback: copy link
+        navigator.clipboard.writeText(location.href).then(function () {
+          btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+          setTimeout(function () {
+            btn.innerHTML = '<i class="fas fa-share-alt"></i> Share';
+          }, 2000);
+        });
+      }
+    });
+
+    header.appendChild(btn);
+  }
+
   /* ---------- Initialise ---------- */
   function init() {
     applyTheme(getTheme());
+    injectSkipLink();
     injectNavbar();
     bindNavbar();
+    injectShareButton();
     initScrollAnimations();
     initPageEnter();
     initSmoothScroll();
