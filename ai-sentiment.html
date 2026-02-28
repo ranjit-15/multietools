@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>AI Sentiment Analyzer - Multietools</title>
-	<meta name="description" content="Analyze text sentiment and emotion with AI. Free online sentiment analyzer â€” instant results, no sign-up. Multietools.">
+	<meta name="description" content="Analyze text sentiment and emotion with AI. Free online sentiment analyzer — instant results, no sign-up. Multietools.">
 	<meta property="og:title" content="AI Sentiment Analyzer - Multietools">
-	<meta property="og:description" content="Analyze text sentiment and emotion with AI. Free online sentiment analyzer â€” instant results, no sign-up. Multietools.">
+	<meta property="og:description" content="Analyze text sentiment and emotion with AI. Free online sentiment analyzer — instant results, no sign-up. Multietools.">
 	<meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/ai-sentiment.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+	<link rel="canonical" href="https://multietools.vercel.app/ai-sentiment.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
 	<style>
@@ -153,7 +153,7 @@
 				<span class="word-count" id="wordCount">0 words</span>
 			</div>
 			<div class="info-box">
-				<i class="fas fa-info-circle"></i> This analyzer uses a built-in lexicon of 400+ scored words, negation handling, intensifier/diminisher detection, emoji analysis, and emotion keyword mapping. All processing is done locally in your browser â€” no data is sent anywhere.
+				<i class="fas fa-info-circle"></i> This analyzer uses a built-in lexicon of 400+ scored words, negation handling, intensifier/diminisher detection, emoji analysis, and emotion keyword mapping. All processing is done locally in your browser — no data is sent anywhere.
 			</div>
 		</div>
 
@@ -166,7 +166,7 @@
 			<div class="panel" id="gaugePanel">
 				<h2><i class="fas fa-gauge-high"></i> Overall Sentiment</h2>
 				<div class="gauge-section">
-					<div class="sentiment-face" id="sentimentFace">ðŸ˜</div>
+					<div class="sentiment-face" id="sentimentFace">😐</div>
 					<div class="gauge-container">
 						<svg class="gauge-svg" viewBox="0 0 280 150">
 							<path class="gauge-bg-arc" d="M 30 140 A 110 110 0 0 1 250 140"/>
@@ -225,23 +225,23 @@
 <script src="js/global.js"></script>
 <script>
 /* =========================================
-   AI Sentiment Analyzer â€” Full Lexicon & Engine
+   AI Sentiment Analyzer — Full Lexicon & Engine
    ========================================= */
 
-// â”€â”€ Positive Lexicon (word: score 1-5) â”€â”€
+// ── Positive Lexicon (word: score 1-5) ──
 const POSITIVE_WORDS = {
-	// 5 â€” Extremely positive
+	// 5 — Extremely positive
 	"amazing":5,"awesome":5,"breathtaking":5,"brilliant":5,"ecstatic":5,"excellent":5,"exceptional":5,"extraordinary":5,"fabulous":5,"fantastic":5,
 	"flawless":5,"glorious":5,"incredible":5,"magnificent":5,"marvelous":5,"masterpiece":5,"outstanding":5,"perfect":5,"phenomenal":5,"sensational":5,
 	"spectacular":5,"splendid":5,"stunning":5,"sublime":5,"superb":5,"supreme":5,"terrific":5,"thrilling":5,"tremendous":5,"unbelievable":5,
 	"wonderful":5,"exquisite":5,
-	// 4 â€” Very positive
+	// 4 — Very positive
 	"admirable":4,"beautiful":4,"blissful":4,"captivating":4,"charming":4,"cheerful":4,"commendable":4,"delightful":4,"elegant":4,"enchanting":4,
 	"enjoyable":4,"euphoric":4,"exciting":4,"exhilarating":4,"favorable":4,"generous":4,"graceful":4,"great":4,"harmonious":4,"heartwarming":4,
 	"heroic":4,"impressive":4,"inspiring":4,"joyful":4,"joyous":4,"lovable":4,"lovely":4,"majestic":4,"miraculous":4,"noble":4,
 	"passionate":4,"pleasing":4,"powerful":4,"radiant":4,"remarkable":4,"rewarding":4,"shining":4,"thriving":4,"triumphant":4,"vibrant":4,
 	"victorious":4,"vivid":4,"warm":4,"wholesome":4,"worthy":4,
-	// 3 â€” Positive
+	// 3 — Positive
 	"accomplished":3,"agreeable":3,"appealing":3,"balanced":3,"beneficial":3,"brave":3,"bright":3,"calm":3,"capable":3,"caring":3,
 	"clean":3,"comfortable":3,"competent":3,"confident":3,"constructive":3,"courageous":3,"creative":3,"dedicated":3,"dependable":3,"diligent":3,
 	"effective":3,"efficient":3,"encouraging":3,"energetic":3,"engaging":3,"enriching":3,"enthusiastic":3,"faithful":3,"flourishing":3,"focused":3,
@@ -252,13 +252,13 @@ const POSITIVE_WORDS = {
 	"rational":3,"refreshing":3,"reliable":3,"resilient":3,"resourceful":3,"respectful":3,"responsible":3,"safe":3,"secure":3,"sincere":3,
 	"skilled":3,"smart":3,"smooth":3,"solid":3,"stable":3,"strong":3,"successful":3,"supportive":3,"sweet":3,"talented":3,
 	"thankful":3,"thoughtful":3,"trustworthy":3,"upbeat":3,"useful":3,"valuable":3,"versatile":3,"wise":3,"witty":3,"youthful":3,
-	// 2 â€” Slightly positive
+	// 2 — Slightly positive
 	"acceptable":2,"adequate":2,"amusing":2,"appropriate":2,"attentive":2,"aware":2,"better":2,"certain":2,"civil":2,"clear":2,
 	"composed":2,"content":2,"correct":2,"decent":2,"easy":2,"fair":2,"feasible":2,"fine":2,"fit":2,"functional":2,
 	"handy":2,"intact":2,"logical":2,"manageable":2,"modest":2,"normal":2,"notable":2,"okay":2,"open":2,"orderly":2,
 	"patient":2,"possible":2,"practical":2,"proper":2,"ready":2,"reasonable":2,"relaxed":2,"relevant":2,"satisfactory":2,"simple":2,
 	"sound":2,"steady":2,"suitable":2,"tidy":2,"tolerant":2,"typical":2,"unified":2,"usual":2,"valid":2,"welcome":2,
-	// 1 â€” Mildly positive
+	// 1 — Mildly positive
 	"alright":1,"available":1,"basic":1,"common":1,"consistent":1,"expected":1,"familiar":1,"general":1,"granted":1,"known":1,
 	"mainstream":1,"moderate":1,"neutral":1,"ordinary":1,"regular":1,"routine":1,"standard":1,"sufficient":1,"trivial":1,"understood":1,
 	"like":2,"love":4,"loved":4,"loves":4,"liked":2,"enjoy":3,"enjoyed":3,"enjoying":3,"recommend":3,"recommended":3,
@@ -267,14 +267,14 @@ const POSITIVE_WORDS = {
 	"best":5,"better":2,"top":3,"elite":4,"superior":4,"premium":4,"prime":3,"ideal":4,"optimal":4,"peak":3
 };
 
-// â”€â”€ Negative Lexicon (word: score -1 to -5) â”€â”€
+// ── Negative Lexicon (word: score -1 to -5) ──
 const NEGATIVE_WORDS = {
-	// -5 â€” Extremely negative
+	// -5 — Extremely negative
 	"abhorrent":-5,"abominable":-5,"appalling":-5,"atrocious":-5,"catastrophic":-5,"deplorable":-5,"despicable":-5,"devastating":-5,"disastrous":-5,"disgusting":-5,
 	"dreadful":-5,"execrable":-5,"ghastly":-5,"grotesque":-5,"heinous":-5,"horrendous":-5,"horrible":-5,"horrific":-5,"loathsome":-5,"monstrous":-5,
 	"nightmarish":-5,"outrageous":-5,"repugnant":-5,"repulsive":-5,"revolting":-5,"sickening":-5,"terrible":-5,"terrifying":-5,"tragic":-5,"vile":-5,
 	"wretched":-5,"abysmal":-5,
-	// -4 â€” Very negative
+	// -4 — Very negative
 	"abusive":-4,"agonizing":-4,"alarming":-4,"angry":-4,"anguished":-4,"apprehensive":-4,"awful":-4,"bitter":-4,"bleak":-4,"brutal":-4,
 	"callous":-4,"corrupt":-4,"cruel":-4,"damaging":-4,"dangerous":-4,"deceitful":-4,"defective":-4,"degrading":-4,"depraved":-4,"depressing":-4,
 	"destructive":-4,"detestable":-4,"dishonest":-4,"dismal":-4,"distressing":-4,"dreadful":-4,"envious":-4,"evil":-4,"fearful":-4,"foolish":-4,
@@ -283,7 +283,7 @@ const NEGATIVE_WORDS = {
 	"miserable":-4,"nasty":-4,"offensive":-4,"oppressive":-4,"painful":-4,"pathetic":-4,"pitiless":-4,"poisonous":-4,"reckless":-4,"ruthless":-4,
 	"savage":-4,"shameful":-4,"sinister":-4,"spiteful":-4,"toxic":-4,"treacherous":-4,"unacceptable":-4,"unforgivable":-4,"unkind":-4,"vengeful":-4,
 	"vicious":-4,"violent":-4,"wicked":-4,"worthless":-4,
-	// -3 â€” Negative
+	// -3 — Negative
 	"abnormal":-3,"aggravating":-3,"annoying":-3,"anxious":-3,"arrogant":-3,"ashamed":-3,"awkward":-3,"bad":-3,"biased":-3,"bored":-3,
 	"boring":-3,"broken":-3,"careless":-3,"chaotic":-3,"clumsy":-3,"cold":-3,"complicated":-3,"confused":-3,"confusing":-3,"cowardly":-3,
 	"cranky":-3,"critical":-3,"cynical":-3,"damaged":-3,"deceived":-3,"deficient":-3,"demanding":-3,"denied":-3,"difficult":-3,"dirty":-3,
@@ -298,14 +298,14 @@ const NEGATIVE_WORDS = {
 	"terrible":-3,"tired":-3,"troubled":-3,"ugly":-3,"uncertain":-3,"uncomfortable":-3,"unfair":-3,"unfortunate":-3,"unhappy":-3,"uninspired":-3,
 	"unpleasant":-3,"unreliable":-3,"unsatisfied":-3,"unstable":-3,"upset":-3,"useless":-3,"vain":-3,"vulnerable":-3,"weak":-3,"worried":-3,
 	"wrong":-3,
-	// -2 â€” Slightly negative
+	// -2 — Slightly negative
 	"ambiguous":-2,"bland":-2,"blunt":-2,"cautious":-2,"complex":-2,"concern":-2,"costly":-2,"delay":-2,"dense":-2,"doubt":-2,
 	"drab":-2,"dry":-2,"flat":-2,"forced":-2,"gray":-2,"hard":-2,"heavy":-2,"idle":-2,"impractical":-2,"inconvenient":-2,
 	"indifferent":-2,"indirect":-2,"lacking":-2,"late":-2,"limited":-2,"minor":-2,"miss":-2,"mixed":-2,"mundane":-2,"narrow":-2,
 	"noisy":-2,"odd":-2,"old":-2,"ordinary":-2,"overdue":-2,"plain":-2,"questionable":-2,"reluctant":-2,"repetitive":-2,"rough":-2,
 	"scarce":-2,"scattered":-2,"slow":-2,"stale":-2,"static":-2,"steep":-2,"stiff":-2,"tedious":-2,"thin":-2,"tight":-2,
 	"tricky":-2,"unclear":-2,"uneven":-2,"unfamiliar":-2,"unlikely":-2,"unpopular":-2,"vague":-2,"wasteful":-2,
-	// -1 â€” Mildly negative
+	// -1 — Mildly negative
 	"basic":-1,"busy":-1,"common":-1,"dated":-1,"generic":-1,"lengthy":-1,"long":-1,"mere":-1,"modest":-1,"neutral":-1,
 	"predictable":-1,"rare":-1,"raw":-1,"slight":-1,"standard":-1,"unchanged":-1,"unexpected":-1,"unknown":-1,"unnoticed":-1,
 	"hate":-4,"hated":-4,"hates":-4,"hating":-4,"dislike":-3,"disliked":-3,"dislikes":-3,"regret":-3,"regretted":-3,"regrets":-3,
@@ -315,7 +315,7 @@ const NEGATIVE_WORDS = {
 	"garbage":-4,"junk":-3,"waste":-3,"pain":-3,"suffer":-4,"suffering":-4,"death":-4,"kill":-4,"destroy":-4,"destroyed":-4
 };
 
-// â”€â”€ Negation words â”€â”€
+// ── Negation words ──
 const NEGATION_WORDS = new Set([
 	"not","no","never","neither","nobody","nothing","nowhere","nor",
 	"cannot","can't","couldn't","shouldn't","wouldn't","won't","don't",
@@ -323,7 +323,7 @@ const NEGATION_WORDS = new Set([
 	"haven't","hadn't","mustn't","needn't","barely","hardly","scarcely","seldom"
 ]);
 
-// â”€â”€ Intensifiers (multiply by factor) â”€â”€
+// ── Intensifiers (multiply by factor) ──
 const INTENSIFIERS = {
 	"very":1.5,"extremely":1.8,"incredibly":1.8,"absolutely":1.7,"totally":1.6,
 	"completely":1.6,"utterly":1.7,"really":1.5,"truly":1.5,"highly":1.5,
@@ -333,7 +333,7 @@ const INTENSIFIERS = {
 	"so":1.3,"such":1.3,"too":1.3,"most":1.4,"quite":1.3
 };
 
-// â”€â”€ Diminishers (multiply by factor) â”€â”€
+// ── Diminishers (multiply by factor) ──
 const DIMINISHERS = {
 	"slightly":0.5,"somewhat":0.6,"barely":0.4,"hardly":0.4,"marginally":0.5,
 	"mildly":0.5,"partly":0.6,"partially":0.6,"a bit":0.5,"a little":0.5,
@@ -341,54 +341,54 @@ const DIMINISHERS = {
 	"moderately":0.6,"occasionally":0.6,"almost":0.7,"just":0.7,"merely":0.5
 };
 
-// â”€â”€ Emoji Sentiment â”€â”€
+// ── Emoji Sentiment ──
 const EMOJI_SENTIMENT = {
-	"ðŸ˜€":3,"ðŸ˜ƒ":3,"ðŸ˜„":4,"ðŸ˜":4,"ðŸ˜†":4,"ðŸ˜‚":4,"ðŸ¤£":4,"ðŸ˜Š":3,"ðŸ˜‡":3,"ðŸ™‚":2,
-	"ðŸ˜‰":2,"ðŸ˜Œ":2,"ðŸ˜":5,"ðŸ¥°":5,"ðŸ˜˜":4,"ðŸ˜—":2,"ðŸ˜™":2,"ðŸ˜š":3,"ðŸ˜‹":3,"ðŸ˜›":2,
-	"ðŸ˜œ":2,"ðŸ¤ª":2,"ðŸ˜":2,"ðŸ¤‘":2,"ðŸ¤—":3,"ðŸ¤­":2,"ðŸ¤«":1,"ðŸ¤”":-1,"ðŸ¤":-1,"ðŸ¤¨":-1,
-	"ðŸ˜":0,"ðŸ˜‘":-1,"ðŸ˜¶":0,"ðŸ˜":-1,"ðŸ˜’":-2,"ðŸ™„":-2,"ðŸ˜¬":-2,"ðŸ¤¥":-3,"ðŸ˜”":-3,"ðŸ˜ª":-2,
-	"ðŸ¤¤":1,"ðŸ˜´":-1,"ðŸ˜·":-2,"ðŸ¤’":-3,"ðŸ¤•":-3,"ðŸ¤¢":-4,"ðŸ¤®":-5,"ðŸ¥µ":-2,"ðŸ¥¶":-2,"ðŸ¥´":-2,
-	"ðŸ˜µ":-3,"ðŸ¤¯":2,"ðŸ¤ ":2,"ðŸ¥³":4,"ðŸ˜Ž":3,"ðŸ¤“":2,"ðŸ§":1,"ðŸ˜•":-2,"ðŸ˜Ÿ":-3,"ðŸ™":-3,
-	"â˜¹ï¸":-3,"ðŸ˜®":-1,"ðŸ˜¯":-1,"ðŸ˜²":-1,"ðŸ˜³":-2,"ðŸ¥º":-3,"ðŸ˜¦":-3,"ðŸ˜§":-3,"ðŸ˜¨":-4,"ðŸ˜°":-4,
-	"ðŸ˜¥":-3,"ðŸ˜¢":-4,"ðŸ˜­":-5,"ðŸ˜±":-5,"ðŸ˜–":-4,"ðŸ˜£":-3,"ðŸ˜ž":-4,"ðŸ˜“":-3,"ðŸ˜©":-4,"ðŸ˜«":-4,
-	"ðŸ¥±":-1,"ðŸ˜¤":-3,"ðŸ˜¡":-5,"ðŸ˜ ":-4,"ðŸ¤¬":-5,"ðŸ’€":-3,"â˜ ï¸":-3,"ðŸ’©":-4,"ðŸ¤¡":-2,"ðŸ‘¿":-4,
-	"ðŸ˜ˆ":-3,"ðŸ‘":3,"ðŸ‘Ž":-3,"â¤ï¸":4,"ðŸ’”":-4,"ðŸ’¯":4,"ðŸ”¥":3,"âœ¨":3,"ðŸŽ‰":4,"ðŸŽŠ":4,
-	"ðŸ’ª":3,"ðŸ™":3,"ðŸ‘":3,"ðŸ¥‡":4,"ðŸ†":4,"â­":3,"ðŸŒŸ":3,"ðŸ’–":4,"ðŸ’•":3,"ðŸ˜ ":-4,
-	"ðŸ’—":3,"ðŸ’":4,"ðŸ’˜":4,"ðŸ’ž":3,"ðŸ’œ":3,"ðŸ–¤":-1,"â£ï¸":3,"ðŸ’™":3,"ðŸ’š":3,"ðŸ§¡":3
+	"😀":3,"😃":3,"😄":4,"😁":4,"😆":4,"😂":4,"🤣":4,"😊":3,"😇":3,"🙂":2,
+	"😉":2,"😌":2,"😍":5,"🥰":5,"😘":4,"😗":2,"😙":2,"😚":3,"😋":3,"😛":2,
+	"😜":2,"🤪":2,"😝":2,"🤑":2,"🤗":3,"🤭":2,"🤫":1,"🤔":-1,"🤐":-1,"🤨":-1,
+	"😐":0,"😑":-1,"😶":0,"😏":-1,"😒":-2,"🙄":-2,"😬":-2,"🤥":-3,"😔":-3,"😪":-2,
+	"🤤":1,"😴":-1,"😷":-2,"🤒":-3,"🤕":-3,"🤢":-4,"🤮":-5,"🥵":-2,"🥶":-2,"🥴":-2,
+	"😵":-3,"🤯":2,"🤠":2,"🥳":4,"😎":3,"🤓":2,"🧐":1,"😕":-2,"😟":-3,"🙁":-3,
+	"☹️":-3,"😮":-1,"😯":-1,"😲":-1,"😳":-2,"🥺":-3,"😦":-3,"😧":-3,"😨":-4,"😰":-4,
+	"😥":-3,"😢":-4,"😭":-5,"😱":-5,"😖":-4,"😣":-3,"😞":-4,"😓":-3,"😩":-4,"😫":-4,
+	"🥱":-1,"😤":-3,"😡":-5,"😠":-4,"🤬":-5,"💀":-3,"☠️":-3,"💩":-4,"🤡":-2,"👿":-4,
+	"😈":-3,"👍":3,"👎":-3,"❤️":4,"💔":-4,"💯":4,"🔥":3,"✨":3,"🎉":4,"🎊":4,
+	"💪":3,"🙏":3,"👏":3,"🥇":4,"🏆":4,"⭐":3,"🌟":3,"💖":4,"💕":3,"😠":-4,
+	"💗":3,"💝":4,"💘":4,"💞":3,"💜":3,"🖤":-1,"❣️":3,"💙":3,"💚":3,"🧡":3
 };
 
-// â”€â”€ Emotion Keywords â”€â”€
+// ── Emotion Keywords ──
 const EMOTION_KEYWORDS = {
 	joy: {
-		icon:"ðŸ˜Š",color:"#10b981",
+		icon:"😊",color:"#10b981",
 		words:["happy","joy","joyful","delighted","cheerful","excited","thrilled","ecstatic","elated","glad","pleased","content","amused","blissful","euphoric","enthusiastic","grateful","hopeful","optimistic","proud","satisfied","wonderful","amazing","love","loving","celebrate","celebrating","celebration","laugh","laughing","smile","smiling","fun","enjoy","enjoying","enjoyable","fantastic","fabulous","terrific","superb","brilliant","magnificent","splendid","glorious","radiant","vibrant","warm","heartwarming","blessed","fortunate","lucky","paradise","dream","dreamy","paradise","perfect","heaven","heavenly"]
 	},
 	sadness: {
-		icon:"ðŸ˜¢",color:"#6366f1",
+		icon:"😢",color:"#6366f1",
 		words:["sad","sadness","sorrow","sorrowful","grief","grieving","depressed","depression","melancholy","gloomy","gloom","unhappy","miserable","heartbroken","lonely","loneliness","dejected","despondent","hopeless","despair","despairing","mourning","mourn","crying","cry","tears","tear","weeping","weep","sobbing","sob","painful","pain","hurt","hurting","suffering","suffer","loss","lost","devastated","devastating","tragic","tragedy","regret","regretful","disappointed","disappointment","empty","emptiness","abandoned","neglected","isolated","isolation"]
 	},
 	anger: {
-		icon:"ðŸ˜¡",color:"#ef4444",
+		icon:"😡",color:"#ef4444",
 		words:["angry","anger","furious","enraged","livid","outraged","mad","irritated","irritating","annoyed","annoying","frustrated","frustrating","hostile","aggressive","violent","rage","raging","hate","hateful","hatred","resent","resentful","resentment","bitter","bitterness","infuriated","provoked","agitated","antagonized","incensed","irate","fuming","seething","wrathful","wrath","vengeance","vengeful","indignant","disgusted","offended","disrespected","betrayed","betrayal","unforgivable","inexcusable","outrageous"]
 	},
 	fear: {
-		icon:"ðŸ˜¨",color:"#f59e0b",
+		icon:"😨",color:"#f59e0b",
 		words:["afraid","fear","fearful","scared","scary","terrified","terrifying","horrified","horrifying","anxious","anxiety","worried","worry","nervous","dread","dreading","panic","panicked","panicking","frightened","frightening","alarmed","alarming","startled","uneasy","apprehensive","paranoid","paranoia","phobia","intimidated","intimidating","threatened","threatening","trembling","shaking","petrified","spooked","creepy","eerie","sinister","menacing","ominous","vulnerable","helpless","powerless","overwhelmed","distressed","desperate"]
 	},
 	surprise: {
-		icon:"ðŸ˜²",color:"#8b5cf6",
+		icon:"😲",color:"#8b5cf6",
 		words:["surprised","surprise","surprising","shocked","shocking","astonished","astonishing","amazed","amazing","stunned","stunning","astounded","astounding","bewildered","baffled","startled","dumbfounded","flabbergasted","speechless","unexpected","unbelievable","incredible","awe","awestruck","wonder","wonderful","miraculous","miracle","extraordinary","remarkable","jaw-dropping","mind-blowing","mindblowing","eye-opening","unprecedented","unreal","unforeseen","sudden","suddenly"]
 	},
 	disgust: {
-		icon:"ðŸ¤¢",color:"#78716c",
+		icon:"🤢",color:"#78716c",
 		words:["disgusted","disgusting","disgust","revolting","repulsive","repugnant","gross","grossed","nauseating","nausea","sickening","sickened","vile","foul","nasty","loathsome","abhorrent","abominable","appalling","offensive","repelled","detestable","distasteful","unpleasant","horrible","hideous","ghastly","putrid","rotten","filthy","dirty","contaminated","toxic","poisonous","corrupt","corrupted","wretched","despicable","contempt","contemptible","deplorable","degrading","vulgar","obscene","grotesque"]
 	}
 };
 
-// â”€â”€ Current mode â”€â”€
+// ── Current mode ──
 let currentMode = "single";
 
-// â”€â”€ Utility â”€â”€
+// ── Utility ──
 function toast(msg) {
 	const t = document.getElementById("toast");
 	t.textContent = msg;
@@ -429,29 +429,29 @@ function clearAll() {
 
 function loadSample() {
 	if (currentMode === "single") {
-		document.getElementById("inputText").value = `I absolutely love this product! The quality is amazing and it exceeded all my expectations. The customer service team was incredibly helpful and friendly. However, the shipping was a bit slow and the packaging could have been better. The price is a little steep but honestly, it's worth every penny. I would highly recommend this to anyone looking for a premium experience. The design is beautiful and elegant. My only minor complaint is the instruction manual was confusing. Overall, a fantastic purchase that made me very happy! ðŸ˜ŠðŸ‘`;
+		document.getElementById("inputText").value = `I absolutely love this product! The quality is amazing and it exceeded all my expectations. The customer service team was incredibly helpful and friendly. However, the shipping was a bit slow and the packaging could have been better. The price is a little steep but honestly, it's worth every penny. I would highly recommend this to anyone looking for a premium experience. The design is beautiful and elegant. My only minor complaint is the instruction manual was confusing. Overall, a fantastic purchase that made me very happy! 😊👍`;
 	} else {
 		document.getElementById("batchInput").value = `I absolutely love this product! It's amazing and works perfectly.
 The service was terrible and the staff were extremely rude and unhelpful.
 The weather today is okay, nothing special but not bad either.
-This movie was a complete disaster. Worst film I've ever seen! ðŸ˜¡
-What a wonderful surprise! I'm so grateful and thrilled beyond words! ðŸŽ‰
+This movie was a complete disaster. Worst film I've ever seen! 😡
+What a wonderful surprise! I'm so grateful and thrilled beyond words! 🎉
 The food was mediocre at best. Bland flavors and overcooked pasta.
-I'm deeply saddened by the tragic news. My heart goes out to everyone affected. ðŸ˜¢
-Incredible performance! The team showed remarkable skill and determination. ðŸ’ªðŸ†`;
+I'm deeply saddened by the tragic news. My heart goes out to everyone affected. 😢
+Incredible performance! The team showed remarkable skill and determination. 💪🏆`;
 	}
 	updateWordCount();
 	toast("Sample text loaded!");
 }
 
-// â”€â”€ Core Sentiment Analysis â”€â”€
+// ── Core Sentiment Analysis ──
 function tokenize(text) {
-	return text.toLowerCase().replace(/[^\w\s'-ðŸ˜€-ðŸ´]/gu, " ").split(/\s+/).filter(Boolean);
+	return text.toLowerCase().replace(/[^\w\s'-😀-🏴]/gu, " ").split(/\s+/).filter(Boolean);
 }
 
 function splitSentences(text) {
 	// Split on sentence-ending punctuation, keeping the delimiter
-	const raw = text.split(/(?<=[.!?â€¦])\s+|[\n\r]+/).filter(s => s.trim().length > 0);
+	const raw = text.split(/(?<=[.!?…])\s+|[\n\r]+/).filter(s => s.trim().length > 0);
 	return raw.map(s => s.trim());
 }
 
@@ -471,7 +471,7 @@ function analyzeText(text) {
 		emotionScores[emo] = 0;
 	}
 
-	// â”€â”€ Emoji scoring â”€â”€
+	// ── Emoji scoring ──
 	let emojiScore = 0;
 	let emojiCount = 0;
 	for (const [emoji, score] of Object.entries(EMOJI_SENTIMENT)) {
@@ -483,7 +483,7 @@ function analyzeText(text) {
 		}
 	}
 
-	// â”€â”€ Per-sentence analysis â”€â”€
+	// ── Per-sentence analysis ──
 	for (const sentence of sentences) {
 		const sTokens = tokenize(sentence);
 		let sentScore = 0;
@@ -597,13 +597,13 @@ function analyzeText(text) {
 	};
 }
 
-// â”€â”€ Render Results â”€â”€
+// ── Render Results ──
 function getVerdictInfo(score) {
-	if (score >= 0.5) return { label: "Very Positive", face: "ðŸ˜„", color: "#10b981" };
-	if (score >= 0.15) return { label: "Positive", face: "ðŸ™‚", color: "#84cc16" };
-	if (score > -0.15) return { label: "Neutral", face: "ðŸ˜", color: "#a3a3a3" };
-	if (score > -0.5) return { label: "Negative", face: "ðŸ˜Ÿ", color: "#f59e0b" };
-	return { label: "Very Negative", face: "ðŸ˜¡", color: "#ef4444" };
+	if (score >= 0.5) return { label: "Very Positive", face: "😄", color: "#10b981" };
+	if (score >= 0.15) return { label: "Positive", face: "🙂", color: "#84cc16" };
+	if (score > -0.15) return { label: "Neutral", face: "😐", color: "#a3a3a3" };
+	if (score > -0.5) return { label: "Negative", face: "😟", color: "#f59e0b" };
+	return { label: "Very Negative", face: "😡", color: "#ef4444" };
 }
 
 function renderGauge(result) {
@@ -666,7 +666,7 @@ function renderSentences(sentences) {
 		const scoreNum = s.score.toFixed(1);
 		const div = document.createElement("div");
 		div.className = "sentence-item " + cls;
-		div.innerHTML = `<span class="sentence-text">${escapeHtml(s.text)}</span><span class="sentence-score ${scoreCls}">${scoreNum} Â· ${label}</span>`;
+		div.innerHTML = `<span class="sentence-text">${escapeHtml(s.text)}</span><span class="sentence-score ${scoreCls}">${scoreNum} · ${label}</span>`;
 		list.appendChild(div);
 	}
 }
@@ -723,7 +723,7 @@ function renderBatchResults(texts) {
 		const badgeCls = r.score > 0.15 ? "badge-pos" : r.score < -0.15 ? "badge-neg" : "badge-neu";
 		const topEmo = Object.entries(r.emotions).sort((a, b) => b[1] - a[1])[0];
 		const emoData = EMOTION_KEYWORDS[topEmo[0]];
-		const truncated = r.text.length > 80 ? r.text.substring(0, 80) + "â€¦" : r.text;
+		const truncated = r.text.length > 80 ? r.text.substring(0, 80) + "…" : r.text;
 		html += `<tr>
 			<td>${r.index}</td>
 			<td title="${escapeHtml(r.text)}">${escapeHtml(truncated)}</td>
@@ -745,7 +745,7 @@ function escapeHtml(str) {
 	return div.innerHTML;
 }
 
-// â”€â”€ Main Analysis Runner â”€â”€
+// ── Main Analysis Runner ──
 function runAnalysis() {
 	const textarea = getActiveTextarea();
 	const text = textarea.value.trim();
@@ -812,7 +812,7 @@ function runAnalysis() {
 	}, 600);
 }
 
-// â”€â”€ Copy Results â”€â”€
+// ── Copy Results ──
 function copyResults() {
 	const textarea = getActiveTextarea();
 	const text = textarea.value.trim();

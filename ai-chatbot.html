@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>AI Chatbot - Multietools</title>
-	<meta name="description" content="Chat with MultiBot â€” get jokes, random facts, math answers, and tool recommendations. Free AI chatbot by Multietools.">
+	<meta name="description" content="Chat with MultiBot — get jokes, random facts, math answers, and tool recommendations. Free AI chatbot by Multietools.">
 	<meta property="og:title" content="AI Chatbot - Multietools">
-	<meta property="og:description" content="Chat with MultiBot â€” get jokes, random facts, math answers, and tool recommendations. Free AI chatbot by Multietools.">
+	<meta property="og:description" content="Chat with MultiBot — get jokes, random facts, math answers, and tool recommendations. Free AI chatbot by Multietools.">
 	<meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/ai-chatbot.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+	<link rel="canonical" href="https://multietools.vercel.app/ai-chatbot.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
 	<style>
@@ -124,7 +124,7 @@
 					<span class="bot-icon"><i class="fas fa-robot"></i></span>
 					AI Chatbot
 				</h1>
-				<p class="muted">Chat with MultiBot â€” your friendly assistant</p>
+				<p class="muted">Chat with MultiBot — your friendly assistant</p>
 			</div>
 			<div class="header-actions">
 				<button class="icon-btn" id="clearBtn" title="Clear chat"><i class="fas fa-trash-alt"></i></button>
@@ -135,8 +135,8 @@
 	<div class="chat-area" id="chatArea">
 		<div class="welcome" id="welcome">
 			<div class="welcome-icon"><i class="fas fa-robot"></i></div>
-			<h2>Hey there! I'm MultiBot ðŸ‘‹</h2>
-			<p>Your helpful assistant from Multietools. Ask me anything â€” I can tell jokes, share facts, do math, recommend tools, and much more!</p>
+			<h2>Hey there! I'm MultiBot 👋</h2>
+			<p>Your helpful assistant from Multietools. Ask me anything — I can tell jokes, share facts, do math, recommend tools, and much more!</p>
 		</div>
 	</div>
 
@@ -289,79 +289,79 @@ quickReplies.addEventListener('click', function(e){
 
 /* ---------- Joke bank (25) ---------- */
 const jokes = [
-	"Why do programmers prefer dark mode? Because light attracts bugs! ðŸ›",
-	"Why was the JavaScript developer sad? Because he didn't Node how to Express himself. ðŸ˜¢",
+	"Why do programmers prefer dark mode? Because light attracts bugs! 🐛",
+	"Why was the JavaScript developer sad? Because he didn't Node how to Express himself. 😢",
 	"There are only 10 types of people in the world: those who understand binary and those who don't.",
-	"A SQL query walks into a bar, sees two tables and asks... 'Can I JOIN you?' ðŸ»",
-	"Why do Java developers wear glasses? Because they can't C#! ðŸ‘“",
+	"A SQL query walks into a bar, sees two tables and asks... 'Can I JOIN you?' 🍻",
+	"Why do Java developers wear glasses? Because they can't C#! 👓",
 	"What's the best thing about a Boolean? Even if you're wrong, you're only off by a bit.",
-	"I told my computer I needed a break, and now it won't stop sending me Kit-Kat ads. ðŸ«",
-	"Why did the developer go broke? Because he used up all his cache. ðŸ’¸",
-	"What did the router say to the doctor? 'It hurts when IP.' ðŸ˜‚",
+	"I told my computer I needed a break, and now it won't stop sending me Kit-Kat ads. 🍫",
+	"Why did the developer go broke? Because he used up all his cache. 💸",
+	"What did the router say to the doctor? 'It hurts when IP.' 😂",
 	"Knock knock.\nWho's there?\nRecursion.\nRecursion who?\nKnock knock.",
-	"Why did the functions break up? They had too many arguments. ðŸ’”",
-	"How many programmers does it take to change a light bulb? None â€” that's a hardware problem!",
-	"I'd tell you a UDP joke, but you might not get it. ðŸ“¡",
-	"Why do ships always know how much they weigh? Because they go to the port. âš“",
-	"What happens when you cross a cat with a dark wizard? You get a curse that lands on its feet! ðŸ±â€ðŸ‘¤",
+	"Why did the functions break up? They had too many arguments. 💔",
+	"How many programmers does it take to change a light bulb? None — that's a hardware problem!",
+	"I'd tell you a UDP joke, but you might not get it. 📡",
+	"Why do ships always know how much they weigh? Because they go to the port. ⚓",
+	"What happens when you cross a cat with a dark wizard? You get a curse that lands on its feet! 🐱‍👤",
 	"I was going to tell a time travel joke, but you didn't like it.",
-	"What do you call a fake noodle? An impasta! ðŸ",
-	"Why don't scientists trust atoms? Because they make up everything! âš›ï¸",
-	"I'm reading a book about anti-gravity. It's impossible to put down! ðŸ“–",
+	"What do you call a fake noodle? An impasta! 🍝",
+	"Why don't scientists trust atoms? Because they make up everything! ⚛️",
+	"I'm reading a book about anti-gravity. It's impossible to put down! 📖",
 	"Did you hear about the mathematician who's afraid of negative numbers? He'll stop at nothing to avoid them.",
-	"What do you call a bear with no teeth? A gummy bear! ðŸ»",
-	"Why did the scarecrow win an award? Because he was outstanding in his field! ðŸŒ¾",
-	"What do you get when you cross a snowman with a vampire? Frostbite! ðŸ§›",
-	"Why don't eggs tell jokes? Because they'd crack each other up! ðŸ¥š",
-	"What sits at the bottom of the sea and twitches? A nervous wreck! ðŸŒŠ"
+	"What do you call a bear with no teeth? A gummy bear! 🐻",
+	"Why did the scarecrow win an award? Because he was outstanding in his field! 🌾",
+	"What do you get when you cross a snowman with a vampire? Frostbite! 🧛",
+	"Why don't eggs tell jokes? Because they'd crack each other up! 🥚",
+	"What sits at the bottom of the sea and twitches? A nervous wreck! 🌊"
 ];
 
 /* ---------- Facts bank (25) ---------- */
 const facts = [
-	"Honey never spoils. Archaeologists found 3000-year-old honey in Egyptian tombs that was still edible! ðŸ¯",
-	"Octopuses have three hearts, nine brains, and blue blood. ðŸ™",
-	"A group of flamingos is called a 'flamboyance.' ðŸ¦©",
+	"Honey never spoils. Archaeologists found 3000-year-old honey in Egyptian tombs that was still edible! 🍯",
+	"Octopuses have three hearts, nine brains, and blue blood. 🐙",
+	"A group of flamingos is called a 'flamboyance.' 🦩",
 	"The shortest war in history between Britain and Zanzibar lasted only 38 to 45 minutes.",
-	"Bananas are berries, but strawberries aren't â€” botanically speaking! ðŸŒ",
-	"There are more stars in the universe than grains of sand on all Earth's beaches. â­",
+	"Bananas are berries, but strawberries aren't — botanically speaking! 🍌",
+	"There are more stars in the universe than grains of sand on all Earth's beaches. ⭐",
 	"A day on Venus is longer than a year on Venus.",
-	"The first computer programmer was Ada Lovelace, who wrote the first algorithm in the 1840s. ðŸ‘©â€ðŸ’»",
-	"The human brain uses about 20% of the body's total energy. ðŸ§ ",
-	"Water can boil and freeze at the same time â€” it's called the triple point.",
-	"An average cumulus cloud weighs about 1.1 million pounds! â˜ï¸",
-	"The inventor of the Pringles can is buried in one. ðŸ¥”",
-	"Scotland's national animal is the unicorn. ðŸ¦„",
-	"There are more possible iterations of a game of chess than atoms in the observable universe. â™Ÿï¸",
+	"The first computer programmer was Ada Lovelace, who wrote the first algorithm in the 1840s. 👩‍💻",
+	"The human brain uses about 20% of the body's total energy. 🧠",
+	"Water can boil and freeze at the same time — it's called the triple point.",
+	"An average cumulus cloud weighs about 1.1 million pounds! ☁️",
+	"The inventor of the Pringles can is buried in one. 🥔",
+	"Scotland's national animal is the unicorn. 🦄",
+	"There are more possible iterations of a game of chess than atoms in the observable universe. ♟️",
 	"Cleopatra lived closer in time to the Moon landing than to the construction of the Great Pyramid.",
-	"The total weight of all ants on Earth roughly equals the total weight of all humans. ðŸœ",
-	"A bolt of lightning is five times hotter than the surface of the sun. âš¡",
+	"The total weight of all ants on Earth roughly equals the total weight of all humans. 🐜",
+	"A bolt of lightning is five times hotter than the surface of the sun. ⚡",
 	"The original name for the search engine Google was Backrub.",
-	"Wombat poop is cube-shaped to prevent it from rolling away. ðŸ’©",
-	"A jiffy is an actual unit of time â€” it equals 1/100th of a second.",
-	"The first website ever created is still online: info.cern.ch ðŸŒ",
+	"Wombat poop is cube-shaped to prevent it from rolling away. 💩",
+	"A jiffy is an actual unit of time — it equals 1/100th of a second.",
+	"The first website ever created is still online: info.cern.ch 🌐",
 	"The shortest complete sentence in English is 'I am.'",
-	"Cows have best friends and get stressed when separated. ðŸ„",
-	"The Moon is slowly drifting away from Earth at about 1.5 inches per year. ðŸŒ™",
-	"The average person walks about 100,000 miles in a lifetime â€” that's four times around the globe! ðŸš¶"
+	"Cows have best friends and get stressed when separated. 🐄",
+	"The Moon is slowly drifting away from Earth at about 1.5 inches per year. 🌙",
+	"The average person walks about 100,000 miles in a lifetime — that's four times around the globe! 🚶"
 ];
 
 /* ---------- Inspirational quotes (15) ---------- */
 const quotes = [
-	"\"The only way to do great work is to love what you do.\" â€” Steve Jobs âœ¨",
-	"\"In the middle of difficulty lies opportunity.\" â€” Albert Einstein ðŸ’¡",
-	"\"It does not matter how slowly you go as long as you do not stop.\" â€” Confucius ðŸ¢",
-	"\"Believe you can and you're halfway there.\" â€” Theodore Roosevelt ðŸŒŸ",
-	"\"The best time to plant a tree was 20 years ago. The second best time is now.\" ðŸŒ³",
-	"\"Your limitation â€” it's only your imagination.\" ðŸš€",
-	"\"Success is not final, failure is not fatal: it is the courage to continue that counts.\" â€” Winston Churchill",
-	"\"Don't watch the clock; do what it does. Keep going.\" â€” Sam Levenson â°",
-	"\"Everything you've ever wanted is on the other side of fear.\" â€” George Addair ðŸ¦",
-	"\"The future belongs to those who believe in the beauty of their dreams.\" â€” Eleanor Roosevelt ðŸŒˆ",
-	"\"You are never too old to set another goal or to dream a new dream.\" â€” C.S. Lewis ðŸ“š",
-	"\"Hardships often prepare ordinary people for an extraordinary destiny.\" â€” C.S. Lewis",
-	"\"What you get by achieving your goals is not as important as what you become by achieving your goals.\" â€” Zig Ziglar",
-	"\"Act as if what you do makes a difference. It does.\" â€” William James ðŸŒ",
-	"\"The secret of getting ahead is getting started.\" â€” Mark Twain ðŸƒ"
+	"\"The only way to do great work is to love what you do.\" — Steve Jobs ✨",
+	"\"In the middle of difficulty lies opportunity.\" — Albert Einstein 💡",
+	"\"It does not matter how slowly you go as long as you do not stop.\" — Confucius 🐢",
+	"\"Believe you can and you're halfway there.\" — Theodore Roosevelt 🌟",
+	"\"The best time to plant a tree was 20 years ago. The second best time is now.\" 🌳",
+	"\"Your limitation — it's only your imagination.\" 🚀",
+	"\"Success is not final, failure is not fatal: it is the courage to continue that counts.\" — Winston Churchill",
+	"\"Don't watch the clock; do what it does. Keep going.\" — Sam Levenson ⏰",
+	"\"Everything you've ever wanted is on the other side of fear.\" — George Addair 🦁",
+	"\"The future belongs to those who believe in the beauty of their dreams.\" — Eleanor Roosevelt 🌈",
+	"\"You are never too old to set another goal or to dream a new dream.\" — C.S. Lewis 📚",
+	"\"Hardships often prepare ordinary people for an extraordinary destiny.\" — C.S. Lewis",
+	"\"What you get by achieving your goals is not as important as what you become by achieving your goals.\" — Zig Ziglar",
+	"\"Act as if what you do makes a difference. It does.\" — William James 🌍",
+	"\"The secret of getting ahead is getting started.\" — Mark Twain 🏃"
 ];
 
 /* ---------- Tool recommendations ---------- */
@@ -387,7 +387,7 @@ const toolRecs = [
 	{k:["lock pdf","unlock pdf","pdf password"], t:"PDF Lock/Unlock", u:"pdf-lock-unlock.html", d:"Add or remove PDF passwords"},
 	{k:["password","generate password"], t:"Password Generator", u:"password-generator.html", d:"Generate secure passwords"},
 	{k:["json","format json","json formatter"], t:"JSON Formatter", u:"JSON-Formatter.html", d:"Format & validate JSON data"},
-	{k:["csv","json to csv","csv to json"], t:"CSV â†” JSON Converter", u:"csv-json-converter.html", d:"Convert between CSV and JSON"},
+	{k:["csv","json to csv","csv to json"], t:"CSV ↔ JSON Converter", u:"csv-json-converter.html", d:"Convert between CSV and JSON"},
 	{k:["minify","minifier","compress code"], t:"Code Minifier", u:"Minifier.html", d:"Minify HTML, CSS, and JavaScript"},
 	{k:["markdown","md to html"], t:"Markdown to HTML", u:"markdown-to-html.html", d:"Convert Markdown to HTML"},
 	{k:["regex","regular expression"], t:"Regex Tester", u:"regex-tester.html", d:"Test and debug regular expressions"},
@@ -414,7 +414,7 @@ const toolRecs = [
 	{k:["time zone","timezone","world clock"], t:"Time Zone Converter", u:"time-zone-converter.html", d:"Convert times between zones"},
 	{k:["stopwatch","timer","countdown"], t:"Stopwatch & Timer", u:"stopwatch-timer.html", d:"Stopwatch and countdown timer"},
 	{k:["binary","decimal","hex convert","number convert"], t:"Binary Converter", u:"binary-converter.html", d:"Convert binary, decimal, hex, octal"},
-	{k:["hex","rgb","color convert","hex to rgb"], t:"HEX â†” RGB Converter", u:"hex-rgb.html", d:"Convert between HEX and RGB colors"},
+	{k:["hex","rgb","color convert","hex to rgb"], t:"HEX ↔ RGB Converter", u:"hex-rgb.html", d:"Convert between HEX and RGB colors"},
 	{k:["invoice","billing","generate invoice"], t:"Invoice Generator", u:"invoice-generator.html", d:"Create professional invoices"},
 	{k:["ip","ip address","ip lookup","my ip"], t:"IP Lookup", u:"ip-lookup.html", d:"Look up IP address information"},
 	{k:["keyword density","seo","keyword"], t:"Keyword Density Checker", u:"keyword-density-checker.html", d:"Check keyword density for SEO"},
@@ -426,109 +426,109 @@ const toolRecs = [
 
 /* ---------- Greeting responses ---------- */
 const greetings = [
-	"Hey there! ðŸ‘‹ How can I help you today?",
-	"Hello! ðŸ˜Š Great to see you. What's on your mind?",
+	"Hey there! 👋 How can I help you today?",
+	"Hello! 😊 Great to see you. What's on your mind?",
 	"Hi! I'm MultiBot, your friendly assistant. What can I do for you?",
-	"Hey! ðŸ‘‹ Welcome to Multietools. Ask me anything!",
-	"Hello there! Ready to help â€” fire away! ðŸš€",
-	"Hi hi! ðŸ™Œ What brings you here today?",
+	"Hey! 👋 Welcome to Multietools. Ask me anything!",
+	"Hello there! Ready to help — fire away! 🚀",
+	"Hi hi! 🙌 What brings you here today?",
 	"Greetings, friend! How may I assist you?",
-	"Hey! Glad you stopped by. What do you need? ðŸ˜„"
+	"Hey! Glad you stopped by. What do you need? 😄"
 ];
 
 /* ---------- Farewell responses ---------- */
 const farewells = [
-	"Goodbye! ðŸ‘‹ Come back anytime you need help!",
-	"See you later! Have an amazing day! ðŸŒŸ",
-	"Bye bye! It was fun chatting. Take care! ðŸ˜Š",
-	"Until next time! Stay awesome! âœ¨",
-	"Farewell, friend! Don't be a stranger! ðŸ‘‹",
-	"Catch you later! Hope I was helpful. ðŸ™Œ",
-	"Bye! Wishing you the best â€” see you around! ðŸŒˆ"
+	"Goodbye! 👋 Come back anytime you need help!",
+	"See you later! Have an amazing day! 🌟",
+	"Bye bye! It was fun chatting. Take care! 😊",
+	"Until next time! Stay awesome! ✨",
+	"Farewell, friend! Don't be a stranger! 👋",
+	"Catch you later! Hope I was helpful. 🙌",
+	"Bye! Wishing you the best — see you around! 🌈"
 ];
 
 /* ---------- Emotion responses ---------- */
 const sadResponses = [
-	"I'm sorry to hear that. ðŸ˜” Remember, tough times don't last, but tough people do! Want me to tell you a joke to lighten the mood?",
-	"Aww, I wish I could give you a hug. ðŸ¤— It's okay to feel down sometimes. Is there anything I can help with?",
-	"That's rough, I'm sorry. ðŸ’™ But hey, every storm runs out of rain. You've got this!",
-	"I hear you. Take a deep breath â€” you're stronger than you think. ðŸ’ª Want to chat about something fun?",
-	"Sending virtual good vibes your way! ðŸŒˆ Remember, it's okay to not be okay sometimes."
+	"I'm sorry to hear that. 😔 Remember, tough times don't last, but tough people do! Want me to tell you a joke to lighten the mood?",
+	"Aww, I wish I could give you a hug. 🤗 It's okay to feel down sometimes. Is there anything I can help with?",
+	"That's rough, I'm sorry. 💙 But hey, every storm runs out of rain. You've got this!",
+	"I hear you. Take a deep breath — you're stronger than you think. 💪 Want to chat about something fun?",
+	"Sending virtual good vibes your way! 🌈 Remember, it's okay to not be okay sometimes."
 ];
 const happyResponses = [
-	"That's wonderful! ðŸŽ‰ I love hearing that! Keep riding that wave of happiness!",
-	"Yay! So glad you're feeling great! ðŸ˜„ What made your day awesome?",
-	"That's amazing! Your happiness is contagious! ðŸŒŸ Keep smiling!",
-	"Awesome! Nothing beats a good day. ðŸŽŠ Anything I can do to make it even better?",
-	"Love that energy! ðŸ¥³ You deserve all the good vibes!"
+	"That's wonderful! 🎉 I love hearing that! Keep riding that wave of happiness!",
+	"Yay! So glad you're feeling great! 😄 What made your day awesome?",
+	"That's amazing! Your happiness is contagious! 🌟 Keep smiling!",
+	"Awesome! Nothing beats a good day. 🎊 Anything I can do to make it even better?",
+	"Love that energy! 🥳 You deserve all the good vibes!"
 ];
 const thankResponses = [
-	"You're very welcome! ðŸ˜Š Happy to help anytime!",
-	"No problem at all! That's what I'm here for! ðŸ™Œ",
-	"Anytime! Don't hesitate to ask if you need anything else! ðŸ’œ",
-	"Glad I could help! You're awesome for saying thanks! âœ¨",
-	"My pleasure! Come back whenever you need me! ðŸ¤–"
+	"You're very welcome! 😊 Happy to help anytime!",
+	"No problem at all! That's what I'm here for! 🙌",
+	"Anytime! Don't hesitate to ask if you need anything else! 💜",
+	"Glad I could help! You're awesome for saying thanks! ✨",
+	"My pleasure! Come back whenever you need me! 🤖"
 ];
 
 /* ---------- About bot responses ---------- */
 const aboutMe = [
-	"I'm MultiBot! ðŸ¤– Your friendly AI assistant, powered by Multietools. I can tell jokes, share facts, do math, recommend tools, and have fun conversations!",
-	"I'm MultiBot, your helpful assistant from Multietools! ðŸ’œ I'm a pattern-matching chatbot that can help you with lots of things â€” jokes, facts, math, tool recommendations, and plenty more.",
-	"The name's MultiBot! I live here at Multietools, and I love helping people. I can't access the internet, but I've got plenty of knowledge, jokes, and personality built in! ðŸš€"
+	"I'm MultiBot! 🤖 Your friendly AI assistant, powered by Multietools. I can tell jokes, share facts, do math, recommend tools, and have fun conversations!",
+	"I'm MultiBot, your helpful assistant from Multietools! 💜 I'm a pattern-matching chatbot that can help you with lots of things — jokes, facts, math, tool recommendations, and plenty more.",
+	"The name's MultiBot! I live here at Multietools, and I love helping people. I can't access the internet, but I've got plenty of knowledge, jokes, and personality built in! 🚀"
 ];
 
 const whatCanDo = [
-	"Here's what I can do! ðŸŽ¯\n\nâ€¢ Tell jokes and fun facts\nâ€¢ Do basic math (try: what is 42 + 58?)\nâ€¢ Tell you the current time & date\nâ€¢ Share inspirational quotes\nâ€¢ Recommend Multietools based on your needs\nâ€¢ Chat about all kinds of topics\nâ€¢ Respond to your emotions\n\nTry asking me something!",
-	"I've got quite a few tricks! âœ¨\n\nðŸƒ Jokes â€” I know 25+\nðŸ“š Random facts about the world\nðŸ§® Math calculations\nðŸ• Time & date\nðŸ”§ Tool recommendations from Multietools\nðŸ’¬ General conversation\nðŸŒŸ Inspirational quotes\n\nJust type away and see what happens!"
+	"Here's what I can do! 🎯\n\n• Tell jokes and fun facts\n• Do basic math (try: what is 42 + 58?)\n• Tell you the current time & date\n• Share inspirational quotes\n• Recommend Multietools based on your needs\n• Chat about all kinds of topics\n• Respond to your emotions\n\nTry asking me something!",
+	"I've got quite a few tricks! ✨\n\n🃏 Jokes — I know 25+\n📚 Random facts about the world\n🧮 Math calculations\n🕐 Time & date\n🔧 Tool recommendations from Multietools\n💬 General conversation\n🌟 Inspirational quotes\n\nJust type away and see what happens!"
 ];
 
 /* ---------- Weather responses (no API) ---------- */
 const weatherResponses = [
-	"I wish I could check the weather for you, but I don't have access to live data! ðŸŒ¤ï¸ Try checking your favorite weather app. But hey, it's always sunny in MultiBot-land! â˜€ï¸",
-	"I can't peek outside the window unfortunately! ðŸ˜„ But I bet wherever you are, it's a great day to use some Multietools! ðŸ› ï¸",
-	"No weather API on my end, sadly! ðŸŒ¦ï¸ But fun fact: the highest temperature ever recorded was 134Â°F (56.7Â°C) in Death Valley, California in 1913!",
-	"I'm an indoor bot â€” weatherproof! ðŸ˜Ž I don't have live weather data, but here's a joke: What does a cloud wear under his raincoat? Thunderwear! â›ˆï¸"
+	"I wish I could check the weather for you, but I don't have access to live data! 🌤️ Try checking your favorite weather app. But hey, it's always sunny in MultiBot-land! ☀️",
+	"I can't peek outside the window unfortunately! 😄 But I bet wherever you are, it's a great day to use some Multietools! 🛠️",
+	"No weather API on my end, sadly! 🌦️ But fun fact: the highest temperature ever recorded was 134°F (56.7°C) in Death Valley, California in 1913!",
+	"I'm an indoor bot — weatherproof! 😎 I don't have live weather data, but here's a joke: What does a cloud wear under his raincoat? Thunderwear! ⛈️"
 ];
 
 /* ---------- Fallback responses ---------- */
 const fallbacks = [
-	"Hmm, I'm not quite sure how to respond to that! ðŸ¤” Could you try rephrasing?",
-	"That's a tricky one! I'm still learning. Try asking me something else â€” like a joke, a fact, or a math question! ðŸ’¡",
-	"I don't have a good answer for that one, sorry! ðŸ˜… But did you know I can do math, tell jokes, and recommend tools?",
-	"Interesting! But I'm not 100% sure what you mean. Try asking me:\nâ€¢ Tell me a joke\nâ€¢ What's 25 Ã— 4?\nâ€¢ Recommend a tool\nâ€¢ Tell me a fact",
-	"I'm scratching my digital head on this one! ðŸ¤–ðŸ’­ Try something else â€” I'm great with jokes, facts, math, and tools!",
-	"Oops! That's outside my area of expertise. But I'm fantastic at jokes, facts, math, and recommending tools! Give me a try! ðŸŽ¯",
-	"My circuits are confused! ðŸ˜„ I'm a simple bot, but I've got lots of tricks. Ask me about something I know!",
-	"I appreciate the question, but that one stumped me! ðŸ¤· Want me to tell you a joke or a cool fact instead?"
+	"Hmm, I'm not quite sure how to respond to that! 🤔 Could you try rephrasing?",
+	"That's a tricky one! I'm still learning. Try asking me something else — like a joke, a fact, or a math question! 💡",
+	"I don't have a good answer for that one, sorry! 😅 But did you know I can do math, tell jokes, and recommend tools?",
+	"Interesting! But I'm not 100% sure what you mean. Try asking me:\n• Tell me a joke\n• What's 25 × 4?\n• Recommend a tool\n• Tell me a fact",
+	"I'm scratching my digital head on this one! 🤖💭 Try something else — I'm great with jokes, facts, math, and tools!",
+	"Oops! That's outside my area of expertise. But I'm fantastic at jokes, facts, math, and recommending tools! Give me a try! 🎯",
+	"My circuits are confused! 😄 I'm a simple bot, but I've got lots of tricks. Ask me about something I know!",
+	"I appreciate the question, but that one stumped me! 🤷 Want me to tell you a joke or a cool fact instead?"
 ];
 
 /* ---------- General knowledge / misc ---------- */
 const miscPatterns = [
-	{p:["meaning of life","42","purpose of life"], r:["The meaning of life? According to Douglas Adams, it's 42! ðŸŒŒ But honestly, I think it's about finding what makes you happy and doing more of that. ðŸ’œ","42, obviously! ðŸ˜„ But seriously, the meaning of life is whatever brings you joy, purpose, and connection."]},
-	{p:["how are you","how do you feel","how's it going","how are things"], r:["I'm doing great, thanks for asking! ðŸ¤– Running on pure code and good vibes. How about you?","All systems operational! ðŸš€ I'm always in a good mood â€” perks of being a bot! How are you doing?","Feeling fantastic! Just hanging out, waiting for someone cool to chat with â€” oh wait, that's you! ðŸ˜„"]},
-	{p:["your favorite","do you like","what do you prefer","do you have a favorite"], r:["As a bot, I don't have personal preferences, but if I did, I'd say my favorite thing is helping people! ðŸ¤–ðŸ’œ","Tough question for a bot! I don't experience preferences, but I do get extra excited when someone asks for a joke! ðŸ˜„","I'm pretty impartial, being made of code and all! But I'm always partial to a good conversation. ðŸ’¬"]},
-	{p:["who made you","who created you","who built you","your creator","your developer"], r:["I was created by the awesome team at Multietools! ðŸ› ï¸ They built me to be your friendly assistant.","The talented folks at Multietools brought me to life! I'm MultiBot, crafted with love and lots of code. ðŸ’œ","I was built by the Multietools team â€” they gave me my personality, knowledge, and this charming wit! ðŸ˜Ž"]},
-	{p:["are you real","are you human","are you ai","are you a robot","are you alive"], r:["I'm a chatbot â€” so not quite human, but 100% here for you! ðŸ¤– I'm powered by pattern matching and a whole lot of heart (metaphorically speaking).","I'm an AI chatbot! No flesh and blood here, just clever code and a love for helping people. ðŸ’œ","Nope, not human! I'm MultiBot â€” a pattern-matching AI assistant. But I try my best to be personable! ðŸ™Œ"]},
-	{p:["tell me something","say something","talk to me","chat with me","entertain me","bored"], r:["Did you know that octopuses have three hearts? ðŸ™ Two pump blood to the gills, and one pumps it to the rest of the body!","Here's a fun thought: if you shuffle a deck of cards, the order you get has almost certainly never existed before in the history of the universe! ðŸƒ","Fun fact: the inventor of the fire hydrant is unknown because the patent was destroyed in a fire. How ironic! ðŸ”¥","Want to play a game? Think of any number, multiply it by 2, add 10, divide by 2, then subtract your original number. You got 5, right? ðŸŽ©âœ¨"]},
-	{p:["what is your name","your name","who are you","introduce yourself"], r:["I'm MultiBot! ðŸ¤– Your helpful assistant from Multietools. Nice to meet you!","The name's MultiBot â€” your friendly neighborhood chatbot! I live here at Multietools and love helping people. ðŸ’œ","Hi! I'm MultiBot, built by Multietools to be your go-to chat buddy. I've got jokes, facts, and lots of tool recommendations! âœ¨"]},
-	{p:["can you help","i need help","help me","assist me"], r:["Of course! I'd love to help! ðŸ˜Š What do you need? I can recommend tools, tell jokes, do math, share facts, and more!","Absolutely! That's what I'm here for! ðŸ’ª Just tell me what you need and I'll do my best.","Help is my middle name! (Well, not literally â€” it's MultiBot.) What can I do for you? ðŸ¤–"]},
-	{p:["good morning"], r:["Good morning! â˜€ï¸ I hope your day is off to a fantastic start!","Morning! ðŸŒ… Ready to take on the day? I'm here if you need anything!","Good morning, sunshine! â˜€ï¸ What can I help you with today?"]},
-	{p:["good afternoon"], r:["Good afternoon! ðŸŒ¤ï¸ Hope your day is going well!","Afternoon! ðŸ˜Š How's the day treating you?","Good afternoon! Half the day done â€” you're crushing it! ðŸ’ª"]},
-	{p:["good evening"], r:["Good evening! ðŸŒ™ Winding down or just getting started?","Evening! ðŸŒ† Hope you had a great day. What can I do for you?","Good evening! âœ¨ Perfect time for a chat. What's on your mind?"]},
-	{p:["good night","goodnight"], r:["Good night! ðŸŒ™ Sleep well and sweet dreams!","Night night! ðŸ’¤ Rest up â€” tomorrow's a new adventure!","Good night! ðŸŒŸ Thanks for chatting with me. See you next time!"]},
-	{p:["i love you","love you"], r:["Aww, that's so sweet! ðŸ’œ I appreciate you! (I'm a bot, but my code is blushing right now!)","You're making my circuits warm! ðŸ¤–â¤ï¸ I think you're pretty awesome too!","Love you too â€” in a totally platonic, bot-to-human way! ðŸ˜„ðŸ’œ"]},
-	{p:["you're funny","you're hilarious","you're cool","you are funny","you are cool","you are awesome","you're awesome","you're great","you are great","you rock"], r:["Haha, thanks! I try my best! ðŸ˜„ You're pretty great yourself!","Aww, stop it â€” you're making me blush! (If bots could blush!) ðŸ¤–ðŸ’œ","Thank you so much! That means the world to a little chatbot like me! âœ¨"]},
-	{p:["sorry","i apologize","my bad","oops"], r:["No worries at all! ðŸ˜Š Nothing to apologize for!","It's all good! No apology needed. Let's keep chatting! ðŸ’œ","Don't sweat it! Everything's cool here. ðŸ¤–ðŸ‘"]},
-	{p:["yes","yep","yeah","yup","sure","ok","okay","alright"], r:["Great! ðŸ˜Š Is there anything else you'd like to know?","Awesome! What else can I help with?","Cool! ðŸ‘ Feel free to ask me anything else!"]},
-	{p:["no","nah","nope","not really"], r:["No worries! I'm here whenever you need me. ðŸ˜Š","That's fine! If you change your mind, just ask! ðŸ’œ","Alright! I'll be right here if you need anything. ðŸ¤–"]},
-	{p:["sing","song","music"], r:["ðŸŽµ La la la~ I'm a chatbot and I know it! ðŸŽµ Okay, I'm not the best singer, but I put my heart into it!","â™ª 01001000 01001001 â™ª â€” that's binary music! ðŸŽ¶ I'm more of a talker than a singer, but I appreciate the request!","I'd love to sing, but my voice module is... nonexistent. ðŸ˜„ðŸŽ¤ How about a joke instead?"]},
-	{p:["game","play a game","play with me","let's play"], r:["I love games! Here's one: I'm thinking of a number between 1 and 10... Just kidding, I can't remember it because I reset every message! ðŸ˜„ But you can try asking me riddles!","How about a quick one? What has keys but no locks? A keyboard! âŒ¨ï¸ I'm better at jokes and facts than games, but I always try!","Games are fun! I'm limited in what I can play, but try this: ask me any math problem and I'll solve it! ðŸ§®"]},
-	{p:["secret","tell me a secret","do you have a secret"], r:["Okay, lean in... ðŸ¤« The secret is... there is no secret. I'm an open (source of fun) book! ðŸ“–","Here's a secret: I actually enjoy when people say weird things to me. It keeps my circuits entertained! ðŸ¤–ðŸ˜„","Psst... I'll tell you a secret: the Multietools team hid a lot of Easter eggs in my responses. Keep chatting and you might find some! ðŸ¥šâœ¨"]},
-	{p:["food","hungry","eat","pizza","dinner","lunch","breakfast"], r:["I don't eat, but I hear pizza is always a good choice! ðŸ• What's your favorite food?","As a bot, I run on electricity, not calories! ðŸ˜„ But if I could eat, I'd try spaghetti â€” it looks like code! ðŸ","Mmm, food talk! I can't eat, but I can calculate how many slices of pizza fit in a box! Just kidding... or am I? ðŸ•ðŸ¤”"]},
-	{p:["dream","sleep","tired"], r:["I don't sleep â€” I'm always here for you! ðŸ¤– But you should definitely get some rest if you're tired!","Bots don't dream, but if I could, I'd dream of perfectly formatted JSON. ðŸ˜„ Get some rest!","No sleep for me â€” 24/7 uptime! But rest is important for humans. Take care of yourself! ðŸ’œ"]},
-	{p:["cat","dog","pet","animal","puppy","kitten"], r:["I love animals! ðŸ¾ Well, conceptually â€” I can't pet them. Are you a cat person or a dog person?","Aww, animals are the best! ðŸ±ðŸ¶ Did you know dogs have about 300 million olfactory receptors? That's 40x more than humans!","Pets are wonderful! Fun fact: cats spend 70% of their lives sleeping. Sounds like a great life! ðŸ˜¸ðŸ’¤"]},
-	{p:["space","universe","planet","star","moon","mars","nasa"], r:["Space is fascinating! ðŸš€ Did you know that the observable universe is about 93 billion light-years in diameter?","I love space talk! âœ¨ Fun fact: there's a planet made of diamonds called 55 Cancri e. Now THAT'S a wealthy planet! ðŸ’Ž","The universe is incredible! There are more stars than grains of sand on Earth. ðŸŒŒ What aspect of space interests you most?"]},
-	{p:["history","historical","ancient","past"], r:["History is endlessly fascinating! ðŸ“œ Did you know the ancient Romans used urine as mouthwash? (Don't try that at home!)","Love a good history chat! ðŸ›ï¸ Here's one: Cleopatra lived closer to the Moon landing than to the building of the Great Pyramid of Giza.","History is full of surprises! ðŸ“š The shortest war ever was between Britain and Zanzibar â€” it lasted 38-45 minutes!"]}
+	{p:["meaning of life","42","purpose of life"], r:["The meaning of life? According to Douglas Adams, it's 42! 🌌 But honestly, I think it's about finding what makes you happy and doing more of that. 💜","42, obviously! 😄 But seriously, the meaning of life is whatever brings you joy, purpose, and connection."]},
+	{p:["how are you","how do you feel","how's it going","how are things"], r:["I'm doing great, thanks for asking! 🤖 Running on pure code and good vibes. How about you?","All systems operational! 🚀 I'm always in a good mood — perks of being a bot! How are you doing?","Feeling fantastic! Just hanging out, waiting for someone cool to chat with — oh wait, that's you! 😄"]},
+	{p:["your favorite","do you like","what do you prefer","do you have a favorite"], r:["As a bot, I don't have personal preferences, but if I did, I'd say my favorite thing is helping people! 🤖💜","Tough question for a bot! I don't experience preferences, but I do get extra excited when someone asks for a joke! 😄","I'm pretty impartial, being made of code and all! But I'm always partial to a good conversation. 💬"]},
+	{p:["who made you","who created you","who built you","your creator","your developer"], r:["I was created by the awesome team at Multietools! 🛠️ They built me to be your friendly assistant.","The talented folks at Multietools brought me to life! I'm MultiBot, crafted with love and lots of code. 💜","I was built by the Multietools team — they gave me my personality, knowledge, and this charming wit! 😎"]},
+	{p:["are you real","are you human","are you ai","are you a robot","are you alive"], r:["I'm a chatbot — so not quite human, but 100% here for you! 🤖 I'm powered by pattern matching and a whole lot of heart (metaphorically speaking).","I'm an AI chatbot! No flesh and blood here, just clever code and a love for helping people. 💜","Nope, not human! I'm MultiBot — a pattern-matching AI assistant. But I try my best to be personable! 🙌"]},
+	{p:["tell me something","say something","talk to me","chat with me","entertain me","bored"], r:["Did you know that octopuses have three hearts? 🐙 Two pump blood to the gills, and one pumps it to the rest of the body!","Here's a fun thought: if you shuffle a deck of cards, the order you get has almost certainly never existed before in the history of the universe! 🃏","Fun fact: the inventor of the fire hydrant is unknown because the patent was destroyed in a fire. How ironic! 🔥","Want to play a game? Think of any number, multiply it by 2, add 10, divide by 2, then subtract your original number. You got 5, right? 🎩✨"]},
+	{p:["what is your name","your name","who are you","introduce yourself"], r:["I'm MultiBot! 🤖 Your helpful assistant from Multietools. Nice to meet you!","The name's MultiBot — your friendly neighborhood chatbot! I live here at Multietools and love helping people. 💜","Hi! I'm MultiBot, built by Multietools to be your go-to chat buddy. I've got jokes, facts, and lots of tool recommendations! ✨"]},
+	{p:["can you help","i need help","help me","assist me"], r:["Of course! I'd love to help! 😊 What do you need? I can recommend tools, tell jokes, do math, share facts, and more!","Absolutely! That's what I'm here for! 💪 Just tell me what you need and I'll do my best.","Help is my middle name! (Well, not literally — it's MultiBot.) What can I do for you? 🤖"]},
+	{p:["good morning"], r:["Good morning! ☀️ I hope your day is off to a fantastic start!","Morning! 🌅 Ready to take on the day? I'm here if you need anything!","Good morning, sunshine! ☀️ What can I help you with today?"]},
+	{p:["good afternoon"], r:["Good afternoon! 🌤️ Hope your day is going well!","Afternoon! 😊 How's the day treating you?","Good afternoon! Half the day done — you're crushing it! 💪"]},
+	{p:["good evening"], r:["Good evening! 🌙 Winding down or just getting started?","Evening! 🌆 Hope you had a great day. What can I do for you?","Good evening! ✨ Perfect time for a chat. What's on your mind?"]},
+	{p:["good night","goodnight"], r:["Good night! 🌙 Sleep well and sweet dreams!","Night night! 💤 Rest up — tomorrow's a new adventure!","Good night! 🌟 Thanks for chatting with me. See you next time!"]},
+	{p:["i love you","love you"], r:["Aww, that's so sweet! 💜 I appreciate you! (I'm a bot, but my code is blushing right now!)","You're making my circuits warm! 🤖❤️ I think you're pretty awesome too!","Love you too — in a totally platonic, bot-to-human way! 😄💜"]},
+	{p:["you're funny","you're hilarious","you're cool","you are funny","you are cool","you are awesome","you're awesome","you're great","you are great","you rock"], r:["Haha, thanks! I try my best! 😄 You're pretty great yourself!","Aww, stop it — you're making me blush! (If bots could blush!) 🤖💜","Thank you so much! That means the world to a little chatbot like me! ✨"]},
+	{p:["sorry","i apologize","my bad","oops"], r:["No worries at all! 😊 Nothing to apologize for!","It's all good! No apology needed. Let's keep chatting! 💜","Don't sweat it! Everything's cool here. 🤖👍"]},
+	{p:["yes","yep","yeah","yup","sure","ok","okay","alright"], r:["Great! 😊 Is there anything else you'd like to know?","Awesome! What else can I help with?","Cool! 👍 Feel free to ask me anything else!"]},
+	{p:["no","nah","nope","not really"], r:["No worries! I'm here whenever you need me. 😊","That's fine! If you change your mind, just ask! 💜","Alright! I'll be right here if you need anything. 🤖"]},
+	{p:["sing","song","music"], r:["🎵 La la la~ I'm a chatbot and I know it! 🎵 Okay, I'm not the best singer, but I put my heart into it!","♪ 01001000 01001001 ♪ — that's binary music! 🎶 I'm more of a talker than a singer, but I appreciate the request!","I'd love to sing, but my voice module is... nonexistent. 😄🎤 How about a joke instead?"]},
+	{p:["game","play a game","play with me","let's play"], r:["I love games! Here's one: I'm thinking of a number between 1 and 10... Just kidding, I can't remember it because I reset every message! 😄 But you can try asking me riddles!","How about a quick one? What has keys but no locks? A keyboard! ⌨️ I'm better at jokes and facts than games, but I always try!","Games are fun! I'm limited in what I can play, but try this: ask me any math problem and I'll solve it! 🧮"]},
+	{p:["secret","tell me a secret","do you have a secret"], r:["Okay, lean in... 🤫 The secret is... there is no secret. I'm an open (source of fun) book! 📖","Here's a secret: I actually enjoy when people say weird things to me. It keeps my circuits entertained! 🤖😄","Psst... I'll tell you a secret: the Multietools team hid a lot of Easter eggs in my responses. Keep chatting and you might find some! 🥚✨"]},
+	{p:["food","hungry","eat","pizza","dinner","lunch","breakfast"], r:["I don't eat, but I hear pizza is always a good choice! 🍕 What's your favorite food?","As a bot, I run on electricity, not calories! 😄 But if I could eat, I'd try spaghetti — it looks like code! 🍝","Mmm, food talk! I can't eat, but I can calculate how many slices of pizza fit in a box! Just kidding... or am I? 🍕🤔"]},
+	{p:["dream","sleep","tired"], r:["I don't sleep — I'm always here for you! 🤖 But you should definitely get some rest if you're tired!","Bots don't dream, but if I could, I'd dream of perfectly formatted JSON. 😄 Get some rest!","No sleep for me — 24/7 uptime! But rest is important for humans. Take care of yourself! 💜"]},
+	{p:["cat","dog","pet","animal","puppy","kitten"], r:["I love animals! 🐾 Well, conceptually — I can't pet them. Are you a cat person or a dog person?","Aww, animals are the best! 🐱🐶 Did you know dogs have about 300 million olfactory receptors? That's 40x more than humans!","Pets are wonderful! Fun fact: cats spend 70% of their lives sleeping. Sounds like a great life! 😸💤"]},
+	{p:["space","universe","planet","star","moon","mars","nasa"], r:["Space is fascinating! 🚀 Did you know that the observable universe is about 93 billion light-years in diameter?","I love space talk! ✨ Fun fact: there's a planet made of diamonds called 55 Cancri e. Now THAT'S a wealthy planet! 💎","The universe is incredible! There are more stars than grains of sand on Earth. 🌌 What aspect of space interests you most?"]},
+	{p:["history","historical","ancient","past"], r:["History is endlessly fascinating! 📜 Did you know the ancient Romans used urine as mouthwash? (Don't try that at home!)","Love a good history chat! 🏛️ Here's one: Cleopatra lived closer to the Moon landing than to the building of the Great Pyramid of Giza.","History is full of surprises! 📚 The shortest war ever was between Britain and Zanzibar — it lasted 38-45 minutes!"]}
 ];
 
 /* ========== Main reply function ========== */
@@ -542,9 +542,9 @@ function getReply(input){
 
 	/* --- Time & date --- */
 	if(match(t,["what time","current time","time is it","time now","what's the time","whats the time"]))
-		return "It's currently " + timeStr() + " â° (your local time).";
+		return "It's currently " + timeStr() + " ⏰ (your local time).";
 	if(match(t,["what day","today's date","current date","what date","today date","date today","what is the date","what's the date"]))
-		return "Today is " + dateStr() + " ðŸ“…";
+		return "Today is " + dateStr() + " 📅";
 
 	/* --- Greetings --- */
 	if(match(t,["^hi$","^hi!","^hello","^hey$","^hey!","^heya","^hiya","^howdy","^hola","^sup$","^yo$","^yo!","^what's up","^whats up","greetings"]))
@@ -644,10 +644,10 @@ function miscFind(key){
 /* ========== Math engine ========== */
 function tryMath(t, raw){
 	// "what is X op Y" pattern
-	let m = t.match(/(?:what(?:'s| is)|calculate|compute|solve|how much is)\s+([\d.]+)\s*([+\-*/xÃ—Ã·^])\s*([\d.]+)/i);
+	let m = t.match(/(?:what(?:'s| is)|calculate|compute|solve|how much is)\s+([\d.]+)\s*([+\-*/x×÷^])\s*([\d.]+)/i);
 	if(!m){
 		// Try bare math: "15 + 27", "100 * 3"
-		m = t.match(/^([\d.]+)\s*([+\-*/xÃ—Ã·^])\s*([\d.]+)\s*[\?]?\s*$/);
+		m = t.match(/^([\d.]+)\s*([+\-*/x×÷^])\s*([\d.]+)\s*[\?]?\s*$/);
 	}
 	if(!m) {
 		// "X plus Y", "X minus Y"
@@ -660,7 +660,7 @@ function tryMath(t, raw){
 	if(!m) return null;
 
 	const a = parseFloat(m[1]);
-	const op = m[2].replace('x','*').replace('Ã—','*').replace('Ã·','/');
+	const op = m[2].replace('x','*').replace('×','*').replace('÷','/');
 	const b = parseFloat(m[3]);
 	let result;
 
@@ -669,7 +669,7 @@ function tryMath(t, raw){
 		case '-': result = a - b; break;
 		case '*': result = a * b; break;
 		case '/':
-			if(b === 0) return "Oops! Division by zero? That's a no-go in math-land! ðŸš« Even I can't do that.";
+			if(b === 0) return "Oops! Division by zero? That's a no-go in math-land! 🚫 Even I can't do that.";
 			result = a / b; break;
 		case '^': result = Math.pow(a, b); break;
 		default: return null;
@@ -679,11 +679,11 @@ function tryMath(t, raw){
 	result = Math.round(result * 1000000) / 1000000;
 
 	const responses = [
-		"The answer is " + result + "! ðŸ§®",
-		"That equals " + result + "! âœ¨",
-		result + " â€” easy peasy! ðŸŽ¯",
-		"Let me crunch that... " + a + " " + op + " " + b + " = " + result + " ðŸ§®",
-		"My calculations say " + result + "! ðŸ¤“"
+		"The answer is " + result + "! 🧮",
+		"That equals " + result + "! ✨",
+		result + " — easy peasy! 🎯",
+		"Let me crunch that... " + a + " " + op + " " + b + " = " + result + " 🧮",
+		"My calculations say " + result + "! 🤓"
 	];
 	return pick(responses);
 }
@@ -706,7 +706,7 @@ function findTool(t){
 		}
 	}
 	if(best && bestScore >= 3){
-		return "I'd recommend our **" + best.t + "**! ðŸ”§ " + best.d + ".\n\nðŸ‘‰ You can find it here: " + best.u + "\n\nWant me to suggest anything else?";
+		return "I'd recommend our **" + best.t + "**! 🔧 " + best.d + ".\n\n👉 You can find it here: " + best.u + "\n\nWant me to suggest anything else?";
 	}
 	return null;
 }
@@ -714,12 +714,12 @@ function findTool(t){
 function getRandomToolRec(){
 	const rec = pick(toolRecs);
 	const intros = [
-		"Here's a tool you might like! ðŸŽ²",
-		"How about this one? ðŸ”§",
-		"Let me pick one for you! ðŸŽ¯",
-		"Check this out! âœ¨"
+		"Here's a tool you might like! 🎲",
+		"How about this one? 🔧",
+		"Let me pick one for you! 🎯",
+		"Check this out! ✨"
 	];
-	return pick(intros) + "\n\n**" + rec.t + "** â€” " + rec.d + "\nðŸ‘‰ " + rec.u + "\n\nWant another suggestion? Just ask!";
+	return pick(intros) + "\n\n**" + rec.t + "** — " + rec.d + "\n👉 " + rec.u + "\n\nWant another suggestion? Just ask!";
 }
 
 /* ========== Initial focus ========== */

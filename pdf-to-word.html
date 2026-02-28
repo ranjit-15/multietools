@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PDF to Text - Multietools</title>
-  <meta name="description" content="Extract text content from PDF files instantly. Free online PDF to text converter â€” no sign-up needed. Multietools.">
+  <meta name="description" content="Extract text content from PDF files instantly. Free online PDF to text converter — no sign-up needed. Multietools.">
   <meta property="og:title" content="PDF to Text - Multietools">
-  <meta property="og:description" content="Extract text content from PDF files instantly. Free online PDF to text converter â€” no sign-up needed. Multietools.">
+  <meta property="og:description" content="Extract text content from PDF files instantly. Free online PDF to text converter — no sign-up needed. Multietools.">
   <meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-  <link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/pdf-to-word.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+  <link rel="canonical" href="https://multietools.vercel.app/pdf-to-word.html">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/global.css">
   <style>
@@ -121,7 +121,7 @@ async function handleFile(){
     const buf=await currentFile.arrayBuffer();
     const pdf=await pdfjsLib.getDocument({data:buf}).promise;
     pageCountEl.textContent=pdf.numPages;
-    wordCountEl.textContent='â€”';charCountEl.textContent='â€”';
+    wordCountEl.textContent='—';charCountEl.textContent='—';
   }catch(e){showToast('Error reading PDF');}
 }
 

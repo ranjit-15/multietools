@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Encryptor / Decryptor - Multietools</title>
-	<meta name="description" content="Encrypt and decrypt text with AES and other ciphers. Free online encryption/decryption tool â€” no sign-up. Multietools.">
+	<meta name="description" content="Encrypt and decrypt text with AES and other ciphers. Free online encryption/decryption tool — no sign-up. Multietools.">
 	<meta property="og:title" content="Encryptor / Decryptor - Multietools">
-	<meta property="og:description" content="Encrypt and decrypt text with AES and other ciphers. Free online encryption/decryption tool â€” no sign-up. Multietools.">
+	<meta property="og:description" content="Encrypt and decrypt text with AES and other ciphers. Free online encryption/decryption tool — no sign-up. Multietools.">
 	<meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/Encryptor-Decryptor.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+	<link rel="canonical" href="https://multietools.vercel.app/Encryptor-Decryptor.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
 	<style>
@@ -48,7 +48,7 @@
 	<main>
 		<div class="panel">
 			<label style="font-weight:600;display:block;margin-bottom:.35rem;">Input Text</label>
-			<textarea id="input" placeholder="Enter text to encrypt or decryptâ€¦"></textarea>
+			<textarea id="input" placeholder="Enter text to encrypt or decrypt…"></textarea>
 		</div>
 
 		<div class="panel">
@@ -78,7 +78,7 @@
 
 		<div class="panel">
 			<label style="font-weight:600;display:block;margin-bottom:.35rem;">Output</label>
-			<textarea id="output" placeholder="Result will appear hereâ€¦" readonly></textarea>
+			<textarea id="output" placeholder="Result will appear here…" readonly></textarea>
 		</div>
 	</main>
 </div>
@@ -101,7 +101,7 @@ function algoChanged(){
 	const a=algoSel.value;
 	document.getElementById('keyRow').style.display=a==='aes'?'flex':'none';
 	document.getElementById('shiftRow').style.display=a==='caesar'?'flex':'none';
-	const notes={aes:'AES-GCM with PBKDF2 key derivation. IV + salt are embedded in the output.',rot13:'ROT13 is its own inverse â€” encrypt and decrypt are the same operation. No key needed.',caesar:'Caesar cipher shifts each letter by the given number. Use same shift to decrypt.'};
+	const notes={aes:'AES-GCM with PBKDF2 key derivation. IV + salt are embedded in the output.',rot13:'ROT13 is its own inverse — encrypt and decrypt are the same operation. No key needed.',caesar:'Caesar cipher shifts each letter by the given number. Use same shift to decrypt.'};
 	document.getElementById('algoNote').textContent=notes[a];
 }
 
@@ -197,7 +197,7 @@ async function doDecrypt(){
 		showToast('Decrypted successfully!');
 	}catch(e){
 		outputEl.value='Error: '+e.message;
-		showToast('Decryption failed â€” wrong password or corrupted data');
+		showToast('Decryption failed — wrong password or corrupted data');
 	}
 }
 

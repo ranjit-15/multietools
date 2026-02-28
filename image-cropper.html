@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Image Cropper â€“ MultiTools</title>
-    <meta name="description" content="Crop images to any size or aspect ratio in your browser. Free online image cropper â€” no sign-up. Multietools.">
-    <meta property="og:title" content="Image Cropper â€“ MultiTools">
-    <meta property="og:description" content="Crop images to any size or aspect ratio in your browser. Free online image cropper â€” no sign-up. Multietools.">
+    <title>Image Cropper – MultiTools</title>
+    <meta name="description" content="Crop images to any size or aspect ratio in your browser. Free online image cropper — no sign-up. Multietools.">
+    <meta property="og:title" content="Image Cropper – MultiTools">
+    <meta property="og:description" content="Crop images to any size or aspect ratio in your browser. Free online image cropper — no sign-up. Multietools.">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-    <link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/image-cropper.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+    <link rel="canonical" href="https://multietools.vercel.app/image-cropper.html">
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
@@ -156,9 +156,9 @@
                             <canvas id="mainCanvas"></canvas>
                         </div>
                         <div class="info-bar" id="infoBar">
-                            <span><i class="fa-solid fa-expand"></i> Image: <em id="imgDims">â€“</em></span>
-                            <span><i class="fa-solid fa-crop"></i> Selection: <em id="selDims">â€“</em></span>
-                            <span><i class="fa-solid fa-file"></i> Original: <em id="origSize">â€“</em></span>
+                            <span><i class="fa-solid fa-expand"></i> Image: <em id="imgDims">–</em></span>
+                            <span><i class="fa-solid fa-crop"></i> Selection: <em id="selDims">–</em></span>
+                            <span><i class="fa-solid fa-file"></i> Original: <em id="origSize">–</em></span>
                         </div>
                     </div>
 
@@ -193,7 +193,7 @@
     <script src="js/global.js"></script>
     <script>
     (() => {
-        /* â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── Helpers ─────────────────────────────────── */
         const $ = s => document.querySelector(s);
         const toast = (msg, type = 'info', ms = 3000) => {
             const el = document.createElement('div');
@@ -205,7 +205,7 @@
         };
         const fmtBytes = b => b < 1024 ? b + ' B' : b < 1048576 ? (b / 1024).toFixed(1) + ' KB' : (b / 1048576).toFixed(2) + ' MB';
 
-        /* â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── State ───────────────────────────────────── */
         let img = null;           // loaded Image element
         let origFileSize = 0;
         let canvasScale = 1;      // ratio: displayed / natural
@@ -214,7 +214,7 @@
         let isDragging = false;
         let dragStart = { x: 0, y: 0 };
 
-        /* â”€â”€ DOM refs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── DOM refs ────────────────────────────────── */
         const uploadZone = $('#uploadZone');
         const fileInput = $('#fileInput');
         const editorArea = $('#editorArea');
@@ -223,7 +223,7 @@
         const ctx = canvas.getContext('2d');
         const inpX = $('#inpX'), inpY = $('#inpY'), inpW = $('#inpW'), inpH = $('#inpH');
 
-        /* â”€â”€ Upload handling â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── Upload handling ─────────────────────────── */
         const handleFile = file => {
             if (!file || !file.type.startsWith('image/')) { toast('Please select a valid image file.', 'error'); return; }
             origFileSize = file.size;
@@ -245,16 +245,16 @@
         uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
         uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
 
-        /* â”€â”€ Editor init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── Editor init ─────────────────────────────── */
         const initEditor = () => {
             uploadPanel.classList.add('hidden');
             editorArea.classList.remove('hidden');
             selection = null;
             fitCanvas();
             drawCanvas();
-            $('#imgDims').textContent = `${img.naturalWidth} Ã— ${img.naturalHeight}`;
+            $('#imgDims').textContent = `${img.naturalWidth} × ${img.naturalHeight}`;
             $('#origSize').textContent = fmtBytes(origFileSize);
-            $('#selDims').textContent = 'â€“';
+            $('#selDims').textContent = '–';
             $('#previewWrap').innerHTML = '<span class="placeholder">Drag on canvas to select area</span>';
             $('#downloadBtn').disabled = true;
             $('#cropFileSize').textContent = '';
@@ -272,7 +272,7 @@
             canvas.height = Math.round(img.naturalHeight * canvasScale);
         };
 
-        /* â”€â”€ Draw canvas with overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── Draw canvas with overlay ────────────────── */
         const drawCanvas = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -306,7 +306,7 @@
             }
         };
 
-        /* â”€â”€ Mouse / Touch crop interaction â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── Mouse / Touch crop interaction ──────────── */
         const getPos = e => {
             const r = canvas.getBoundingClientRect();
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -366,7 +366,7 @@
                 drawCanvas();
                 $('#previewWrap').innerHTML = '<span class="placeholder">Drag on canvas to select area</span>';
                 $('#downloadBtn').disabled = true;
-                $('#selDims').textContent = 'â€“';
+                $('#selDims').textContent = '–';
                 $('#cropFileSize').textContent = '';
             }
         };
@@ -378,7 +378,7 @@
         canvas.addEventListener('touchmove', moveDrag, { passive: false });
         window.addEventListener('touchend', endDrag);
 
-        /* â”€â”€ Sync inputs â†” selection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── Sync inputs ↔ selection ─────────────────── */
         const toNatural = v => Math.round(v / canvasScale);
         const toDisplay = v => v * canvasScale;
 
@@ -388,7 +388,7 @@
             inpY.value = toNatural(selection.y);
             inpW.value = toNatural(selection.w);
             inpH.value = toNatural(selection.h);
-            $('#selDims').textContent = `${toNatural(selection.w)} Ã— ${toNatural(selection.h)}`;
+            $('#selDims').textContent = `${toNatural(selection.w)} × ${toNatural(selection.h)}`;
         };
 
         $('#applyManualBtn').addEventListener('click', () => {
@@ -412,7 +412,7 @@
             toast('Selection applied', 'success');
         });
 
-        /* â”€â”€ Aspect ratio buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── Aspect ratio buttons ────────────────────── */
         const ratioMap = { 'free': null, '1:1': 1, '4:3': 4 / 3, '16:9': 16 / 9, '3:2': 3 / 2 };
 
         const setActiveAspect = key => {
@@ -430,12 +430,12 @@
                 drawCanvas();
                 $('#previewWrap').innerHTML = '<span class="placeholder">Drag to select with new ratio</span>';
                 $('#downloadBtn').disabled = true;
-                $('#selDims').textContent = 'â€“';
+                $('#selDims').textContent = '–';
                 $('#cropFileSize').textContent = '';
             }
         });
 
-        /* â”€â”€ Preview & crop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── Preview & crop ──────────────────────────── */
         const getCroppedBlob = (format) => {
             return new Promise(resolve => {
                 const sx = toNatural(selection.x);
@@ -460,13 +460,13 @@
             $('#downloadBtn').disabled = false;
             syncInputs();
             if (blob) {
-                $('#cropFileSize').textContent = `Cropped: ${sw} Ã— ${sh} Â· ${fmtBytes(blob.size)}`;
+                $('#cropFileSize').textContent = `Cropped: ${sw} × ${sh} · ${fmtBytes(blob.size)}`;
             }
         };
 
         $('#formatSelect').addEventListener('change', () => { if (selection && selection.w > 2) updatePreview(); });
 
-        /* â”€â”€ Download â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── Download ────────────────────────────────── */
         $('#downloadBtn').addEventListener('click', async () => {
             if (!selection) return;
             const format = $('#formatSelect').value;
@@ -481,14 +481,14 @@
             toast('Cropped image downloaded!', 'success');
         });
 
-        /* â”€â”€ Reset / New â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── Reset / New ─────────────────────────────── */
         $('#resetSelBtn').addEventListener('click', () => {
             selection = null;
             drawCanvas();
             inpX.value = 0; inpY.value = 0; inpW.value = 0; inpH.value = 0;
             $('#previewWrap').innerHTML = '<span class="placeholder">Drag on canvas to select area</span>';
             $('#downloadBtn').disabled = true;
-            $('#selDims').textContent = 'â€“';
+            $('#selDims').textContent = '–';
             $('#cropFileSize').textContent = '';
             toast('Selection cleared', 'info');
         });
@@ -503,7 +503,7 @@
             toast('Ready for a new image', 'info');
         });
 
-        /* â”€â”€ Resize handling â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+        /* ── Resize handling ─────────────────────────── */
         let resizeTimer;
         window.addEventListener('resize', () => {
             if (!img) return;

@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Online Notepad - Multietools</title>
-	<meta name="description" content="Write and save notes in your browser with auto-save. Free online notepad â€” no sign-up required. Multietools.">
+	<meta name="description" content="Write and save notes in your browser with auto-save. Free online notepad — no sign-up required. Multietools.">
 	<meta property="og:title" content="Online Notepad - Multietools">
-	<meta property="og:description" content="Write and save notes in your browser with auto-save. Free online notepad â€” no sign-up required. Multietools.">
+	<meta property="og:description" content="Write and save notes in your browser with auto-save. Free online notepad — no sign-up required. Multietools.">
 	<meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/notepad.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+	<link rel="canonical" href="https://multietools.vercel.app/notepad.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
 	<style>
@@ -92,7 +92,7 @@
 		</div>
 
 		<!-- Editor -->
-		<textarea id="editor" placeholder="Start typing your notes hereâ€¦" spellcheck="true"></textarea>
+		<textarea id="editor" placeholder="Start typing your notes here…" spellcheck="true"></textarea>
 
 		<!-- Status Bar -->
 		<div class="status-bar">
@@ -128,7 +128,7 @@
 	// Debounced auto-save (2 seconds)
 	editor.addEventListener('input', () => {
 		updateCounts();
-		saveStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Savingâ€¦';
+		saveStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
 		clearTimeout(saveTimer);
 		saveTimer = setTimeout(() => {
 			doSave();

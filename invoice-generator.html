@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Invoice Generator - Multietools</title>
-	<meta name="description" content="Create professional invoices in minutes and download as PDF. Free online invoice generator â€” no sign-up. Multietools.">
+	<meta name="description" content="Create professional invoices in minutes and download as PDF. Free online invoice generator — no sign-up. Multietools.">
 	<meta property="og:title" content="Invoice Generator - Multietools">
-	<meta property="og:description" content="Create professional invoices in minutes and download as PDF. Free online invoice generator â€” no sign-up. Multietools.">
+	<meta property="og:description" content="Create professional invoices in minutes and download as PDF. Free online invoice generator — no sign-up. Multietools.">
 	<meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/invoice-generator.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+	<link rel="canonical" href="https://multietools.vercel.app/invoice-generator.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
 	<style>
@@ -108,10 +108,10 @@
 				<label>Currency:</label>
 				<select id="currency" onchange="recalc()">
 					<option value="$" selected>USD ($)</option>
-					<option value="â‚¬">EUR (â‚¬)</option>
-					<option value="Â£">GBP (Â£)</option>
-					<option value="â‚¹">INR (â‚¹)</option>
-					<option value="Â¥">JPY (Â¥)</option>
+					<option value="€">EUR (€)</option>
+					<option value="£">GBP (£)</option>
+					<option value="₹">INR (₹)</option>
+					<option value="¥">JPY (¥)</option>
 				</select>
 			</div>
 		</div>
@@ -157,7 +157,7 @@
 			<div class="totals" id="totals">
 				<div class="line"><span>Subtotal:</span><strong id="subtotal">0.00</strong></div>
 				<div class="line"><span>Tax:</span><strong id="taxAmt">0.00</strong></div>
-				<div class="line"><span>Discount:</span><strong id="discAmt">âˆ’0.00</strong></div>
+				<div class="line"><span>Discount:</span><strong id="discAmt">−0.00</strong></div>
 				<div class="line grand"><span>Total:</span><strong id="grandTotal">0.00</strong></div>
 			</div>
 		</div>
@@ -166,7 +166,7 @@
 		<div class="panel">
 			<h3><i class="fas fa-sticky-note"></i> Notes</h3>
 			<div class="form-group full">
-				<textarea id="notes" rows="3" placeholder="Payment terms, bank details, thank you noteâ€¦" style="resize:vertical;"></textarea>
+				<textarea id="notes" rows="3" placeholder="Payment terms, bank details, thank you note…" style="resize:vertical;"></textarea>
 			</div>
 			<div class="actions" style="margin-top:1rem;">
 				<button class="btn btn-primary" onclick="printInvoice()"><i class="fas fa-print"></i> Print / Save PDF</button>
@@ -236,7 +236,7 @@
 
 		document.getElementById('subtotal').textContent = c + sub.toFixed(2);
 		document.getElementById('taxAmt').textContent = c + tax.toFixed(2);
-		document.getElementById('discAmt').textContent = 'âˆ’' + c + disc.toFixed(2);
+		document.getElementById('discAmt').textContent = '−' + c + disc.toFixed(2);
 		document.getElementById('grandTotal').textContent = c + Math.max(0, grand).toFixed(2);
 	}
 

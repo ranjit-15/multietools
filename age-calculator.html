@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Age Calculator - Multietools</title>
-	<meta name="description" content="Calculate your exact age in years, months, and days instantly. Free online age calculator â€” no sign-up. Multietools.">
+	<meta name="description" content="Calculate your exact age in years, months, and days instantly. Free online age calculator — no sign-up. Multietools.">
 	<meta property="og:title" content="Age Calculator - Multietools">
-	<meta property="og:description" content="Calculate your exact age in years, months, and days instantly. Free online age calculator â€” no sign-up. Multietools.">
+	<meta property="og:description" content="Calculate your exact age in years, months, and days instantly. Free online age calculator — no sign-up. Multietools.">
 	<meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/age-calculator.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+	<link rel="canonical" href="https://multietools.vercel.app/age-calculator.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
 	<style>
@@ -62,35 +62,35 @@
 			<div class="stats">
 				<div class="stat highlight">
 					<div class="label">Your Age</div>
-					<div class="value" id="age">â€”</div>
+					<div class="value" id="age">—</div>
 				</div>
 				<div class="stat">
 					<div class="label"><i class="fas fa-calendar-day"></i> Total Days</div>
-					<div class="value" id="totalDays">â€”</div>
+					<div class="value" id="totalDays">—</div>
 				</div>
 				<div class="stat">
 					<div class="label"><i class="fas fa-calendar-week"></i> Total Weeks</div>
-					<div class="value" id="totalWeeks">â€”</div>
+					<div class="value" id="totalWeeks">—</div>
 				</div>
 				<div class="stat">
 					<div class="label"><i class="fas fa-clock"></i> Total Hours</div>
-					<div class="value" id="totalHours">â€”</div>
+					<div class="value" id="totalHours">—</div>
 				</div>
 				<div class="stat">
 					<div class="label"><i class="fas fa-hourglass-half"></i> Next Birthday</div>
-					<div class="value" id="nextBday">â€”</div>
+					<div class="value" id="nextBday">—</div>
 				</div>
 				<div class="stat">
 					<div class="label"><i class="fas fa-star"></i> Zodiac Sign</div>
-					<div class="value" id="zodiac">â€”</div>
+					<div class="value" id="zodiac">—</div>
 				</div>
 				<div class="stat">
 					<div class="label"><i class="fas fa-calendar"></i> Day Born On</div>
-					<div class="value" id="dayBorn">â€”</div>
+					<div class="value" id="dayBorn">—</div>
 				</div>
 				<div class="stat">
 					<div class="label"><i class="fas fa-moon"></i> Birth Month</div>
-					<div class="value" id="birthMonth">â€”</div>
+					<div class="value" id="birthMonth">—</div>
 				</div>
 			</div>
 		</div>
@@ -158,7 +158,7 @@ function calculate() {
 		nextBday = new Date(now.getFullYear() + 1, dob.getMonth(), dob.getDate());
 	}
 	const daysUntil = Math.ceil((nextBday - now) / (1000 * 60 * 60 * 24));
-	document.getElementById('nextBday').textContent = daysUntil === 0 ? 'ðŸŽ‰ Today!' : daysUntil + ' days';
+	document.getElementById('nextBday').textContent = daysUntil === 0 ? '🎉 Today!' : daysUntil + ' days';
 
 	// Zodiac sign
 	document.getElementById('zodiac').innerHTML = getZodiac(dob.getMonth() + 1, dob.getDate());
@@ -176,19 +176,19 @@ function calculate() {
 
 function getZodiac(month, day) {
 	const signs = [
-		{ name: 'Capricorn', symbol: 'â™‘', start: [1,1], end: [1,19] },
-		{ name: 'Aquarius', symbol: 'â™’', start: [1,20], end: [2,18] },
-		{ name: 'Pisces', symbol: 'â™“', start: [2,19], end: [3,20] },
-		{ name: 'Aries', symbol: 'â™ˆ', start: [3,21], end: [4,19] },
-		{ name: 'Taurus', symbol: 'â™‰', start: [4,20], end: [5,20] },
-		{ name: 'Gemini', symbol: 'â™Š', start: [5,21], end: [6,20] },
-		{ name: 'Cancer', symbol: 'â™‹', start: [6,21], end: [7,22] },
-		{ name: 'Leo', symbol: 'â™Œ', start: [7,23], end: [8,22] },
-		{ name: 'Virgo', symbol: 'â™', start: [8,23], end: [9,22] },
-		{ name: 'Libra', symbol: 'â™Ž', start: [9,23], end: [10,22] },
-		{ name: 'Scorpio', symbol: 'â™', start: [10,23], end: [11,21] },
-		{ name: 'Sagittarius', symbol: 'â™', start: [11,22], end: [12,21] },
-		{ name: 'Capricorn', symbol: 'â™‘', start: [12,22], end: [12,31] }
+		{ name: 'Capricorn', symbol: '♑', start: [1,1], end: [1,19] },
+		{ name: 'Aquarius', symbol: '♒', start: [1,20], end: [2,18] },
+		{ name: 'Pisces', symbol: '♓', start: [2,19], end: [3,20] },
+		{ name: 'Aries', symbol: '♈', start: [3,21], end: [4,19] },
+		{ name: 'Taurus', symbol: '♉', start: [4,20], end: [5,20] },
+		{ name: 'Gemini', symbol: '♊', start: [5,21], end: [6,20] },
+		{ name: 'Cancer', symbol: '♋', start: [6,21], end: [7,22] },
+		{ name: 'Leo', symbol: '♌', start: [7,23], end: [8,22] },
+		{ name: 'Virgo', symbol: '♍', start: [8,23], end: [9,22] },
+		{ name: 'Libra', symbol: '♎', start: [9,23], end: [10,22] },
+		{ name: 'Scorpio', symbol: '♏', start: [10,23], end: [11,21] },
+		{ name: 'Sagittarius', symbol: '♐', start: [11,22], end: [12,21] },
+		{ name: 'Capricorn', symbol: '♑', start: [12,22], end: [12,31] }
 	];
 	for (const s of signs) {
 		const afterStart = month > s.start[0] || (month === s.start[0] && day >= s.start[1]);
@@ -197,7 +197,7 @@ function getZodiac(month, day) {
 			return '<span class="zodiac-icon">' + s.symbol + '</span>' + s.name;
 		}
 	}
-	return 'â€”';
+	return '—';
 }
 </script>
 

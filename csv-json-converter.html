@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>CSV â‡„ JSON Converter - Multietools</title>
-	<meta name="description" content="Convert CSV to JSON and JSON to CSV instantly. Free online data format converter â€” no upload required. Multietools.">
-	<meta property="og:title" content="CSV â‡„ JSON Converter - Multietools">
-	<meta property="og:description" content="Convert CSV to JSON and JSON to CSV instantly. Free online data format converter â€” no upload required. Multietools.">
+	<title>CSV ⇄ JSON Converter - Multietools</title>
+	<meta name="description" content="Convert CSV to JSON and JSON to CSV instantly. Free online data format converter — no upload required. Multietools.">
+	<meta property="og:title" content="CSV ⇄ JSON Converter - Multietools">
+	<meta property="og:description" content="Convert CSV to JSON and JSON to CSV instantly. Free online data format converter — no upload required. Multietools.">
 	<meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/csv-json-converter.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+	<link rel="canonical" href="https://multietools.vercel.app/csv-json-converter.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
 	<style>
@@ -49,13 +49,13 @@
 <div class="wrap">
 	<header>
 		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
-		<h1><i class="fas fa-table"></i> CSV â‡„ JSON Converter</h1>
+		<h1><i class="fas fa-table"></i> CSV ⇄ JSON Converter</h1>
 		<p class="muted">Convert data between CSV and JSON formats with delimiter options and preview.</p>
 	</header>
 	<main>
 		<div class="tabs">
-			<button class="tab active" data-tab="csv2json">CSV â†’ JSON</button>
-			<button class="tab" data-tab="json2csv">JSON â†’ CSV</button>
+			<button class="tab active" data-tab="csv2json">CSV → JSON</button>
+			<button class="tab" data-tab="json2csv">JSON → CSV</button>
 		</div>
 
 		<div class="row" style="margin-top:0;">
@@ -81,7 +81,7 @@
 			</div>
 			<div class="panel">
 				<label style="font-weight:600;display:block;margin-bottom:.35rem;">JSON Output</label>
-				<textarea id="jsonOutput" placeholder="JSON result will appear hereâ€¦" readonly></textarea>
+				<textarea id="jsonOutput" placeholder="JSON result will appear here…" readonly></textarea>
 			</div>
 		</div>
 
@@ -98,7 +98,7 @@
 			</div>
 			<div class="panel">
 				<label style="font-weight:600;display:block;margin-bottom:.35rem;">CSV Output</label>
-				<textarea id="csvOutput" placeholder="CSV result will appear hereâ€¦" readonly></textarea>
+				<textarea id="csvOutput" placeholder="CSV result will appear here…" readonly></textarea>
 			</div>
 		</div>
 
@@ -190,7 +190,7 @@ function convertCsvToJson(){
 	});
 	document.getElementById('jsonOutput').value=JSON.stringify(data,null,2);
 	renderPreview(headers,rows.slice(1));
-	showToast('Converted CSV â†’ JSON!');
+	showToast('Converted CSV → JSON!');
 }
 
 /* --- JSON to CSV --- */
@@ -215,7 +215,7 @@ function convertJsonToCsv(){
 		document.getElementById('csvOutput').value=csvResult;
 		const dataRows=arr.map(row=>headers.map(h=>String(row[h]??'')));
 		renderPreview(headers,dataRows);
-		showToast('Converted JSON â†’ CSV!');
+		showToast('Converted JSON → CSV!');
 	}catch(e){
 		showToast('Invalid JSON: '+e.message);
 	}
@@ -230,7 +230,7 @@ function renderPreview(headers,rows){
 	});
 	html+='</tbody>';
 	document.getElementById('previewTable').innerHTML=html;
-	document.getElementById('previewInfo').textContent=`${rows.length} rows Ã— ${headers.length} cols (showing ${maxRows.length})`;
+	document.getElementById('previewInfo').textContent=`${rows.length} rows × ${headers.length} cols (showing ${maxRows.length})`;
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 

@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Image OCR Tool â€“ MultiTools</title>
-  <meta name="description" content="Extract text from images using OCR technology. Free online image-to-text tool â€” no sign-up needed. Multietools.">
-  <meta property="og:title" content="Image OCR Tool â€“ MultiTools">
-  <meta property="og:description" content="Extract text from images using OCR technology. Free online image-to-text tool â€” no sign-up needed. Multietools.">
+  <title>Image OCR Tool – MultiTools</title>
+  <meta name="description" content="Extract text from images using OCR technology. Free online image-to-text tool — no sign-up needed. Multietools.">
+  <meta property="og:title" content="Image OCR Tool – MultiTools">
+  <meta property="og:description" content="Extract text from images using OCR technology. Free online image-to-text tool — no sign-up needed. Multietools.">
   <meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-  <link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/image-ocr-tool.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+  <link rel="canonical" href="https://multietools.vercel.app/image-ocr-tool.html">
   <link rel="stylesheet" href="css/global.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
@@ -136,7 +136,7 @@
 
         <!-- Progress -->
         <div class="progress-wrap" id="progressWrap">
-          <p class="progress-label" id="progressLabel">Initializing OCR engineâ€¦</p>
+          <p class="progress-label" id="progressLabel">Initializing OCR engine…</p>
           <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
         </div>
 
@@ -149,7 +149,7 @@
       <!-- Output Panel -->
       <section class="panel output-area">
         <h2 class="panel-title"><i class="fa-solid fa-file-lines"></i> Recognized Text</h2>
-        <textarea id="outputText" placeholder="Extracted text will appear hereâ€¦" readonly></textarea>
+        <textarea id="outputText" placeholder="Extracted text will appear here…" readonly></textarea>
         <div class="action-row">
           <button class="btn btn-secondary" id="copyBtn" disabled><i class="fa-regular fa-clipboard"></i> Copy</button>
           <button class="btn btn-secondary" id="downloadBtn" disabled><i class="fa-solid fa-download"></i> Download TXT</button>
@@ -199,7 +199,7 @@
     let currentFile = null;
     let isProcessing = false;
 
-    /* â”€â”€ Toast â”€â”€ */
+    /* ── Toast ── */
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -210,7 +210,7 @@
       setTimeout(() => toast.remove(), 3000);
     }
 
-    /* â”€â”€ Drag & Drop â”€â”€ */
+    /* ── Drag & Drop ── */
     ['dragenter', 'dragover'].forEach(evt => {
       dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('dragover'); });
     });
@@ -225,7 +225,7 @@
       if (fileInput.files[0]) handleFile(fileInput.files[0]);
     });
 
-    /* â”€â”€ File Handling â”€â”€ */
+    /* ── File Handling ── */
     function handleFile(file) {
       const validTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/bmp', 'image/gif'];
       if (!validTypes.includes(file.type)) {
@@ -244,17 +244,17 @@
       };
       reader.readAsDataURL(file);
       startBtn.disabled = false;
-      showToast('Image loaded â€“ ready to extract text.', 'success');
+      showToast('Image loaded – ready to extract text.', 'success');
     }
 
-    /* â”€â”€ Progress â”€â”€ */
+    /* ── Progress ── */
     function updateProgress(progress) {
       const pct = Math.round(progress * 100);
       progressFill.style.width = pct + '%';
-      progressLabel.textContent = `Recognizing textâ€¦ ${pct}%`;
+      progressLabel.textContent = `Recognizing text… ${pct}%`;
     }
 
-    /* â”€â”€ OCR â”€â”€ */
+    /* ── OCR ── */
     startBtn.addEventListener('click', async () => {
       if (!currentFile || isProcessing) return;
       isProcessing = true;
@@ -266,20 +266,20 @@
 
       progressWrap.classList.add('visible');
       progressFill.style.width = '0%';
-      progressLabel.textContent = 'Loading OCR engineâ€¦';
+      progressLabel.textContent = 'Loading OCR engine…';
 
       const langCode = langSelect.value;
 
       try {
         await loadTesseract();
-        progressLabel.textContent = 'Initializing OCR engineâ€¦';
+        progressLabel.textContent = 'Initializing OCR engine…';
 
         const worker = await Tesseract.createWorker(langCode, 1, {
           logger: m => {
             if (m.status === 'recognizing text') {
               updateProgress(m.progress);
             } else if (m.status) {
-              progressLabel.textContent = m.status.charAt(0).toUpperCase() + m.status.slice(1) + 'â€¦';
+              progressLabel.textContent = m.status.charAt(0).toUpperCase() + m.status.slice(1) + '…';
             }
           }
         });
@@ -308,7 +308,7 @@
       }
     });
 
-    /* â”€â”€ Stats â”€â”€ */
+    /* ── Stats ── */
     function updateStats() {
       const text = outputText.value.trim();
       const words = text.length > 0 ? text.split(/\s+/).length : 0;
@@ -316,7 +316,7 @@
       charCountEl.textContent = outputText.value.length;
     }
 
-    /* â”€â”€ Copy â”€â”€ */
+    /* ── Copy ── */
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(outputText.value);
@@ -328,7 +328,7 @@
       }
     });
 
-    /* â”€â”€ Download â”€â”€ */
+    /* ── Download ── */
     downloadBtn.addEventListener('click', () => {
       const blob = new Blob([outputText.value], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
@@ -340,7 +340,7 @@
       showToast('File downloaded.', 'success');
     });
 
-    /* â”€â”€ Clear â”€â”€ */
+    /* ── Clear ── */
     clearBtn.addEventListener('click', () => {
       currentFile = null;
       fileInput.value = '';

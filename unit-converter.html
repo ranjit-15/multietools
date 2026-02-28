@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -8,8 +8,8 @@
 	<meta property="og:title" content="Unit Converter - Multietools">
 	<meta property="og:description" content="Convert units of length, weight, temperature, volume, and more. Free online unit converter. Multietools.">
 	<meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/unit-converter.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+	<link rel="canonical" href="https://multietools.vercel.app/unit-converter.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
 	<style>
@@ -82,7 +82,7 @@
 
 		<div class="panel">
 			<div class="result-box">
-				<div class="result-value" id="resultValue">â€”</div>
+				<div class="result-value" id="resultValue">—</div>
 				<div class="formula-info" id="formulaInfo"></div>
 			</div>
 		</div>
@@ -246,7 +246,7 @@
 	/* -------- Convert -------- */
 	function doConvert(){
 		var amount = parseFloat(amountIn.value);
-		if(isNaN(amount)){ resultValue.textContent = 'â€”'; formulaInfo.textContent = ''; return; }
+		if(isNaN(amount)){ resultValue.textContent = '—'; formulaInfo.textContent = ''; return; }
 
 		var from = fromSel.value;
 		var to = toSel.value;

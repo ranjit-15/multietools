@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ranjit-15.github.io/multietools/htdocs/sitemap.xml
+Sitemap: https://multietools.vercel.app/sitemap.xml

@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PDF Compressor - Multietools</title>
-  <meta name="description" content="Compress PDF files to reduce size while keeping quality. Free online PDF compressor â€” runs in browser. Multietools.">
+  <meta name="description" content="Compress PDF files to reduce size while keeping quality. Free online PDF compressor — runs in browser. Multietools.">
   <meta property="og:title" content="PDF Compressor - Multietools">
-  <meta property="og:description" content="Compress PDF files to reduce size while keeping quality. Free online PDF compressor â€” runs in browser. Multietools.">
+  <meta property="og:description" content="Compress PDF files to reduce size while keeping quality. Free online PDF compressor — runs in browser. Multietools.">
   <meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-  <link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/pdf-compressor-tool.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+  <link rel="canonical" href="https://multietools.vercel.app/pdf-compressor-tool.html">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/global.css">
   <style>
@@ -75,10 +75,10 @@ main{padding:1.5rem;display:grid;gap:1.25rem;}
       <div class="form-row">
         <label><i class="fas fa-tachometer-alt"></i> Quality (DPI):</label>
         <select id="dpiSelect">
-          <option value="72">Low (72 DPI â€” Max compression)</option>
-          <option value="96" selected>Medium (96 DPI â€” Balanced)</option>
-          <option value="120">High (120 DPI â€” Better quality)</option>
-          <option value="150">Minimal (150 DPI â€” Slight compression)</option>
+          <option value="72">Low (72 DPI — Max compression)</option>
+          <option value="96" selected>Medium (96 DPI — Balanced)</option>
+          <option value="120">High (120 DPI — Better quality)</option>
+          <option value="150">Minimal (150 DPI — Slight compression)</option>
         </select>
       </div>
       <div class="form-row">
@@ -98,12 +98,12 @@ main{padding:1.5rem;display:grid;gap:1.25rem;}
       <div class="size-compare" id="sizeCompare" style="display:none;">
         <div class="size-box original">
           <div class="label">Original Size</div>
-          <div class="value" id="origSize">â€”</div>
+          <div class="value" id="origSize">—</div>
         </div>
         <div class="arrow"><i class="fas fa-arrow-right"></i></div>
         <div class="size-box compressed">
           <div class="label">Compressed Size</div>
-          <div class="value" id="compSize">â€”</div>
+          <div class="value" id="compSize">—</div>
           <div class="saved" id="savedPct"></div>
         </div>
       </div>

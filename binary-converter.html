@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -8,8 +8,8 @@
 	<meta property="og:title" content="Binary / Number Base Converter - Multietools">
 	<meta property="og:description" content="Convert between binary, decimal, octal, and hexadecimal number systems. Free online base converter. Multietools.">
 	<meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/binary-converter.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+	<link rel="canonical" href="https://multietools.vercel.app/binary-converter.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
 	<style>
@@ -51,24 +51,24 @@
 		<div class="panel">
 			<label style="font-weight:600;display:block;margin-bottom:.5rem;">Conversion Mode</label>
 			<div class="mode-grid" id="modeGrid">
-				<button class="mode-btn active" data-mode="txt2bin">Text â†’ Binary</button>
-				<button class="mode-btn" data-mode="bin2txt">Binary â†’ Text</button>
-				<button class="mode-btn" data-mode="txt2hex">Text â†’ Hex</button>
-				<button class="mode-btn" data-mode="hex2txt">Hex â†’ Text</button>
-				<button class="mode-btn" data-mode="txt2oct">Text â†’ Octal</button>
-				<button class="mode-btn" data-mode="oct2txt">Octal â†’ Text</button>
-				<button class="mode-btn" data-mode="dec2bin">Decimal â†’ Binary</button>
-				<button class="mode-btn" data-mode="bin2dec">Binary â†’ Decimal</button>
-				<button class="mode-btn" data-mode="dec2hex">Decimal â†’ Hex</button>
-				<button class="mode-btn" data-mode="hex2dec">Hex â†’ Decimal</button>
-				<button class="mode-btn" data-mode="dec2oct">Decimal â†’ Octal</button>
-				<button class="mode-btn" data-mode="oct2dec">Octal â†’ Decimal</button>
+				<button class="mode-btn active" data-mode="txt2bin">Text → Binary</button>
+				<button class="mode-btn" data-mode="bin2txt">Binary → Text</button>
+				<button class="mode-btn" data-mode="txt2hex">Text → Hex</button>
+				<button class="mode-btn" data-mode="hex2txt">Hex → Text</button>
+				<button class="mode-btn" data-mode="txt2oct">Text → Octal</button>
+				<button class="mode-btn" data-mode="oct2txt">Octal → Text</button>
+				<button class="mode-btn" data-mode="dec2bin">Decimal → Binary</button>
+				<button class="mode-btn" data-mode="bin2dec">Binary → Decimal</button>
+				<button class="mode-btn" data-mode="dec2hex">Decimal → Hex</button>
+				<button class="mode-btn" data-mode="hex2dec">Hex → Decimal</button>
+				<button class="mode-btn" data-mode="dec2oct">Decimal → Octal</button>
+				<button class="mode-btn" data-mode="oct2dec">Octal → Decimal</button>
 			</div>
 		</div>
 
 		<div class="panel">
 			<label style="font-weight:600;display:block;margin-bottom:.35rem;" id="inputLabel">Input (Text)</label>
-			<input type="text" id="input" placeholder="Type hereâ€¦" autocomplete="off">
+			<input type="text" id="input" placeholder="Type here…" autocomplete="off">
 			<div class="row">
 				<button onclick="doSwap()"><i class="fas fa-exchange-alt"></i> Swap</button>
 				<button class="secondary" onclick="copyOutput()"><i class="fas fa-copy"></i> Copy Output</button>
@@ -77,7 +77,7 @@
 
 		<div class="panel">
 			<label style="font-weight:600;display:block;margin-bottom:.35rem;" id="outputLabel">Output (Binary)</label>
-			<div class="output-box" id="output">Result will appear hereâ€¦</div>
+			<div class="output-box" id="output">Result will appear here…</div>
 		</div>
 	</main>
 </div>
@@ -137,7 +137,7 @@ inputEl.addEventListener('input',convert);
 
 function convert(){
 	const v=inputEl.value;
-	if(!v){outputEl.textContent='Result will appear hereâ€¦';return;}
+	if(!v){outputEl.textContent='Result will appear here…';return;}
 	try{
 		outputEl.textContent=doConvert(currentMode,v);
 	}catch(e){
@@ -167,7 +167,7 @@ function doSwap(){
 	const newMode=swapMap[currentMode];
 	if(!newMode) return;
 	const out=outputEl.textContent;
-	if(out&&out!=='Result will appear hereâ€¦'&&out!=='Invalid input'){
+	if(out&&out!=='Result will appear here…'&&out!=='Invalid input'){
 		inputEl.value=out;
 	}
 	setMode(newMode);
@@ -177,7 +177,7 @@ function doSwap(){
 
 function copyOutput(){
 	const t=outputEl.textContent;
-	if(!t||t==='Result will appear hereâ€¦'){showToast('Nothing to copy');return;}
+	if(!t||t==='Result will appear here…'){showToast('Nothing to copy');return;}
 	navigator.clipboard.writeText(t).then(()=>showToast('Copied to clipboard!'));
 }
 </script>

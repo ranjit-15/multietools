@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Speech to Text - Multietools</title>
-<meta name="description" content="Convert speech to text using your microphone in real time. Free online speech-to-text tool â€” no sign-up. Multietools.">
+<meta name="description" content="Convert speech to text using your microphone in real time. Free online speech-to-text tool — no sign-up. Multietools.">
 <meta property="og:title" content="Speech to Text - Multietools">
-<meta property="og:description" content="Convert speech to text using your microphone in real time. Free online speech-to-text tool â€” no sign-up. Multietools.">
+<meta property="og:description" content="Convert speech to text using your microphone in real time. Free online speech-to-text tool — no sign-up. Multietools.">
 <meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/speech-to-text.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+<link rel="canonical" href="https://multietools.vercel.app/speech-to-text.html">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="css/global.css">
 <style>
@@ -72,7 +72,7 @@ button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
 <div class="status" id="status">Click to start recording</div>
 </div>
 <div id="interimBox" class="interim" style="min-height:1.2rem;padding:0 .25rem;font-size:.9rem;"></div>
-<textarea id="output" placeholder="Transcribed text will appear hereâ€¦"></textarea>
+<textarea id="output" placeholder="Transcribed text will appear here…"></textarea>
 <div class="row" style="margin-top:.5rem;">
 <button onclick="copyOut()"><i class="fas fa-copy"></i> Copy</button>
 <button onclick="clearOut()"><i class="fas fa-eraser"></i> Clear</button>
@@ -131,7 +131,7 @@ function startRec(){
   try{recognition.start();}catch(ex){}
   isRecording=true;
   micBtn.classList.add('recording');
-  statusEl.textContent='Listeningâ€¦';statusEl.classList.add('active');
+  statusEl.textContent='Listening…';statusEl.classList.add('active');
   showToast('Recording started');
 }
 

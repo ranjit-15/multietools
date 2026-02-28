@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -8,8 +8,8 @@
 	<meta property="og:title" content="Keyword Density Checker - Multietools">
 	<meta property="og:description" content="Analyze keyword density and word frequency in your text. Free SEO keyword density checker tool. Multietools.">
 	<meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/keyword-density-checker.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+	<link rel="canonical" href="https://multietools.vercel.app/keyword-density-checker.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
 	<style>
@@ -60,8 +60,8 @@
 	<main>
 		<div class="panel">
 			<label style="font-weight:600;display:block;margin-bottom:.35rem;">Text Content</label>
-			<textarea id="textInput" placeholder="Paste your article, blog post, or any text content hereâ€¦"></textarea>
-			<label style="font-weight:600;display:block;margin-top:.75rem;margin-bottom:.35rem;">Or enter a URL (optional â€” may be blocked by CORS)</label>
+			<textarea id="textInput" placeholder="Paste your article, blog post, or any text content here…"></textarea>
+			<label style="font-weight:600;display:block;margin-top:.75rem;margin-bottom:.35rem;">Or enter a URL (optional — may be blocked by CORS)</label>
 			<input type="url" id="urlInput" placeholder="https://example.com/article">
 			<div class="row">
 				<button onclick="analyze()"><i class="fas fa-chart-bar"></i> Analyze</button>
@@ -202,7 +202,7 @@ async function fetchURL(){
 	const url=document.getElementById('urlInput').value.trim();
 	if(!url){showToast('Please enter a URL');return;}
 	try{
-		showToast('Fetchingâ€¦');
+		showToast('Fetching…');
 		const resp=await fetch(url);
 		if(!resp.ok) throw new Error('HTTP '+resp.status);
 		const html=await resp.text();
@@ -211,7 +211,7 @@ async function fetchURL(){
 		doc.querySelectorAll('script,style,noscript').forEach(el=>el.remove());
 		const text=doc.body?doc.body.innerText||doc.body.textContent:'';
 		document.getElementById('textInput').value=text;
-		showToast('Page content fetched â€” click Analyze');
+		showToast('Page content fetched — click Analyze');
 	}catch(e){
 		showToast('Fetch failed (CORS?): '+e.message);
 	}

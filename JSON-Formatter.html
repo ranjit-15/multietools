@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -8,8 +8,8 @@
 	<meta property="og:title" content="JSON Formatter - Multietools">
 	<meta property="og:description" content="Format, validate, and beautify JSON data instantly. Free online JSON formatter and validator. Multietools.">
 	<meta property="og:type" content="website">
-    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
-	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/JSON-Formatter.html">
+    <meta property="og:image" content="https://multietools.vercel.app/og-image.svg">
+	<link rel="canonical" href="https://multietools.vercel.app/JSON-Formatter.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
 	<style>
@@ -47,7 +47,7 @@
 	<main>
 		<div class="panel">
 			<label style="font-weight:600;margin-bottom:.35rem;display:block;">Input</label>
-			<textarea id="input" placeholder="Paste raw JSON hereâ€¦"></textarea>
+			<textarea id="input" placeholder="Paste raw JSON here…"></textarea>
 			<div class="row">
 				<button onclick="formatJson()"><i class="fas fa-indent"></i> Beautify</button>
 				<button onclick="minifyJson()"><i class="fas fa-compress"></i> Minify</button>
@@ -66,7 +66,7 @@
 				<label style="font-weight:600;">Output</label>
 				<button class="secondary" onclick="copyOut()"><i class="fas fa-copy"></i> Copy</button>
 			</div>
-			<textarea id="output" placeholder="Formatted / minified resultâ€¦" readonly></textarea>
+			<textarea id="output" placeholder="Formatted / minified result…" readonly></textarea>
 		</div>
 	</main>
 </div>
@@ -122,20 +122,20 @@ function formatJson(){
 	const{data,error}=tryParse();
 	if(error){setStatus('Invalid JSON',false);showError(error);outputEl.value='';return;}
 	outputEl.value=JSON.stringify(data,null,getIndent());
-	setStatus('Beautified âœ“');showToast('JSON beautified!');
+	setStatus('Beautified ✓');showToast('JSON beautified!');
 }
 
 function minifyJson(){
 	const{data,error}=tryParse();
 	if(error){setStatus('Invalid JSON',false);showError(error);outputEl.value='';return;}
 	outputEl.value=JSON.stringify(data);
-	setStatus('Minified âœ“');showToast('JSON minified!');
+	setStatus('Minified ✓');showToast('JSON minified!');
 }
 
 function validateJson(){
 	const{data,error}=tryParse();
-	if(error){setStatus('Invalid âœ—',false);showError(error);showToast('Invalid JSON');return;}
-	setStatus('Valid JSON âœ“');hideError();showToast('JSON is valid!');
+	if(error){setStatus('Invalid ✗',false);showError(error);showToast('Invalid JSON');return;}
+	setStatus('Valid JSON ✓');hideError();showToast('JSON is valid!');
 }
 
 function copyOut(){
