@@ -410,8 +410,8 @@
 
   /* ---------- Back to Top (Global) ---------- */
   function injectBackToTop() {
-    // Skip if page already has its own .scroll-top
-    if (document.querySelector('.scroll-top')) return;
+    // Skip on contact page and pages with their own scroll-top
+    if (isContact || document.querySelector('.scroll-top')) return;
     var btn = document.createElement('button');
     btn.className = 'global-back-top';
     btn.setAttribute('aria-label', 'Back to top');

@@ -358,8 +358,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="js/global.js"></script>
     <script>
-        // Initialise EmailJS
-        emailjs.init('2ys1wdJHhpLbjlwgX');
+        // Initialise EmailJS (v4 format)
+        emailjs.init({ publicKey: '2ys1wdJHhpLbjlwgX' });
 
         // Toast helper
         function showToast(msg, duration = 3000) {
@@ -458,16 +458,20 @@
             showStatus('Sending your message...', 'sending');
 
             // Send via EmailJS
-            emailjs.sendForm('service_4jtgwzp', 'template_contact', form)
-                .then(() => {
+            emailjs.send('service_4jtgwzp', 'template_contact', {
+                from_name: name,
+                user_email: email,
+                subject: subject,
+                message: message
+            }).then(() => {
                     showStatus('Message sent successfully! We\'ll get back to you soon.', 'success');
-                    showToast('Message sent! âœ“');
+                    showToast('Message sent! ✔');
                     form.reset();
                     generateCaptcha();
                 })
                 .catch((err) => {
                     console.error('EmailJS Error:', err);
-                    showStatus('Failed to send message. Please try again or email us directly.', 'error');
+                    showStatus('Failed to send message. Please try again or email us directly at ranjityadav982577rd@gmail.com', 'error');
                 })
                 .finally(() => {
                     submitBtn.disabled = false;
