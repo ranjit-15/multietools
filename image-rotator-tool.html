@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Image Rotator &amp; Flipper - Multietools</title>
-	<meta name="description" content="Rotate and flip images at any angle instantly. Free online image rotator and flipper — no sign-up. Multietools.">
+	<meta name="description" content="Rotate and flip images at any angle instantly. Free online image rotator and flipper â€” no sign-up. Multietools.">
 	<meta property="og:title" content="Image Rotator &amp; Flipper - Multietools">
-	<meta property="og:description" content="Rotate and flip images at any angle instantly. Free online image rotator and flipper — no sign-up. Multietools.">
+	<meta property="og:description" content="Rotate and flip images at any angle instantly. Free online image rotator and flipper â€” no sign-up. Multietools.">
 	<meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/image-rotator-tool.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
@@ -275,6 +276,8 @@
 		}
 	</style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 
@@ -305,14 +308,14 @@
 			<div>
 				<div class="angle-label" style="margin-bottom:0.5rem;">Quick Rotate</div>
 				<div class="rotate-btns">
-					<button class="rotate-btn" id="btn-left90" title="Rotate 90° Left">
-						<i class="fas fa-undo"></i> 90° Left
+					<button class="rotate-btn" id="btn-left90" title="Rotate 90Â° Left">
+						<i class="fas fa-undo"></i> 90Â° Left
 					</button>
-					<button class="rotate-btn" id="btn-right90" title="Rotate 90° Right">
-						<i class="fas fa-redo"></i> 90° Right
+					<button class="rotate-btn" id="btn-right90" title="Rotate 90Â° Right">
+						<i class="fas fa-redo"></i> 90Â° Right
 					</button>
-					<button class="rotate-btn" id="btn-180" title="Rotate 180°">
-						<i class="fas fa-sync-alt"></i> 180°
+					<button class="rotate-btn" id="btn-180" title="Rotate 180Â°">
+						<i class="fas fa-sync-alt"></i> 180Â°
 					</button>
 				</div>
 			</div>
@@ -326,7 +329,7 @@
 					</div>
 					<div style="display:flex; align-items:center; gap:0.35rem;">
 						<input type="number" class="angle-input" id="angle-input" min="0" max="360" step="1" value="0">
-						<span style="font-weight:600; color:var(--muted);">°</span>
+						<span style="font-weight:600; color:var(--muted);">Â°</span>
 					</div>
 				</div>
 			</div>
@@ -351,9 +354,9 @@
 
 			<!-- Stats -->
 			<div class="stats-bar" id="stats-bar">
-				<div class="stat"><i class="fas fa-ruler-combined"></i> Original: <strong id="stat-original">—</strong></div>
-				<div class="stat"><i class="fas fa-expand-arrows-alt"></i> Output: <strong id="stat-output">—</strong></div>
-				<div class="stat"><i class="fas fa-compass"></i> Angle: <strong id="stat-angle">0°</strong></div>
+				<div class="stat"><i class="fas fa-ruler-combined"></i> Original: <strong id="stat-original">â€”</strong></div>
+				<div class="stat"><i class="fas fa-expand-arrows-alt"></i> Output: <strong id="stat-output">â€”</strong></div>
+				<div class="stat"><i class="fas fa-compass"></i> Angle: <strong id="stat-angle">0Â°</strong></div>
 				<div class="stat" id="stat-flip-wrap"><i class="fas fa-exchange-alt"></i> Flip: <strong id="stat-flip">None</strong></div>
 			</div>
 
@@ -467,7 +470,7 @@
 				flipV = false;
 				angleSlider.value = 0;
 				angleInput.value = 0;
-				statOriginal.textContent = img.naturalWidth + ' × ' + img.naturalHeight;
+				statOriginal.textContent = img.naturalWidth + ' Ã— ' + img.naturalHeight;
 				showEditor();
 				renderPreview();
 				toast('Image loaded successfully!', 'success');
@@ -553,8 +556,8 @@
 		canvasWrap.classList.add('has-image');
 
 		// Update stats
-		statOutput.textContent = newW + ' × ' + newH;
-		statAngle.textContent = currentAngle + '°';
+		statOutput.textContent = newW + ' Ã— ' + newH;
+		statAngle.textContent = currentAngle + 'Â°';
 		updateFlipStat();
 	}
 
@@ -710,9 +713,9 @@
 		canvas.style.display = 'none';
 		placeholder.style.display = '';
 		canvasWrap.classList.remove('has-image');
-		statOriginal.textContent = '—';
-		statOutput.textContent = '—';
-		statAngle.textContent = '0°';
+		statOriginal.textContent = 'â€”';
+		statOutput.textContent = 'â€”';
+		statAngle.textContent = '0Â°';
 		statFlip.textContent = 'None';
 		fileInput.value = '';
 		hideEditor();

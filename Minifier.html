@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Code Minifier - Multietools</title>
-	<meta name="description" content="Minify HTML, CSS, and JavaScript code to reduce file size. Free online code minifier — instant results. Multietools.">
+	<meta name="description" content="Minify HTML, CSS, and JavaScript code to reduce file size. Free online code minifier â€” instant results. Multietools.">
 	<meta property="og:title" content="Code Minifier - Multietools">
-	<meta property="og:description" content="Minify HTML, CSS, and JavaScript code to reduce file size. Free online code minifier — instant results. Multietools.">
+	<meta property="og:description" content="Minify HTML, CSS, and JavaScript code to reduce file size. Free online code minifier â€” instant results. Multietools.">
 	<meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/Minifier.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
@@ -34,6 +35,8 @@
 		.toast.show{transform:translateY(0);opacity:1;}
 	</style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
@@ -51,7 +54,7 @@
 					<button class="tab" data-lang="js" onclick="selectLang(this)">JavaScript</button>
 				</div>
 			</div>
-			<textarea id="input" placeholder="Paste your code here…"></textarea>
+			<textarea id="input" placeholder="Paste your code hereâ€¦"></textarea>
 			<div class="row" style="margin-top:.75rem;">
 				<button onclick="minify()"><i class="fas fa-compress"></i> Minify</button>
 				<button class="secondary" onclick="copyOut()"><i class="fas fa-copy"></i> Copy Output</button>
@@ -62,7 +65,7 @@
 				<label style="font-weight:700;">Output</label>
 				<div class="stats" id="stats"></div>
 			</div>
-			<textarea id="output" placeholder="Minified output…" readonly></textarea>
+			<textarea id="output" placeholder="Minified outputâ€¦" readonly></textarea>
 		</div>
 	</main>
 </div>

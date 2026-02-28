@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>IP Lookup - Multietools</title>
-	<meta name="description" content="Look up IP address location, ISP, and geolocation details. Free online IP lookup tool — no sign-up. Multietools.">
+	<meta name="description" content="Look up IP address location, ISP, and geolocation details. Free online IP lookup tool â€” no sign-up. Multietools.">
 	<meta property="og:title" content="IP Lookup - Multietools">
-	<meta property="og:description" content="Look up IP address location, ISP, and geolocation details. Free online IP lookup tool — no sign-up. Multietools.">
+	<meta property="og:description" content="Look up IP address location, ISP, and geolocation details. Free online IP lookup tool â€” no sign-up. Multietools.">
 	<meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/ip-lookup.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
@@ -45,6 +46,8 @@
 		@media(max-width:500px){.ip-hero .ip-value{font-size:1.5rem;} .grid{grid-template-columns:1fr;}}
 	</style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
@@ -65,24 +68,24 @@
 		</div>
 
 		<!-- Loading -->
-		<div class="loading" id="loading"><i class="fas fa-spinner fa-spin"></i> Looking up IP details…</div>
+		<div class="loading" id="loading"><i class="fas fa-spinner fa-spin"></i> Looking up IP detailsâ€¦</div>
 
 		<!-- IP Hero -->
 		<div class="panel ip-hero" id="ipHero" style="display:none;">
 			<div class="ip-label">Your IP Address</div>
-			<div class="ip-value" id="ipDisplay">—</div>
+			<div class="ip-value" id="ipDisplay">â€”</div>
 		</div>
 
 		<!-- Details Grid -->
 		<div class="grid" id="results" style="display:none;">
-			<div class="stat"><div class="label">City</div><div class="value" id="r-city">—</div></div>
-			<div class="stat"><div class="label">Region</div><div class="value" id="r-region">—</div></div>
-			<div class="stat"><div class="label">Country</div><div class="value" id="r-country">—</div></div>
-			<div class="stat"><div class="label">Timezone</div><div class="value" id="r-tz">—</div></div>
-			<div class="stat"><div class="label">ISP / Org</div><div class="value" id="r-isp">—</div></div>
-			<div class="stat"><div class="label">Latitude</div><div class="value" id="r-lat">—</div></div>
-			<div class="stat"><div class="label">Longitude</div><div class="value" id="r-lng">—</div></div>
-			<div class="stat"><div class="label">Postal Code</div><div class="value" id="r-postal">—</div></div>
+			<div class="stat"><div class="label">City</div><div class="value" id="r-city">â€”</div></div>
+			<div class="stat"><div class="label">Region</div><div class="value" id="r-region">â€”</div></div>
+			<div class="stat"><div class="label">Country</div><div class="value" id="r-country">â€”</div></div>
+			<div class="stat"><div class="label">Timezone</div><div class="value" id="r-tz">â€”</div></div>
+			<div class="stat"><div class="label">ISP / Org</div><div class="value" id="r-isp">â€”</div></div>
+			<div class="stat"><div class="label">Latitude</div><div class="value" id="r-lat">â€”</div></div>
+			<div class="stat"><div class="label">Longitude</div><div class="value" id="r-lng">â€”</div></div>
+			<div class="stat"><div class="label">Postal Code</div><div class="value" id="r-postal">â€”</div></div>
 		</div>
 
 		<!-- Map -->
@@ -135,14 +138,14 @@
 
 			// Populate
 			document.getElementById('ipDisplay').textContent = currentIP;
-			document.getElementById('r-city').textContent = d.city || '—';
-			document.getElementById('r-region').textContent = d.region || '—';
-			document.getElementById('r-country').textContent = d.country_name || d.country || '—';
-			document.getElementById('r-tz').textContent = d.timezone || '—';
-			document.getElementById('r-isp').textContent = d.org || d.asn || '—';
-			document.getElementById('r-lat').textContent = d.latitude ?? '—';
-			document.getElementById('r-lng').textContent = d.longitude ?? '—';
-			document.getElementById('r-postal').textContent = d.postal || '—';
+			document.getElementById('r-city').textContent = d.city || 'â€”';
+			document.getElementById('r-region').textContent = d.region || 'â€”';
+			document.getElementById('r-country').textContent = d.country_name || d.country || 'â€”';
+			document.getElementById('r-tz').textContent = d.timezone || 'â€”';
+			document.getElementById('r-isp').textContent = d.org || d.asn || 'â€”';
+			document.getElementById('r-lat').textContent = d.latitude ?? 'â€”';
+			document.getElementById('r-lng').textContent = d.longitude ?? 'â€”';
+			document.getElementById('r-postal').textContent = d.postal || 'â€”';
 
 			// Show sections
 			loading.style.display = 'none';

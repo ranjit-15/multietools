@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,7 @@
     <meta property="og:title" content="Contact - Multietools">
     <meta property="og:description" content="Get in touch with the Multietools team. We'd love to hear from you.">
     <meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
     <link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/contact.html">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/global.css">
@@ -245,6 +246,8 @@
         }
     </style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
     <div class="bg-orbs"><span class="o1"></span><span class="o2"></span></div>
@@ -383,8 +386,8 @@
         function generateCaptcha() {
             const ops = [
                 () => { const a = Math.floor(Math.random()*20)+1, b = Math.floor(Math.random()*20)+1; return { q: `${a} + ${b}`, a: a+b }; },
-                () => { const a = Math.floor(Math.random()*20)+5, b = Math.floor(Math.random()*a)+1; return { q: `${a} − ${b}`, a: a-b }; },
-                () => { const a = Math.floor(Math.random()*10)+2, b = Math.floor(Math.random()*10)+2; return { q: `${a} × ${b}`, a: a*b }; }
+                () => { const a = Math.floor(Math.random()*20)+5, b = Math.floor(Math.random()*a)+1; return { q: `${a} âˆ’ ${b}`, a: a-b }; },
+                () => { const a = Math.floor(Math.random()*10)+2, b = Math.floor(Math.random()*10)+2; return { q: `${a} Ã— ${b}`, a: a*b }; }
             ];
             const op = ops[Math.floor(Math.random()*ops.length)]();
             captchaAnswer = op.a;
@@ -458,7 +461,7 @@
             emailjs.sendForm('service_4jtgwzp', 'template_contact', form)
                 .then(() => {
                     showStatus('Message sent successfully! We\'ll get back to you soon.', 'success');
-                    showToast('Message sent! ✓');
+                    showToast('Message sent! âœ“');
                     form.reset();
                     generateCaptcha();
                 })

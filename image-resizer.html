@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Image Resizer - Multietools</title>
-	<meta name="description" content="Resize images to exact dimensions or percentage. Free online image resizer — runs in your browser. Multietools.">
+	<meta name="description" content="Resize images to exact dimensions or percentage. Free online image resizer â€” runs in your browser. Multietools.">
 	<meta property="og:title" content="Image Resizer - Multietools">
-	<meta property="og:description" content="Resize images to exact dimensions or percentage. Free online image resizer — runs in your browser. Multietools.">
+	<meta property="og:description" content="Resize images to exact dimensions or percentage. Free online image resizer â€” runs in your browser. Multietools.">
 	<meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/image-resizer.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
@@ -240,13 +241,15 @@
 		}
 	</style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
 	<header>
 		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
 		<h1><i class="fas fa-expand-arrows-alt"></i> Image Resizer</h1>
-		<p class="muted">Resize images to exact pixel dimensions or scale by percentage — with format conversion &amp; quality control.</p>
+		<p class="muted">Resize images to exact pixel dimensions or scale by percentage â€” with format conversion &amp; quality control.</p>
 	</header>
 
 	<main>
@@ -281,11 +284,11 @@
 
 			<div class="panel-title" style="margin-top:0.5rem;"><i class="fas fa-th-large"></i> Preset Sizes</div>
 			<div class="presets" id="presets">
-				<button class="preset-btn" data-w="640" data-h="480">640×480</button>
-				<button class="preset-btn" data-w="800" data-h="600">800×600</button>
-				<button class="preset-btn" data-w="1024" data-h="768">1024×768</button>
-				<button class="preset-btn" data-w="1280" data-h="720">1280×720</button>
-				<button class="preset-btn" data-w="1920" data-h="1080">1920×1080</button>
+				<button class="preset-btn" data-w="640" data-h="480">640Ã—480</button>
+				<button class="preset-btn" data-w="800" data-h="600">800Ã—600</button>
+				<button class="preset-btn" data-w="1024" data-h="768">1024Ã—768</button>
+				<button class="preset-btn" data-w="1280" data-h="720">1280Ã—720</button>
+				<button class="preset-btn" data-w="1920" data-h="1080">1920Ã—1080</button>
 				<button class="preset-btn" data-scale="0.5">50%</button>
 				<button class="preset-btn" data-scale="0.25">25%</button>
 			</div>
@@ -325,10 +328,10 @@
 		<div class="panel hidden" id="statsPanel">
 			<div class="panel-title"><i class="fas fa-chart-bar"></i> Image Info</div>
 			<div class="stats-bar" id="statsBar">
-				<div class="stat"><i class="fas fa-image"></i> Original: <strong id="origDims">—</strong></div>
-				<div class="stat"><i class="fas fa-file-image"></i> Size: <strong id="origSize">—</strong></div>
-				<div class="stat"><i class="fas fa-arrows-alt"></i> Resized: <strong id="newDims">—</strong></div>
-				<div class="stat"><i class="fas fa-save"></i> New Size: <strong id="newSize">—</strong></div>
+				<div class="stat"><i class="fas fa-image"></i> Original: <strong id="origDims">â€”</strong></div>
+				<div class="stat"><i class="fas fa-file-image"></i> Size: <strong id="origSize">â€”</strong></div>
+				<div class="stat"><i class="fas fa-arrows-alt"></i> Resized: <strong id="newDims">â€”</strong></div>
+				<div class="stat"><i class="fas fa-save"></i> New Size: <strong id="newSize">â€”</strong></div>
 			</div>
 		</div>
 
@@ -446,10 +449,10 @@
 				heightInput.value = img.height;
 
 				// Stats
-				origDims.textContent = `${img.width} × ${img.height}`;
+				origDims.textContent = `${img.width} Ã— ${img.height}`;
 				origSizeEl.textContent = formatBytes(file.size);
-				newDims.textContent = '—';
-				newSizeEl.textContent = '—';
+				newDims.textContent = 'â€”';
+				newSizeEl.textContent = 'â€”';
 
 				// Original preview
 				origPreview.innerHTML = '';
@@ -466,7 +469,7 @@
 				showPanels();
 				resizeBtn.disabled = false;
 				clearActivePresets();
-				toast('Image loaded — set dimensions and resize.');
+				toast('Image loaded â€” set dimensions and resize.');
 			};
 			img.src = e.target.result;
 		};
@@ -573,7 +576,7 @@
 			resizedDataURL = URL.createObjectURL(blob);
 
 			// Stats
-			newDims.textContent = `${targetW} × ${targetH}`;
+			newDims.textContent = `${targetW} Ã— ${targetH}`;
 			newSizeEl.textContent = formatBytes(blob.size);
 
 			// Resized preview
@@ -584,7 +587,7 @@
 
 			// Show download
 			downloadBtn.classList.remove('hidden');
-			toast(`Resized to ${targetW}×${targetH} — ${formatBytes(blob.size)}`);
+			toast(`Resized to ${targetW}Ã—${targetH} â€” ${formatBytes(blob.size)}`);
 		}, mime, fmt === 'png' ? undefined : quality);
 	});
 

@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PDF Page Deleter - Multietools</title>
-  <meta name="description" content="Delete specific pages from PDF files instantly. Free online PDF page deleter — runs in your browser. Multietools.">
+  <meta name="description" content="Delete specific pages from PDF files instantly. Free online PDF page deleter â€” runs in your browser. Multietools.">
   <meta property="og:title" content="PDF Page Deleter - Multietools">
-  <meta property="og:description" content="Delete specific pages from PDF files instantly. Free online PDF page deleter — runs in your browser. Multietools.">
+  <meta property="og:description" content="Delete specific pages from PDF files instantly. Free online PDF page deleter â€” runs in your browser. Multietools.">
   <meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
   <link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/pdf-page-deleter.html">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/global.css">
@@ -49,6 +50,8 @@ main{padding:1.5rem;display:grid;gap:1.25rem;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   </style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
@@ -128,7 +131,7 @@ async function loadPdf(){
     const buf=await currentFile.arrayBuffer();
     const pdf=await pdfjsLib.getDocument({data:buf}).promise;
     totalPages=pdf.numPages;
-    infoBar.innerHTML=`<i class="fas fa-file-pdf"></i> <span>${currentFile.name}</span> — ${totalPages} pages — ${formatSize(currentFile.size)}`;
+    infoBar.innerHTML=`<i class="fas fa-file-pdf"></i> <span>${currentFile.name}</span> â€” ${totalPages} pages â€” ${formatSize(currentFile.size)}`;
 
     for(let i=1;i<=totalPages;i++){
       const page=await pdf.getPage(i);

@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>URL Encoder / Decoder - Multietools</title>
-	<meta name="description" content="Encode and decode URLs for safe web use. Free online URL encoder and decoder — no sign-up needed. Multietools.">
+	<meta name="description" content="Encode and decode URLs for safe web use. Free online URL encoder and decoder â€” no sign-up needed. Multietools.">
 	<meta property="og:title" content="URL Encoder / Decoder - Multietools">
-	<meta property="og:description" content="Encode and decode URLs for safe web use. Free online URL encoder and decoder — no sign-up needed. Multietools.">
+	<meta property="og:description" content="Encode and decode URLs for safe web use. Free online URL encoder and decoder â€” no sign-up needed. Multietools.">
 	<meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/url-encoder.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
@@ -30,6 +31,8 @@
 		.toast.show{transform:translateY(0);opacity:1;}
 	</style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
@@ -41,7 +44,7 @@
 	<main>
 		<div class="panel">
 			<label class="section">Input</label>
-			<textarea id="input" placeholder="Paste text or URL…" oninput="autoProcess()"></textarea>
+			<textarea id="input" placeholder="Paste text or URLâ€¦" oninput="autoProcess()"></textarea>
 			<div class="row" style="margin-top:.75rem;">
 				<button onclick="doEncode()"><i class="fas fa-lock"></i> URL Encode</button>
 				<button onclick="doDecode()"><i class="fas fa-lock-open"></i> URL Decode</button>
@@ -58,7 +61,7 @@
 				<label class="section" style="margin:0;">Output</label>
 				<button class="secondary" onclick="copyOut()"><i class="fas fa-copy"></i> Copy</button>
 			</div>
-			<textarea id="output" placeholder="Result…" readonly></textarea>
+			<textarea id="output" placeholder="Resultâ€¦" readonly></textarea>
 		</div>
 	</main>
 </div>

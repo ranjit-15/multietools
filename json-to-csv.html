@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>JSON ↔ CSV Converter - Multietools</title>
-	<meta name="description" content="Convert JSON to CSV and CSV to JSON online. Free bidirectional data converter — no sign-up needed. Multietools.">
-	<meta property="og:title" content="JSON ↔ CSV Converter - Multietools">
-	<meta property="og:description" content="Convert JSON to CSV and CSV to JSON online. Free bidirectional data converter — no sign-up needed. Multietools.">
+	<title>JSON â†” CSV Converter - Multietools</title>
+	<meta name="description" content="Convert JSON to CSV and CSV to JSON online. Free bidirectional data converter â€” no sign-up needed. Multietools.">
+	<meta property="og:title" content="JSON â†” CSV Converter - Multietools">
+	<meta property="og:description" content="Convert JSON to CSV and CSV to JSON online. Free bidirectional data converter â€” no sign-up needed. Multietools.">
 	<meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/json-to-csv.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
@@ -62,19 +63,21 @@
 		@media(max-width:500px){.options{flex-direction:column;align-items:flex-start;}}
 	</style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
 	<header>
 		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
-		<h1><i class="fas fa-file-csv"></i> JSON ↔ CSV Converter</h1>
+		<h1><i class="fas fa-file-csv"></i> JSON â†” CSV Converter</h1>
 		<p class="muted">Convert JSON arrays to CSV and CSV files back to JSON instantly.</p>
 	</header>
 	<main>
 		<!-- Tabs -->
 		<div class="tab-row">
-			<button class="tab-btn active" data-mode="j2c"><i class="fas fa-arrow-right"></i> JSON → CSV</button>
-			<button class="tab-btn" data-mode="c2j"><i class="fas fa-arrow-left"></i> CSV → JSON</button>
+			<button class="tab-btn active" data-mode="j2c"><i class="fas fa-arrow-right"></i> JSON â†’ CSV</button>
+			<button class="tab-btn" data-mode="c2j"><i class="fas fa-arrow-left"></i> CSV â†’ JSON</button>
 		</div>
 
 		<!-- Input -->
@@ -118,7 +121,7 @@
 		<!-- Output -->
 		<div class="panel">
 			<h3 id="outputLabel"><i class="fas fa-table"></i> CSV Output</h3>
-			<textarea id="outputArea" readonly placeholder="Output will appear here…"></textarea>
+			<textarea id="outputArea" readonly placeholder="Output will appear hereâ€¦"></textarea>
 			<div class="row">
 				<button class="btn btn-outline" onclick="copyOutput()"><i class="fas fa-copy"></i> Copy</button>
 				<button class="btn btn-outline" onclick="downloadOutput()"><i class="fas fa-download"></i> Download</button>
@@ -242,7 +245,7 @@
 
 		// Show preview
 		showPreview(cols, data.slice(0, 10));
-		showToast('Converted JSON → CSV!');
+		showToast('Converted JSON â†’ CSV!');
 	}
 
 	function convertCsvToJson(val) {
@@ -265,7 +268,7 @@
 
 		// Show preview
 		showPreview(headers, result.slice(0, 10));
-		showToast('Converted CSV → JSON!');
+		showToast('Converted CSV â†’ JSON!');
 	}
 
 	function escapeCsv(v, d) {

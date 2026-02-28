@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -8,6 +8,7 @@
 	<meta property="og:title" content="Percentage Calculator - Multietools">
 	<meta property="og:description" content="Calculate percentages, increases, decreases, and ratios instantly. Free online percentage calculator. Multietools.">
 	<meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/percentage-calculator.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
@@ -39,13 +40,15 @@
 		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 	</style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
 	<header>
 		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
 		<h1><i class="fas fa-percent"></i> Percentage Calculator</h1>
-		<p class="muted">Four handy percentage calculations — results update as you type.</p>
+		<p class="muted">Four handy percentage calculations â€” results update as you type.</p>
 	</header>
 	<main>
 		<!-- Mode 1: X% of Y -->
@@ -55,7 +58,7 @@
 				What is <input type="number" id="m1x" placeholder="X" step="any"> % of <input type="number" id="m1y" placeholder="Y" step="any"> ?
 			</div>
 			<div class="result-line">
-				<span>= </span><span class="val" id="m1r">—</span>
+				<span>= </span><span class="val" id="m1r">â€”</span>
 				<button class="copy-btn" onclick="copyResult('m1r')"><i class="fas fa-copy"></i> Copy</button>
 			</div>
 		</div>
@@ -67,7 +70,7 @@
 				<input type="number" id="m2x" placeholder="X" step="any"> is what % of <input type="number" id="m2y" placeholder="Y" step="any"> ?
 			</div>
 			<div class="result-line">
-				<span>= </span><span class="val" id="m2r">—</span>
+				<span>= </span><span class="val" id="m2r">â€”</span>
 				<button class="copy-btn" onclick="copyResult('m2r')"><i class="fas fa-copy"></i> Copy</button>
 			</div>
 		</div>
@@ -79,7 +82,7 @@
 				From <input type="number" id="m3x" placeholder="X" step="any"> to <input type="number" id="m3y" placeholder="Y" step="any">
 			</div>
 			<div class="result-line">
-				<span>= </span><span class="val" id="m3r">—</span>
+				<span>= </span><span class="val" id="m3r">â€”</span>
 				<button class="copy-btn" onclick="copyResult('m3r')"><i class="fas fa-copy"></i> Copy</button>
 			</div>
 		</div>
@@ -91,12 +94,12 @@
 				<input type="number" id="m4x" placeholder="X" step="any">
 				<select id="m4dir" style="padding:.6rem .5rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-family:inherit;font-weight:600;">
 					<option value="increase">+ Increase</option>
-					<option value="decrease">− Decrease</option>
+					<option value="decrease">âˆ’ Decrease</option>
 				</select>
 				by <input type="number" id="m4y" placeholder="Y" step="any"> %
 			</div>
 			<div class="result-line">
-				<span>= </span><span class="val" id="m4r">—</span>
+				<span>= </span><span class="val" id="m4r">â€”</span>
 				<button class="copy-btn" onclick="copyResult('m4r')"><i class="fas fa-copy"></i> Copy</button>
 			</div>
 		</div>
@@ -110,7 +113,7 @@ function showToast(m){const t=document.getElementById('toast');t.textContent=m;t
 
 function copyResult(id) {
 	const val = document.getElementById(id).textContent;
-	if (!val || val === '—') { showToast('Nothing to copy!'); return; }
+	if (!val || val === 'â€”') { showToast('Nothing to copy!'); return; }
 	navigator.clipboard.writeText(val);
 	showToast('Copied: ' + val);
 }
@@ -121,7 +124,7 @@ document.getElementById('m1y').addEventListener('input', calcM1);
 function calcM1() {
 	const x = parseFloat(document.getElementById('m1x').value);
 	const y = parseFloat(document.getElementById('m1y').value);
-	document.getElementById('m1r').textContent = (!isNaN(x) && !isNaN(y)) ? round((x / 100) * y) : '—';
+	document.getElementById('m1r').textContent = (!isNaN(x) && !isNaN(y)) ? round((x / 100) * y) : 'â€”';
 }
 
 // --- Mode 2: X is what % of Y ---
@@ -133,7 +136,7 @@ function calcM2() {
 	if (!isNaN(x) && !isNaN(y) && y !== 0) {
 		document.getElementById('m2r').textContent = round((x / y) * 100) + '%';
 	} else {
-		document.getElementById('m2r').textContent = '—';
+		document.getElementById('m2r').textContent = 'â€”';
 	}
 }
 
@@ -148,7 +151,7 @@ function calcM3() {
 		const prefix = change >= 0 ? '+' : '';
 		document.getElementById('m3r').textContent = prefix + round(change) + '%';
 	} else {
-		document.getElementById('m3r').textContent = '—';
+		document.getElementById('m3r').textContent = 'â€”';
 	}
 }
 
@@ -164,7 +167,7 @@ function calcM4() {
 		const factor = dir === 'increase' ? (1 + y / 100) : (1 - y / 100);
 		document.getElementById('m4r').textContent = round(x * factor);
 	} else {
-		document.getElementById('m4r').textContent = '—';
+		document.getElementById('m4r').textContent = 'â€”';
 	}
 }
 

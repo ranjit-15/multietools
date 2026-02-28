@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -8,6 +8,7 @@
 <meta property="og:title" content="Text to Speech - Multietools">
 <meta property="og:description" content="Convert text to natural speech audio with multiple voices and languages. Free online text-to-speech tool. Multietools.">
 <meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 <link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/text-to-speech.html">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="css/global.css">
@@ -44,6 +45,8 @@ button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
 .toast.show{transform:translateY(0);opacity:1;}
 </style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
@@ -55,7 +58,7 @@ button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
 <main>
 <div class="panel">
 <label class="section">Text Input</label>
-<textarea id="text" placeholder="Type or paste the text you want spoken…"></textarea>
+<textarea id="text" placeholder="Type or paste the text you want spokenâ€¦"></textarea>
 <div class="info">
 <span><i class="fas fa-font"></i> <span id="charCount">0</span> characters</span>
 <span><i class="fas fa-clock"></i> Est. duration: <span id="estDur">0s</span></span>
@@ -66,7 +69,7 @@ button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
 <div class="controls-grid">
 <div class="field">
 <label for="voiceSelect">Voice</label>
-<select id="voiceSelect"><option>Loading voices…</option></select>
+<select id="voiceSelect"><option>Loading voicesâ€¦</option></select>
 </div>
 <div class="field">
 <label>Speed: <span class="range-val" id="speedVal">1.0</span></label>
@@ -81,7 +84,7 @@ button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
 <button class="btn-primary" id="btnSpeak" onclick="doSpeak()"><i class="fas fa-play"></i> Speak</button>
 <button class="btn-warn" id="btnPause" onclick="doPause()"><i class="fas fa-pause"></i> Pause</button>
 <button class="btn-danger" onclick="doStop()"><i class="fas fa-stop"></i> Stop</button>
-<span class="speaking-indicator" id="speakingInd"><span class="dot"></span> Speaking…</span>
+<span class="speaking-indicator" id="speakingInd"><span class="dot"></span> Speakingâ€¦</span>
 </div>
 </div>
 </main>
@@ -140,7 +143,7 @@ function doSpeak(){
   utter.onend=function(){indicator.classList.remove('active');isPaused=false;pauseBtn.innerHTML='<i class="fas fa-pause"></i> Pause';};
   utter.onerror=function(){indicator.classList.remove('active');};
   synth.speak(utter);isPaused=false;
-  showToast('Speaking…');
+  showToast('Speakingâ€¦');
 }
 
 function doPause(){

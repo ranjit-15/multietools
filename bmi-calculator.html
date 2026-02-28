@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>BMI Calculator - Multietools</title>
-	<meta name="description" content="Calculate your Body Mass Index instantly with health category. Free online BMI calculator — no sign-up. Multietools.">
+	<meta name="description" content="Calculate your Body Mass Index instantly with health category. Free online BMI calculator â€” no sign-up. Multietools.">
 	<meta property="og:title" content="BMI Calculator - Multietools">
-	<meta property="og:description" content="Calculate your Body Mass Index instantly with health category. Free online BMI calculator — no sign-up. Multietools.">
+	<meta property="og:description" content="Calculate your Body Mass Index instantly with health category. Free online BMI calculator â€” no sign-up. Multietools.">
 	<meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/bmi-calculator.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
@@ -51,6 +52,8 @@
 		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 	</style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
@@ -80,8 +83,8 @@
 
 		<div class="panel" id="resultPanel" style="display:none;">
 			<div class="result-box">
-				<div class="bmi-value" id="bmiValue">—</div>
-				<div class="bmi-category" id="bmiCategory">—</div>
+				<div class="bmi-value" id="bmiValue">â€”</div>
+				<div class="bmi-category" id="bmiCategory">â€”</div>
 				<div class="bmi-detail" id="bmiDetail"></div>
 			</div>
 
@@ -190,18 +193,18 @@ function calc() {
 	const pct = Math.min(100, Math.max(0, ((bmi - 10) / 35) * 100));
 	gaugePointer.style.left = pct + '%';
 
-	// Ideal weight range (BMI 18.5–24.9)
+	// Ideal weight range (BMI 18.5â€“24.9)
 	const idealLow = 18.5 * hM * hM;
 	const idealHigh = 24.9 * hM * hM;
 	if (unit === 'imperial') {
 		idealRange.innerHTML = '<i class="fas fa-bullseye"></i> Ideal weight range: ' +
-			(idealLow * 2.20462).toFixed(1) + ' – ' + (idealHigh * 2.20462).toFixed(1) + ' lb';
+			(idealLow * 2.20462).toFixed(1) + ' â€“ ' + (idealHigh * 2.20462).toFixed(1) + ' lb';
 	} else {
 		idealRange.innerHTML = '<i class="fas fa-bullseye"></i> Ideal weight range: ' +
-			idealLow.toFixed(1) + ' – ' + idealHigh.toFixed(1) + ' kg';
+			idealLow.toFixed(1) + ' â€“ ' + idealHigh.toFixed(1) + ' kg';
 	}
 
-	showToast('BMI: ' + bmi.toFixed(1) + ' — ' + cat);
+	showToast('BMI: ' + bmi.toFixed(1) + ' â€” ' + cat);
 }
 </script>
 

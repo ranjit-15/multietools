@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -8,6 +8,7 @@
 	<meta property="og:title" content="Image Converter - Multietools">
 	<meta property="og:description" content="Convert images between PNG, JPG, WEBP, BMP formats with quality control. Free online image converter. Multietools.">
 	<meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/image-converter.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
@@ -61,13 +62,15 @@
 		@media(max-width:640px){.preview-area{grid-template-columns:1fr;}.controls{flex-direction:column;}}
 	</style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
 	<header>
 		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
 		<h1><i class="fas fa-exchange-alt"></i> Image Converter</h1>
-		<p class="muted">Convert images to PNG, JPG, WEBP, or BMP — drag &amp; drop or browse files.</p>
+		<p class="muted">Convert images to PNG, JPG, WEBP, or BMP â€” drag &amp; drop or browse files.</p>
 	</header>
 	<main>
 		<!-- Upload -->
@@ -102,9 +105,9 @@
 		<!-- Stats -->
 		<div class="stats" id="stats" style="display:none;">
 			<div class="stat-card"><div class="label">Files</div><div class="value" id="statFiles">0</div></div>
-			<div class="stat-card"><div class="label">Original Size</div><div class="value" id="statOriginal">—</div></div>
-			<div class="stat-card"><div class="label">Converted Size</div><div class="value" id="statConverted">—</div></div>
-			<div class="stat-card"><div class="label">Savings</div><div class="value" id="statSavings">—</div></div>
+			<div class="stat-card"><div class="label">Original Size</div><div class="value" id="statOriginal">â€”</div></div>
+			<div class="stat-card"><div class="label">Converted Size</div><div class="value" id="statConverted">â€”</div></div>
+			<div class="stat-card"><div class="label">Savings</div><div class="value" id="statSavings">â€”</div></div>
 		</div>
 
 		<!-- Batch list -->

@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>AI Paraphraser - Multietools</title>
-	<meta name="description" content="Rephrase and rewrite text with AI in multiple tones. Free online paraphraser — no sign-up required. Multietools.">
+	<meta name="description" content="Rephrase and rewrite text with AI in multiple tones. Free online paraphraser â€” no sign-up required. Multietools.">
 	<meta property="og:title" content="AI Paraphraser - Multietools">
-	<meta property="og:description" content="Rephrase and rewrite text with AI in multiple tones. Free online paraphraser — no sign-up required. Multietools.">
+	<meta property="og:description" content="Rephrase and rewrite text with AI in multiple tones. Free online paraphraser â€” no sign-up required. Multietools.">
 	<meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/ai-paraphraser.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
@@ -96,13 +97,15 @@
 		}
 	</style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
 	<header>
 		<a class="back" href="tools.html#ai-tools"><i class="fas fa-arrow-left"></i> Back to Tools</a>
 		<h1><i class="fas fa-wand-magic-sparkles"></i> AI Paraphraser</h1>
-		<p class="muted">Rewrite text in different styles — Standard, Formal, Casual, Creative, or Shortened.</p>
+		<p class="muted">Rewrite text in different styles â€” Standard, Formal, Casual, Creative, or Shortened.</p>
 	</header>
 	<main>
 		<!-- Mode Selector -->
@@ -116,7 +119,7 @@
 				<button class="mode-btn" data-mode="shortened"><i class="fas fa-compress"></i> Shortened</button>
 			</div>
 			<div class="info-box" id="modeInfo">
-				<i class="fas fa-info-circle"></i> <strong>Standard</strong> — Balanced rewriting with synonym replacement and sentence restructuring. Preserves meaning while varying vocabulary and structure.
+				<i class="fas fa-info-circle"></i> <strong>Standard</strong> â€” Balanced rewriting with synonym replacement and sentence restructuring. Preserves meaning while varying vocabulary and structure.
 			</div>
 		</div>
 
@@ -161,11 +164,11 @@
 
 			<!-- Stats Bar (hidden until output exists) -->
 			<div class="stats-bar" id="statsBar" style="display:none;">
-				<div class="stat-item"><i class="fas fa-arrow-right"></i> Words: <strong id="statInputWords">0</strong> → <strong id="statOutputWords">0</strong></div>
+				<div class="stat-item"><i class="fas fa-arrow-right"></i> Words: <strong id="statInputWords">0</strong> â†’ <strong id="statOutputWords">0</strong></div>
 				<div class="stat-divider"></div>
 				<div class="stat-item"><i class="fas fa-percentage"></i> Change: <strong id="statChangePercent">0%</strong></div>
 				<div class="stat-divider"></div>
-				<div class="stat-item"><i class="fas fa-font"></i> Characters: <strong id="statInputChars">0</strong> → <strong id="statOutputChars">0</strong></div>
+				<div class="stat-item"><i class="fas fa-font"></i> Characters: <strong id="statInputChars">0</strong> â†’ <strong id="statOutputChars">0</strong></div>
 				<div class="stat-divider"></div>
 				<div class="stat-item"><i class="fas fa-shuffle"></i> Words Changed: <strong id="statWordsChanged">0</strong></div>
 			</div>
@@ -454,11 +457,11 @@ function updateInputCounts() {
 }
 
 const MODE_DESCRIPTIONS = {
-	standard: '<i class="fas fa-info-circle"></i> <strong>Standard</strong> — Balanced rewriting with synonym replacement and sentence restructuring. Preserves meaning while varying vocabulary and structure.',
-	formal: '<i class="fas fa-info-circle"></i> <strong>Formal</strong> — Elevates language to a professional, academic tone. Uses formal vocabulary, complex sentence structures, and removes colloquialisms.',
-	casual: '<i class="fas fa-info-circle"></i> <strong>Casual</strong> — Makes text conversational and approachable. Simplifies complex language, shortens sentences, and adds a relaxed tone.',
-	creative: '<i class="fas fa-info-circle"></i> <strong>Creative</strong> — Transforms text with vivid, imaginative language. Uses metaphors, expressive adjectives, and dynamic sentence structures.',
-	shortened: '<i class="fas fa-info-circle"></i> <strong>Shortened</strong> — Condenses text to its essential meaning. Removes filler words, combines sentences, and delivers the core message concisely.'
+	standard: '<i class="fas fa-info-circle"></i> <strong>Standard</strong> â€” Balanced rewriting with synonym replacement and sentence restructuring. Preserves meaning while varying vocabulary and structure.',
+	formal: '<i class="fas fa-info-circle"></i> <strong>Formal</strong> â€” Elevates language to a professional, academic tone. Uses formal vocabulary, complex sentence structures, and removes colloquialisms.',
+	casual: '<i class="fas fa-info-circle"></i> <strong>Casual</strong> â€” Makes text conversational and approachable. Simplifies complex language, shortens sentences, and adds a relaxed tone.',
+	creative: '<i class="fas fa-info-circle"></i> <strong>Creative</strong> â€” Transforms text with vivid, imaginative language. Uses metaphors, expressive adjectives, and dynamic sentence structures.',
+	shortened: '<i class="fas fa-info-circle"></i> <strong>Shortened</strong> â€” Condenses text to its essential meaning. Removes filler words, combines sentences, and delivers the core message concisely.'
 };
 
 function updateModeInfo() {
@@ -513,7 +516,7 @@ function matchCase(original, replacement) {
 
 // Passive/active voice swap (simple heuristic)
 function tryPassiveToActive(sentence) {
-	// Pattern: "X was/were [verb]ed by Y" → "Y [verb]ed X"
+	// Pattern: "X was/were [verb]ed by Y" â†’ "Y [verb]ed X"
 	const passiveRe = /^(.+?)\s+(was|were)\s+(\w+ed)\s+by\s+(.+)$/i;
 	const m = sentence.match(passiveRe);
 	if (m) {
@@ -526,7 +529,7 @@ function tryPassiveToActive(sentence) {
 }
 
 function tryActiveToPassive(sentence) {
-	// Simple: "Subject verbs Object." → "Object was verbed by Subject."
+	// Simple: "Subject verbs Object." â†’ "Object was verbed by Subject."
 	const parts = sentence.split(/\s+/);
 	if (parts.length >= 3 && parts.length <= 12) {
 		const subject = parts[0];
@@ -890,7 +893,7 @@ function renderOutput() {
 		document.getElementById('statWordsChanged').textContent = diff.changedCount;
 	} else {
 		outputEl.textContent = rawOutput;
-		document.getElementById('statWordsChanged').textContent = '—';
+		document.getElementById('statWordsChanged').textContent = 'â€”';
 	}
 }
 

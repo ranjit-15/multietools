@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Text Reverser - Multietools</title>
-<meta name="description" content="Reverse text, words, or sentences instantly. Free online text reverser tool — no sign-up required. Multietools.">
+<meta name="description" content="Reverse text, words, or sentences instantly. Free online text reverser tool â€” no sign-up required. Multietools.">
 <meta property="og:title" content="Text Reverser - Multietools">
-<meta property="og:description" content="Reverse text, words, or sentences instantly. Free online text reverser tool — no sign-up required. Multietools.">
+<meta property="og:description" content="Reverse text, words, or sentences instantly. Free online text reverser tool â€” no sign-up required. Multietools.">
 <meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 <link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/text-reverser.html">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="css/global.css">
@@ -32,18 +33,20 @@ button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
 .toast.show{transform:translateY(0);opacity:1;}
 </style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
 <header>
 <a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
 <h1><i class="fas fa-exchange-alt"></i> Text Reverser</h1>
-<p class="muted">Reverse text by characters, words, word-order, or lines — emoji-safe.</p>
+<p class="muted">Reverse text by characters, words, word-order, or lines â€” emoji-safe.</p>
 </header>
 <main>
 <div class="panel">
 <label class="section">Input</label>
-<textarea id="input" placeholder="Enter your text here…"></textarea>
+<textarea id="input" placeholder="Enter your text hereâ€¦"></textarea>
 <div class="btn-grid">
 <button class="btn-mode" onclick="doReverse('chars')"><i class="fas fa-text-width"></i> Reverse Entire Text</button>
 <button class="btn-mode" onclick="doReverse('wordLetters')"><i class="fas fa-spell-check"></i> Reverse Each Word</button>
@@ -53,7 +56,7 @@ button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
 </div>
 <div class="panel">
 <label class="section">Output</label>
-<textarea id="output" placeholder="Result will appear here…" readonly></textarea>
+<textarea id="output" placeholder="Result will appear hereâ€¦" readonly></textarea>
 <div class="btn-grid">
 <button class="btn-action" onclick="copyOut()"><i class="fas fa-copy"></i> Copy Output</button>
 </div>

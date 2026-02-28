@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -8,6 +8,7 @@
   <meta property="og:title" content="Image Color Picker | MultiTools">
   <meta property="og:description" content="Pick colors from any uploaded image and get HEX, RGB values. Free online image color picker. Multietools.">
   <meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
   <link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/image-color-picker.html">
   <link rel="stylesheet" href="css/global.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -88,6 +89,8 @@
     }
   </style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
   <div class="wrap">
@@ -150,7 +153,7 @@
           <button class="clear-btn" id="clearPalette"><i class="fa-solid fa-trash-can"></i> Clear</button>
         </div>
         <div class="palette-grid" id="paletteGrid">
-          <span class="palette-empty">Pick colors to build your palette…</span>
+          <span class="palette-empty">Pick colors to build your paletteâ€¦</span>
         </div>
       </div>
     </main>
@@ -161,7 +164,7 @@
   <script src="js/global.js"></script>
   <script>
   (() => {
-    /* ── Helpers ── */
+    /* â”€â”€ Helpers â”€â”€ */
     function rgbToHsl(r, g, b) {
       r /= 255; g /= 255; b /= 255;
       const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
@@ -188,7 +191,7 @@
       setTimeout(() => el.remove(), 2800);
     }
 
-    /* ── DOM refs ── */
+    /* â”€â”€ DOM refs â”€â”€ */
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
     const browseBtn = document.getElementById('browseBtn');
@@ -212,7 +215,7 @@
     let palette = [];
     let imgLoaded = false;
 
-    /* ── Drop zone events ── */
+    /* â”€â”€ Drop zone events â”€â”€ */
     browseBtn.addEventListener('click', () => fileInput.click());
     dropZone.addEventListener('click', (e) => { if (e.target !== browseBtn && !browseBtn.contains(e.target)) fileInput.click(); });
 
@@ -225,7 +228,7 @@
     });
     fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); });
 
-    /* ── Load image ── */
+    /* â”€â”€ Load image â”€â”€ */
     function handleFile(file) {
       if (!file.type.startsWith('image/')) { toast('Please select a valid image file.', 'error'); return; }
       const reader = new FileReader();
@@ -243,14 +246,14 @@
           canvasPanel.style.display = '';
           resultPanel.style.display = '';
           palettePanel.style.display = '';
-          toast('Image loaded — click to pick colors!', 'success');
+          toast('Image loaded â€” click to pick colors!', 'success');
         };
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
 
-    /* ── Magnifier ── */
+    /* â”€â”€ Magnifier â”€â”€ */
     canvasWrapper.addEventListener('mousemove', e => {
       if (!imgLoaded) return;
       magnifier.style.display = 'block';
@@ -274,7 +277,7 @@
     });
     canvasWrapper.addEventListener('mouseleave', () => { magnifier.style.display = 'none'; });
 
-    /* ── Pick color on click ── */
+    /* â”€â”€ Pick color on click â”€â”€ */
     canvas.addEventListener('click', e => {
       if (!imgLoaded) return;
       const rect = canvas.getBoundingClientRect();
@@ -287,7 +290,7 @@
       addToPalette(rgbToHex(r, g, b));
     });
 
-    /* ── Apply picked color ── */
+    /* â”€â”€ Apply picked color â”€â”€ */
     function applyColor(r, g, b) {
       const hex = rgbToHex(r, g, b);
       const [h, s, l] = rgbToHsl(r, g, b);
@@ -298,7 +301,7 @@
       hslVal.value = `hsl(${h}, ${s}%, ${l}%)`;
     }
 
-    /* ── Copy buttons ── */
+    /* â”€â”€ Copy buttons â”€â”€ */
     document.querySelectorAll('.copy-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const input = document.getElementById(btn.dataset.target);
@@ -313,7 +316,7 @@
       });
     });
 
-    /* ── Palette ── */
+    /* â”€â”€ Palette â”€â”€ */
     function addToPalette(hex) {
       hex = hex.toUpperCase();
       /* remove duplicate if already in palette */
@@ -325,7 +328,7 @@
 
     function renderPalette() {
       if (!palette.length) {
-        paletteGrid.innerHTML = '<span class="palette-empty">Pick colors to build your palette…</span>';
+        paletteGrid.innerHTML = '<span class="palette-empty">Pick colors to build your paletteâ€¦</span>';
         return;
       }
       paletteGrid.innerHTML = '';
@@ -351,7 +354,7 @@
       toast('Palette cleared', 'info');
     });
 
-    /* ── Optimise magnifier: cache data URL on mouseenter ── */
+    /* â”€â”€ Optimise magnifier: cache data URL on mouseenter â”€â”€ */
     let cachedDataURL = '';
     canvasWrapper.addEventListener('mouseenter', () => {
       if (imgLoaded) cachedDataURL = canvas.toDataURL();

@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Hash Generator - Multietools</title>
-	<meta name="description" content="Generate MD5, SHA-1, SHA-256, and other hashes from text. Free online hash generator — no sign-up. Multietools.">
+	<meta name="description" content="Generate MD5, SHA-1, SHA-256, and other hashes from text. Free online hash generator â€” no sign-up. Multietools.">
 	<meta property="og:title" content="Hash Generator - Multietools">
-	<meta property="og:description" content="Generate MD5, SHA-1, SHA-256, and other hashes from text. Free online hash generator — no sign-up. Multietools.">
+	<meta property="og:description" content="Generate MD5, SHA-1, SHA-256, and other hashes from text. Free online hash generator â€” no sign-up. Multietools.">
 	<meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/hash-generator.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
@@ -40,6 +41,8 @@
 		.toast.show{transform:translateY(0);opacity:1;}
 	</style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
@@ -51,7 +54,7 @@
 	<main>
 		<div class="panel">
 			<label class="section">Text Input</label>
-			<textarea id="input" placeholder="Type or paste text to hash…" oninput="autoHash()"></textarea>
+			<textarea id="input" placeholder="Type or paste text to hashâ€¦" oninput="autoHash()"></textarea>
 			<div class="row" style="margin-top:.65rem;">
 				<label class="section" style="margin:0;">Algorithm</label>
 				<select id="algo" onchange="autoHash()">
@@ -200,7 +203,7 @@ function renderRows(algos){
 	container.innerHTML=algos.map(a=>`
 		<div class="hash-row">
 			<span class="hash-label">${a}</span>
-			<span class="hash-value" id="hash-${a.replace('-','')}">—</span>
+			<span class="hash-value" id="hash-${a.replace('-','')}">â€”</span>
 			<button class="hash-copy" onclick="copyHash('${a.replace('-','')}')"><i class="fas fa-copy"></i></button>
 		</div>
 	`).join('');
@@ -212,7 +215,7 @@ async function autoHash(){
 	const selectedAlgo=document.getElementById('algo').value;
 	const algos=showAll?ALGOS:[selectedAlgo];
 	renderRows(algos);
-	if(!text){algos.forEach(a=>{document.getElementById('hash-'+a.replace('-','')).textContent='—';});return;}
+	if(!text){algos.forEach(a=>{document.getElementById('hash-'+a.replace('-','')).textContent='â€”';});return;}
 	for(const a of algos){
 		const h=await hashText(text,a);
 		document.getElementById('hash-'+a.replace('-','')).textContent=h;
@@ -236,7 +239,7 @@ async function hashFile(){
 
 function copyHash(id){
 	const el=document.getElementById('hash-'+id);
-	if(!el||el.textContent==='—'){showToast('No hash to copy');return;}
+	if(!el||el.textContent==='â€”'){showToast('No hash to copy');return;}
 	navigator.clipboard.writeText(el.textContent).then(()=>showToast('Hash copied!'));
 }
 

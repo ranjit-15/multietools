@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Grammar Checker - Multietools</title>
-<meta name="description" content="Fix grammar, spelling, and punctuation errors with AI. Free online grammar checker — no sign-up needed. Multietools.">
+<meta name="description" content="Fix grammar, spelling, and punctuation errors with AI. Free online grammar checker â€” no sign-up needed. Multietools.">
 <meta property="og:title" content="AI Grammar Checker - Multietools">
-<meta property="og:description" content="Fix grammar, spelling, and punctuation errors with AI. Free online grammar checker — no sign-up needed. Multietools.">
+<meta property="og:description" content="Fix grammar, spelling, and punctuation errors with AI. Free online grammar checker â€” no sign-up needed. Multietools.">
 <meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 <link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/ai-grammar-checker.html">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="css/global.css">
@@ -123,13 +124,15 @@ main{padding:1.5rem;display:grid;gap:1.25rem;}
 }
 </style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
 	<header>
 		<a class="back" href="tools.html#ai-tools"><i class="fas fa-arrow-left"></i> Back to Tools</a>
 		<h1><i class="fas fa-spell-check"></i> AI Grammar Checker</h1>
-		<p class="muted">Check grammar, spelling, punctuation, and style — get instant suggestions to improve your writing.</p>
+		<p class="muted">Check grammar, spelling, punctuation, and style â€” get instant suggestions to improve your writing.</p>
 	</header>
 	<main>
 		<!-- Score Panel -->
@@ -141,7 +144,7 @@ main{padding:1.5rem;display:grid;gap:1.25rem;}
 						<circle class="fill" id="scoreFill" cx="36" cy="36" r="30"
 							stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
 					</svg>
-					<div class="score-value" id="scoreValue">—</div>
+					<div class="score-value" id="scoreValue">â€”</div>
 				</div>
 				<div class="score-info">
 					<div class="score-label">Writing Score</div>
@@ -179,7 +182,7 @@ main{padding:1.5rem;display:grid;gap:1.25rem;}
 				</div>
 				<div class="loading" id="loading"><div class="spinner"></div> Analyzing your text...</div>
 				<div class="info-box">
-					<i class="fas fa-info-circle"></i> This grammar checker uses a built-in rule engine with 100+ spelling corrections, grammar pattern matching, punctuation rules, and style suggestions. All processing is done locally in your browser — no data is sent anywhere.
+					<i class="fas fa-info-circle"></i> This grammar checker uses a built-in rule engine with 100+ spelling corrections, grammar pattern matching, punctuation rules, and style suggestions. All processing is done locally in your browser â€” no data is sent anywhere.
 				</div>
 			</div>
 
@@ -208,14 +211,14 @@ main{padding:1.5rem;display:grid;gap:1.25rem;}
 <script src="js/global.js"></script>
 <script>
 /* ==============================================================
-   AI Grammar Checker — Client-Side Rule Engine
+   AI Grammar Checker â€” Client-Side Rule Engine
    ============================================================== */
 
-// ─── State ────────────────────────────────────────────────────
+// â”€â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let currentIssues = [];
 let activeFilter = 'all';
 
-// ─── DOM refs ─────────────────────────────────────────────────
+// â”€â”€â”€ DOM refs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const editorEl      = document.getElementById('editor');
 const wordCountEl   = document.getElementById('wordCount');
 const sentCountEl   = document.getElementById('sentenceCount');
@@ -229,7 +232,7 @@ const loadingEl     = document.getElementById('loading');
 const fixAllBtn     = document.getElementById('fixAllBtn');
 const checkBtn      = document.getElementById('checkBtn');
 
-// ─── Helpers ──────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getPlainText(){
 	return editorEl.innerText || '';
 }
@@ -248,14 +251,14 @@ editorEl.addEventListener('input',()=>{
 	sentCountEl.textContent=sentences.length+' sentence'+(sentences.length!==1?'s':'');
 });
 
-// ─── Toast ────────────────────────────────────────────────────
+// â”€â”€â”€ Toast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showToast(msg){
 	const t=document.getElementById('toast');
 	t.textContent=msg;t.classList.add('show');
 	setTimeout(()=>t.classList.remove('show'),2400);
 }
 
-// ─── SPELLING DICTIONARY (100+ entries) ───────────────────────
+// â”€â”€â”€ SPELLING DICTIONARY (100+ entries) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const MISSPELLINGS = {
 	'teh':'the','thier':'their','recieve':'receive','beleive':'believe','occured':'occurred',
 	'seperate':'separate','definately':'definitely','goverment':'government','occassion':'occasion',
@@ -320,7 +323,7 @@ const MISSPELLINGS = {
 	'incidently':'incidentally','innoculate':'inoculate','intelligance':'intelligence'
 };
 
-// ─── GRAMMAR RULES (regex-based) ─────────────────────────────
+// â”€â”€â”€ GRAMMAR RULES (regex-based) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const GRAMMAR_RULES = [
 	// Double words
 	{regex:/\b(\w+)\s+\1\b/gi, type:'grammar', msg:'Duplicate word detected.', fix:(m,w)=>w,
@@ -341,7 +344,7 @@ const GRAMMAR_RULES = [
 	{regex:/^\bi\b(?=\s)/gm, type:'grammar',
 		msg:'Capitalize "I".', fix:()=>'I',
 		explain:'The pronoun "I" should always be capitalized.'},
-	// its vs it's (common confusion — flag "its" before a verb)
+	// its vs it's (common confusion â€” flag "its" before a verb)
 	{regex:/\bits\s+(is|was|has|had|been|going|not|a\s+very)\b/gi, type:'grammar',
 		msg:'Did you mean "it\'s" (it is)?', fix:(m)=>"it's "+m[1],
 		explain:'"It\'s" is a contraction of "it is" or "it has". "Its" is possessive.'},
@@ -361,7 +364,7 @@ const GRAMMAR_RULES = [
 	{regex:/\b(he|she|it)\s+don't\b/gi, type:'grammar',
 		msg:m=>`Use "doesn't" with "${m[1]}".`, fix:(m)=>m[1]+" doesn't",
 		explain:'Third-person singular subjects require "doesn\'t" instead of "don\'t".'},
-	// "could of" → "could have"
+	// "could of" â†’ "could have"
 	{regex:/\b(could|would|should|might|must)\s+of\b/gi, type:'grammar',
 		msg:m=>`Use "${m[1]} have" instead of "${m[1]} of".`, fix:(m)=>m[1]+' have',
 		explain:'The correct form is "could have", not "could of". The confusion comes from the contraction "could\'ve".'},
@@ -369,7 +372,7 @@ const GRAMMAR_RULES = [
 	{regex:/\bless\s+(people|items|things|books|cars|dollars|hours|minutes|days|years|students|employees|problems|questions|options)\b/gi, type:'grammar',
 		msg:m=>`Use "fewer" with countable noun "${m[1]}".`, fix:(m)=>'fewer '+m[1],
 		explain:'"Fewer" is used with countable nouns; "less" is for uncountable quantities.'},
-	// "who" vs "whom" — simplified
+	// "who" vs "whom" â€” simplified
 	{regex:/\bwho\s+(did\s+\w+\s+\w+|was\s+it\s+given|do\s+you\s+see|should\s+I\s+call|are\s+you\s+talking)\b/gi, type:'grammar',
 		msg:'Consider using "whom".', fix:(m)=>'whom '+m[1],
 		explain:'"Whom" is used as the object of a verb or preposition.'},
@@ -385,7 +388,7 @@ const GRAMMAR_RULES = [
 	{regex:/\b(is|are|was|were)\s+a\s+lots?\s+of\b/gi, type:'grammar',
 		msg:'Use "a lot" (two words).', fix:(m)=>m[1]+' a lot of',
 		explain:'"A lot" is always two words.'},
-	// "suppose to" → "supposed to"
+	// "suppose to" â†’ "supposed to"
 	{regex:/\b(suppose|use)\s+to\b/gi, type:'grammar',
 		msg:m=>`Use "${m[1]}d to".`, fix:(m)=>m[1]+'d to',
 		explain:`The correct forms are "supposed to" and "used to" with the past tense.`},
@@ -393,7 +396,7 @@ const GRAMMAR_RULES = [
 	{regex:/\b(don't|doesn't|didn't|won't|wouldn't|can't|couldn't|isn't|aren't|wasn't|weren't)\s+(no|nothing|neither|nobody|nowhere|never)\b/gi, type:'grammar',
 		msg:'Avoid double negatives.', fix:null,
 		explain:'Using two negatives in a clause can create confusion or unintended meaning.'},
-	// "between you and I" → "between you and me"
+	// "between you and I" â†’ "between you and me"
 	{regex:/\bbetween\s+(you|her|him|them)\s+and\s+I\b/gi, type:'grammar',
 		msg:'Use "me" after "between".', fix:(m)=>'between '+m[1]+' and me',
 		explain:'After prepositions like "between", use the objective case "me", not "I".'},
@@ -407,7 +410,7 @@ const GRAMMAR_RULES = [
 		explain:'"Literally" means in a literal sense. Consider whether you mean "figuratively".'}
 ];
 
-// ─── PUNCTUATION RULES ───────────────────────────────────────
+// â”€â”€â”€ PUNCTUATION RULES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const PUNCTUATION_RULES = [
 	// Double spaces
 	{regex:/[^\n] {2,}/g, type:'punctuation',
@@ -453,7 +456,7 @@ const PUNCTUATION_RULES = [
 		explain:'Decades as plurals don\'t need an apostrophe (e.g., "1990s" not "1990\'s").'},
 	// Ellipsis with wrong number of dots
 	{regex:/\.{2}(?!\.)/g, type:'punctuation',
-		msg:'Use three dots for an ellipsis (…).', fix:()=>'...',
+		msg:'Use three dots for an ellipsis (â€¦).', fix:()=>'...',
 		explain:'An ellipsis consists of three dots.'},
 	{regex:/\.{4,}/g, type:'punctuation',
 		msg:'An ellipsis should have exactly three dots.', fix:()=>'...',
@@ -463,7 +466,7 @@ const PUNCTUATION_RULES = [
 		msg:'Capitalize the first word of a sentence.',
 		fix:(m)=>m[0].slice(0,-1)+m[0].slice(-1).toUpperCase(),
 		explain:'Sentences should start with a capital letter.'},
-	// Quotation marks — straight to curly hint
+	// Quotation marks â€” straight to curly hint
 	{regex:/\s"(\w)/g, type:'punctuation',
 		msg:null, fix:null, skip:true},
 	// Missing comma after introductory words
@@ -473,60 +476,60 @@ const PUNCTUATION_RULES = [
 		explain:'Introductory words and transitional phrases are typically followed by a comma.'}
 ];
 
-// ─── STYLE SUGGESTIONS ───────────────────────────────────────
+// â”€â”€â”€ STYLE SUGGESTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const STYLE_RULES = [
 	// Passive voice patterns
 	{regex:/\b(is|are|was|were|been|being|be)\s+(being\s+)?(acknowledged|adapted|adjusted|administered|affected|agreed|amazed|amused|annoyed|approved|arranged|assumed|attacked|attempted|awarded|based|beaten|believed|born|broken|built|burned|called|caught|caused|changed|chosen|claimed|closed|collected|committed|compared|completed|composed|concerned|confirmed|connected|considered|constructed|contained|controlled|convinced|covered|created|damaged|decided|defined|delivered|demanded|denied|described|designed|destroyed|determined|developed|directed|discovered|discussed|distributed|done|drawn|dressed|driven|dropped|eaten|effected|employed|encouraged|enjoyed|established|examined|excited|expected|experienced|explained|expressed|extended|faced|fed|felt|filled|focused|followed|forced|formed|found|frightened|given|gone|grown|guided|handled|heard|held|helped|hidden|hit|identified|ignored|illustrated|imagined|improved|included|increased|indicated|influenced|informed|inspired|intended|interested|introduced|invested|invited|involved|joined|judged|kept|killed|known|laid|led|left|limited|linked|loaded|lost|loved|made|maintained|managed|marked|meant|measured|mentioned|met|missed|motivated|moved|needed|noted|observed|obtained|offered|opened|operated|organized|overcome|owned|paid|passed|perceived|performed|permitted|persuaded|placed|planned|played|pleased|pointed|prepared|presented|preserved|prevented|produced|promised|proposed|protected|proved|provided|published|pulled|pushed|put|raised|reached|read|realized|received|recognized|recommended|recorded|reduced|referred|reflected|regarded|related|released|remained|remembered|removed|replaced|reported|represented|requested|required|respected|revealed|reviewed|rid|ruled|said|satisfied|saved|seen|selected|sent|separated|served|set|settled|shared|shot|shown|shut|signed|situated|sold|sorted|sought|spent|spoken|spread|started|stated|stolen|stopped|stretched|struck|studied|suggested|supported|supposed|surrounded|taken|talked|taught|tested|thought|thrown|told|touched|trained|transferred|treated|tried|troubled|trusted|turned|understood|united|used|valued|visited|wanted|warned|washed|watched|weakened|welcomed|widened|wished|won|worked|worried|worn|written|wronged)\b/gi,
 		type:'style', msg:'Passive voice detected. Consider active voice.',fix:null,
 		explain:'Active voice is generally more direct and engaging than passive voice.'},
 	// Wordy phrases
-	{regex:/\bin order to\b/gi, type:'style', msg:'Simplify: "in order to" → "to".', fix:()=>'to',
+	{regex:/\bin order to\b/gi, type:'style', msg:'Simplify: "in order to" â†’ "to".', fix:()=>'to',
 		explain:'"In order to" can usually be shortened to "to".'},
-	{regex:/\bdue to the fact that\b/gi, type:'style', msg:'Simplify: "due to the fact that" → "because".', fix:()=>'because',
+	{regex:/\bdue to the fact that\b/gi, type:'style', msg:'Simplify: "due to the fact that" â†’ "because".', fix:()=>'because',
 		explain:'Replace wordy phrase with "because".'},
-	{regex:/\bat this point in time\b/gi, type:'style', msg:'Simplify: "at this point in time" → "now".', fix:()=>'now',
+	{regex:/\bat this point in time\b/gi, type:'style', msg:'Simplify: "at this point in time" â†’ "now".', fix:()=>'now',
 		explain:'Replace wordy phrase with "now".'},
-	{regex:/\bin the event that\b/gi, type:'style', msg:'Simplify: "in the event that" → "if".', fix:()=>'if',
+	{regex:/\bin the event that\b/gi, type:'style', msg:'Simplify: "in the event that" â†’ "if".', fix:()=>'if',
 		explain:'Replace wordy phrase with "if".'},
-	{regex:/\bfor the purpose of\b/gi, type:'style', msg:'Simplify: "for the purpose of" → "to" or "for".', fix:()=>'for',
+	{regex:/\bfor the purpose of\b/gi, type:'style', msg:'Simplify: "for the purpose of" â†’ "to" or "for".', fix:()=>'for',
 		explain:'Replace wordy phrase with something shorter.'},
-	{regex:/\bwith regard to\b/gi, type:'style', msg:'Simplify: "with regard to" → "about" or "regarding".', fix:()=>'regarding',
+	{regex:/\bwith regard to\b/gi, type:'style', msg:'Simplify: "with regard to" â†’ "about" or "regarding".', fix:()=>'regarding',
 		explain:'Replace wordy phrase with a concise alternative.'},
-	{regex:/\bin spite of the fact that\b/gi, type:'style', msg:'Simplify: "in spite of the fact that" → "although".', fix:()=>'although',
+	{regex:/\bin spite of the fact that\b/gi, type:'style', msg:'Simplify: "in spite of the fact that" â†’ "although".', fix:()=>'although',
 		explain:'Replace wordy phrase with "although".'},
-	{regex:/\bat the present time\b/gi, type:'style', msg:'Simplify: "at the present time" → "now" or "currently".', fix:()=>'currently',
+	{regex:/\bat the present time\b/gi, type:'style', msg:'Simplify: "at the present time" â†’ "now" or "currently".', fix:()=>'currently',
 		explain:'Replace wordy phrase with "currently" or "now".'},
-	{regex:/\bhas the ability to\b/gi, type:'style', msg:'Simplify: "has the ability to" → "can".', fix:()=>'can',
+	{regex:/\bhas the ability to\b/gi, type:'style', msg:'Simplify: "has the ability to" â†’ "can".', fix:()=>'can',
 		explain:'"Can" is more concise.'},
-	{regex:/\bon a daily basis\b/gi, type:'style', msg:'Simplify: "on a daily basis" → "daily".', fix:()=>'daily',
+	{regex:/\bon a daily basis\b/gi, type:'style', msg:'Simplify: "on a daily basis" â†’ "daily".', fix:()=>'daily',
 		explain:'Replace wordy phrase with "daily".'},
 	{regex:/\bbasically\b/gi, type:'style', msg:'Consider removing filler word "basically".', fix:null,
 		explain:'"Basically" is often an unnecessary filler word.'},
 	{regex:/\bvery\s+(unique|perfect|complete|dead|empty|equal|eternal|fatal|final|impossible|infinite|pregnant|supreme|total|unanimous|universal)\b/gi,
-		type:'style', msg:m=>`"${m[1]}" is absolute — "very" is redundant.`, fix:(m)=>m[1],
+		type:'style', msg:m=>`"${m[1]}" is absolute â€” "very" is redundant.`, fix:(m)=>m[1],
 		explain:'Absolute adjectives cannot be modified by "very".'},
-	// Clichés
-	{regex:/\bat the end of the day\b/gi, type:'style', msg:'Cliché: "at the end of the day". Consider rephrasing.', fix:null,
-		explain:'Clichés can weaken your writing. Try a more original expression.'},
-	{regex:/\bthink outside the box\b/gi, type:'style', msg:'Cliché: "think outside the box". Consider rephrasing.', fix:null,
-		explain:'Clichés can weaken your writing.'},
-	{regex:/\bapples and oranges\b/gi, type:'style', msg:'Cliché: "apples and oranges". Consider rephrasing.',fix:null,
-		explain:'Clichés can weaken your writing.'},
-	{regex:/\bit goes without saying\b/gi, type:'style', msg:'Cliché: "it goes without saying". If so, don\'t say it.', fix:null,
+	// ClichÃ©s
+	{regex:/\bat the end of the day\b/gi, type:'style', msg:'ClichÃ©: "at the end of the day". Consider rephrasing.', fix:null,
+		explain:'ClichÃ©s can weaken your writing. Try a more original expression.'},
+	{regex:/\bthink outside the box\b/gi, type:'style', msg:'ClichÃ©: "think outside the box". Consider rephrasing.', fix:null,
+		explain:'ClichÃ©s can weaken your writing.'},
+	{regex:/\bapples and oranges\b/gi, type:'style', msg:'ClichÃ©: "apples and oranges". Consider rephrasing.',fix:null,
+		explain:'ClichÃ©s can weaken your writing.'},
+	{regex:/\bit goes without saying\b/gi, type:'style', msg:'ClichÃ©: "it goes without saying". If so, don\'t say it.', fix:null,
 		explain:'If something goes without saying, you might not need to include it.'},
-	{regex:/\blast but not least\b/gi, type:'style', msg:'Cliché: "last but not least". Consider rephrasing.', fix:null,
-		explain:'Clichés can weaken your writing.'},
-	{regex:/\bneedle in a haystack\b/gi, type:'style', msg:'Cliché: "needle in a haystack".', fix:null,
-		explain:'Clichés can weaken your writing.'},
-	{regex:/\bonly time will tell\b/gi, type:'style', msg:'Cliché: "only time will tell".', fix:null,
-		explain:'Clichés can weaken your writing.'},
-	{regex:/\bplaying with fire\b/gi, type:'style', msg:'Cliché: "playing with fire".', fix:null,
-		explain:'Clichés can weaken your writing.'},
-	{regex:/\bin this day and age\b/gi, type:'style', msg:'Cliché: "in this day and age" → try "today" or "currently".', fix:()=>'today',
-		explain:'Replace cliché with a concise alternative.'},
-	{regex:/\beach and every\b/gi, type:'style', msg:'Wordy: "each and every" → use "each" or "every".', fix:()=>'every',
+	{regex:/\blast but not least\b/gi, type:'style', msg:'ClichÃ©: "last but not least". Consider rephrasing.', fix:null,
+		explain:'ClichÃ©s can weaken your writing.'},
+	{regex:/\bneedle in a haystack\b/gi, type:'style', msg:'ClichÃ©: "needle in a haystack".', fix:null,
+		explain:'ClichÃ©s can weaken your writing.'},
+	{regex:/\bonly time will tell\b/gi, type:'style', msg:'ClichÃ©: "only time will tell".', fix:null,
+		explain:'ClichÃ©s can weaken your writing.'},
+	{regex:/\bplaying with fire\b/gi, type:'style', msg:'ClichÃ©: "playing with fire".', fix:null,
+		explain:'ClichÃ©s can weaken your writing.'},
+	{regex:/\bin this day and age\b/gi, type:'style', msg:'ClichÃ©: "in this day and age" â†’ try "today" or "currently".', fix:()=>'today',
+		explain:'Replace clichÃ© with a concise alternative.'},
+	{regex:/\beach and every\b/gi, type:'style', msg:'Wordy: "each and every" â†’ use "each" or "every".', fix:()=>'every',
 		explain:'"Each and every" is redundant. Use one or the other.'},
-	{regex:/\bfirst and foremost\b/gi, type:'style', msg:'Wordy: "first and foremost" → use "first".', fix:()=>'first',
+	{regex:/\bfirst and foremost\b/gi, type:'style', msg:'Wordy: "first and foremost" â†’ use "first".', fix:()=>'first',
 		explain:'"First and foremost" is redundant.'},
 	{regex:/\b(very|really|extremely|quite|rather|somewhat|fairly)\s+(good|bad|big|small|nice|great|important|interesting)\b/gi,
 		type:'style', msg:m=>`Consider a stronger word instead of "${m[1]} ${m[2]}".`, fix:null,
@@ -534,7 +537,7 @@ const STYLE_RULES = [
 ];
 
 
-// ─── MAIN CHECK FUNCTION ─────────────────────────────────────
+// â”€â”€â”€ MAIN CHECK FUNCTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function runCheck() {
 	const text = getPlainText().trim();
 	if(!text || getWords(text).length < 3){
@@ -552,16 +555,16 @@ async function runCheck() {
 
 	currentIssues = [];
 
-	// — Run spelling check —
+	// â€” Run spelling check â€”
 	checkSpelling(text);
 
-	// — Run grammar rules —
+	// â€” Run grammar rules â€”
 	runRuleSet(GRAMMAR_RULES, text);
 
-	// — Run punctuation rules —
+	// â€” Run punctuation rules â€”
 	runRuleSet(PUNCTUATION_RULES, text);
 
-	// — Run style rules —
+	// â€” Run style rules â€”
 	runRuleSet(STYLE_RULES, text);
 
 	// Remove duplicates (same position)
@@ -605,7 +608,7 @@ function checkSpelling(text) {
 				length: word.length,
 				original: word,
 				suggestion: fixedWord,
-				message: `"${word}" → "${fixedWord}"`,
+				message: `"${word}" â†’ "${fixedWord}"`,
 				explain: `Possible misspelling. Did you mean "${fixedWord}"?`
 			});
 		}
@@ -656,7 +659,7 @@ function deduplicateIssues() {
 	});
 }
 
-// ─── SCORING ─────────────────────────────────────────────────
+// â”€â”€â”€ SCORING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function updateScore(text) {
 	const words = getWords(text);
 	const totalErrors = currentIssues.length;
@@ -668,11 +671,11 @@ function updateScore(text) {
 	// Color by score
 	let color;
 	let grade;
-	if(score >= 90) { color = 'var(--success)'; grade = 'Excellent — minimal issues'; }
-	else if(score >= 75) { color = '#22c55e'; grade = 'Good — a few improvements suggested'; }
-	else if(score >= 60) { color = 'var(--warning)'; grade = 'Fair — several issues found'; }
-	else if(score >= 40) { color = '#f97316'; grade = 'Needs work — many issues detected'; }
-	else { color = 'var(--error)'; grade = 'Poor — significant revision recommended'; }
+	if(score >= 90) { color = 'var(--success)'; grade = 'Excellent â€” minimal issues'; }
+	else if(score >= 75) { color = '#22c55e'; grade = 'Good â€” a few improvements suggested'; }
+	else if(score >= 60) { color = 'var(--warning)'; grade = 'Fair â€” several issues found'; }
+	else if(score >= 40) { color = '#f97316'; grade = 'Needs work â€” many issues detected'; }
+	else { color = 'var(--error)'; grade = 'Poor â€” significant revision recommended'; }
 
 	// Animate score circle
 	const circumference = 188.5;
@@ -693,7 +696,7 @@ function updateScore(text) {
 	document.getElementById('statStyle').textContent = counts.style;
 }
 
-// ─── RENDER ISSUES LIST ──────────────────────────────────────
+// â”€â”€â”€ RENDER ISSUES LIST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderIssues() {
 	const filtered = activeFilter === 'all'
 		? currentIssues
@@ -719,7 +722,7 @@ function renderIssues() {
 				${issue.suggestion ? `<span class="issue-arrow"><i class="fas fa-arrow-right"></i></span>
 				<span class="issue-suggestion">${escHtml(issue.suggestion)}</span>` : ''}
 			</div>
-			<div class="issue-explain">${escHtml(issue.message)}${issue.explain ? ' — '+escHtml(issue.explain) : ''}</div>
+			<div class="issue-explain">${escHtml(issue.message)}${issue.explain ? ' â€” '+escHtml(issue.explain) : ''}</div>
 			${issue.suggestion ? `<button class="issue-fix-btn" onclick="event.stopPropagation();fixIssue(${globalIdx})" title="Apply fix"><i class="fas fa-check"></i></button>` : ''}
 		</div>`;
 	}).join('');
@@ -738,7 +741,7 @@ function escHtml(str) {
 	return d.innerHTML;
 }
 
-// ─── HIGHLIGHT ERRORS IN EDITOR ──────────────────────────────
+// â”€â”€â”€ HIGHLIGHT ERRORS IN EDITOR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function highlightErrors(text) {
 	if(currentIssues.length === 0) {
 		// Re-set plain text to clear any old highlights
@@ -791,7 +794,7 @@ function escHtmlText(str) {
 	return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 }
 
-// ─── SCROLL TO ISSUE ─────────────────────────────────────────
+// â”€â”€â”€ SCROLL TO ISSUE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function scrollToIssue(idx) {
 	const el = editorEl.querySelector(`.err-underline[data-idx="${idx}"]`);
 	if(el) {
@@ -812,7 +815,7 @@ function scrollToIssueCard(idx) {
 	}
 }
 
-// ─── FIX SINGLE ISSUE ────────────────────────────────────────
+// â”€â”€â”€ FIX SINGLE ISSUE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function fixIssue(idx) {
 	const issue = currentIssues[idx];
 	if(!issue || !issue.suggestion) return;
@@ -844,7 +847,7 @@ function fixIssue(idx) {
 	showToast('Fix applied');
 }
 
-// ─── FIX ALL ─────────────────────────────────────────────────
+// â”€â”€â”€ FIX ALL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function fixAll() {
 	const fixable = currentIssues.filter(i=>i.suggestion);
 	if(fixable.length === 0){
@@ -875,14 +878,14 @@ function fixAll() {
 	showToast(sorted.length + ' fix'+(sorted.length!==1?'es':'')+' applied!');
 }
 
-// ─── COPY TEXT ────────────────────────────────────────────────
+// â”€â”€â”€ COPY TEXT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function copyText() {
 	const text = getPlainText();
 	if(!text){showToast('Nothing to copy');return;}
 	navigator.clipboard.writeText(text).then(()=>showToast('Text copied to clipboard!'));
 }
 
-// ─── CLEAR ALL ────────────────────────────────────────────────
+// â”€â”€â”€ CLEAR ALL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function clearAll() {
 	editorEl.innerHTML = '';
 	currentIssues = [];
@@ -896,7 +899,7 @@ function clearAll() {
 	showToast('Cleared');
 }
 
-// ─── Init word/sentence count ─────────────────────────────────
+// â”€â”€â”€ Init word/sentence count â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 editorEl.dispatchEvent(new Event('input'));
 </script>
 </body>

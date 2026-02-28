@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Currency Converter - Multietools</title>
-	<meta name="description" content="Convert currencies with live exchange rates. Free online currency converter — fast, no sign-up required. Multietools.">
+	<meta name="description" content="Convert currencies with live exchange rates. Free online currency converter â€” fast, no sign-up required. Multietools.">
 	<meta property="og:title" content="Currency Converter - Multietools">
-	<meta property="og:description" content="Convert currencies with live exchange rates. Free online currency converter — fast, no sign-up required. Multietools.">
+	<meta property="og:description" content="Convert currencies with live exchange rates. Free online currency converter â€” fast, no sign-up required. Multietools.">
 	<meta property="og:type" content="website">
+    <meta property="og:image" content="https://ranjit-15.github.io/multietools/htdocs/og-image.svg">
 	<link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/currency-converter.html">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="css/global.css">
@@ -40,6 +41,8 @@
 		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 	</style>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <div class="wrap">
@@ -72,7 +75,7 @@
 
 		<div class="panel">
 			<div class="result-box" id="resultBox">
-				<div class="result-value" id="resultValue">—</div>
+				<div class="result-value" id="resultValue">â€”</div>
 				<div class="rate-info" id="rateInfo"></div>
 			</div>
 			<div class="last-updated" id="lastUpdated"></div>
@@ -87,26 +90,26 @@
 	'use strict';
 
 	const currencies = [
-		{code:'USD',name:'US Dollar',flag:'🇺🇸'},
-		{code:'EUR',name:'Euro',flag:'🇪🇺'},
-		{code:'GBP',name:'British Pound',flag:'🇬🇧'},
-		{code:'INR',name:'Indian Rupee',flag:'🇮🇳'},
-		{code:'JPY',name:'Japanese Yen',flag:'🇯🇵'},
-		{code:'CAD',name:'Canadian Dollar',flag:'🇨🇦'},
-		{code:'AUD',name:'Australian Dollar',flag:'🇦🇺'},
-		{code:'CHF',name:'Swiss Franc',flag:'🇨🇭'},
-		{code:'CNY',name:'Chinese Yuan',flag:'🇨🇳'},
-		{code:'BRL',name:'Brazilian Real',flag:'🇧🇷'},
-		{code:'MXN',name:'Mexican Peso',flag:'🇲🇽'},
-		{code:'KRW',name:'South Korean Won',flag:'🇰🇷'},
-		{code:'SGD',name:'Singapore Dollar',flag:'🇸🇬'},
-		{code:'HKD',name:'Hong Kong Dollar',flag:'🇭🇰'},
-		{code:'SAR',name:'Saudi Riyal',flag:'🇸🇦'},
-		{code:'AED',name:'UAE Dirham',flag:'🇦🇪'},
-		{code:'ZAR',name:'South African Rand',flag:'🇿🇦'},
-		{code:'NZD',name:'New Zealand Dollar',flag:'🇳🇿'},
-		{code:'SEK',name:'Swedish Krona',flag:'🇸🇪'},
-		{code:'NOK',name:'Norwegian Krone',flag:'🇳🇴'}
+		{code:'USD',name:'US Dollar',flag:'ðŸ‡ºðŸ‡¸'},
+		{code:'EUR',name:'Euro',flag:'ðŸ‡ªðŸ‡º'},
+		{code:'GBP',name:'British Pound',flag:'ðŸ‡¬ðŸ‡§'},
+		{code:'INR',name:'Indian Rupee',flag:'ðŸ‡®ðŸ‡³'},
+		{code:'JPY',name:'Japanese Yen',flag:'ðŸ‡¯ðŸ‡µ'},
+		{code:'CAD',name:'Canadian Dollar',flag:'ðŸ‡¨ðŸ‡¦'},
+		{code:'AUD',name:'Australian Dollar',flag:'ðŸ‡¦ðŸ‡º'},
+		{code:'CHF',name:'Swiss Franc',flag:'ðŸ‡¨ðŸ‡­'},
+		{code:'CNY',name:'Chinese Yuan',flag:'ðŸ‡¨ðŸ‡³'},
+		{code:'BRL',name:'Brazilian Real',flag:'ðŸ‡§ðŸ‡·'},
+		{code:'MXN',name:'Mexican Peso',flag:'ðŸ‡²ðŸ‡½'},
+		{code:'KRW',name:'South Korean Won',flag:'ðŸ‡°ðŸ‡·'},
+		{code:'SGD',name:'Singapore Dollar',flag:'ðŸ‡¸ðŸ‡¬'},
+		{code:'HKD',name:'Hong Kong Dollar',flag:'ðŸ‡­ðŸ‡°'},
+		{code:'SAR',name:'Saudi Riyal',flag:'ðŸ‡¸ðŸ‡¦'},
+		{code:'AED',name:'UAE Dirham',flag:'ðŸ‡¦ðŸ‡ª'},
+		{code:'ZAR',name:'South African Rand',flag:'ðŸ‡¿ðŸ‡¦'},
+		{code:'NZD',name:'New Zealand Dollar',flag:'ðŸ‡³ðŸ‡¿'},
+		{code:'SEK',name:'Swedish Krona',flag:'ðŸ‡¸ðŸ‡ª'},
+		{code:'NOK',name:'Norwegian Krone',flag:'ðŸ‡³ðŸ‡´'}
 	];
 
 	const fromSel = document.getElementById('fromCurrency');
@@ -118,8 +121,8 @@
 
 	// Populate dropdowns
 	currencies.forEach(function(c){
-		const opt1 = new Option(c.flag + ' ' + c.code + ' — ' + c.name, c.code);
-		const opt2 = new Option(c.flag + ' ' + c.code + ' — ' + c.name, c.code);
+		const opt1 = new Option(c.flag + ' ' + c.code + ' â€” ' + c.name, c.code);
+		const opt2 = new Option(c.flag + ' ' + c.code + ' â€” ' + c.name, c.code);
 		fromSel.appendChild(opt1);
 		toSel.appendChild(opt2);
 	});
@@ -166,7 +169,7 @@
 	let converting = false;
 	async function convert(){
 		const amount = parseFloat(amountIn.value);
-		if(isNaN(amount) || amount < 0){ resultValue.textContent = '—'; rateInfo.textContent = ''; return; }
+		if(isNaN(amount) || amount < 0){ resultValue.textContent = 'â€”'; rateInfo.textContent = ''; return; }
 		if(converting) return;
 		converting = true;
 		resultValue.innerHTML = '<span class="loading"></span>';
