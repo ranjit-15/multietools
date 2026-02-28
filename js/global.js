@@ -8,10 +8,11 @@
 
   /* ---------- Detect current page ---------- */
   const path = location.pathname.split('/').pop() || 'index.html';
+  const is404 = path === '404.html';
   const isHome = path === 'index.html' || path === 'home.html' || path === '';
   const isTools = path === 'tools.html';
   const isContact = path === 'contact.html';
-  const isToolPage = !isHome && !isTools && !isContact;
+  const isToolPage = !isHome && !isTools && !isContact && !is404;
 
   /* ---------- Dark Mode Management ---------- */
   function getTheme() {
@@ -228,6 +229,47 @@
     header.appendChild(btn);
   }
 
+  /* ---------- Recent Tools Tracker ---------- */
+  function trackRecentTool() {
+    if (!isToolPage) return;
+    var title = document.title.replace(' - Multietools', '').trim();
+    var recent = JSON.parse(localStorage.getItem('mt-recent-tools') || '[]');
+    // Remove duplicate if exists
+    recent = recent.filter(function(t) { return t.href !== path; });
+    // Add to front
+    recent.unshift({ href: path, title: title });
+    // Keep only last 6
+    if (recent.length > 6) recent = recent.slice(0, 6);
+    localStorage.setItem('mt-recent-tools', JSON.stringify(recent));
+  }
+
+  function injectRecentTools() {
+    if (!isTools) return;
+    var recent = JSON.parse(localStorage.getItem('mt-recent-tools') || '[]');
+    if (recent.length === 0) return;
+
+    var searchSection = document.querySelector('.search-section, .tools-search, #tools-search');
+    var insertTarget = searchSection || document.querySelector('main, .page');
+    if (!insertTarget) return;
+
+    var div = document.createElement('div');
+    div.className = 'recent-tools-bar';
+    div.innerHTML = '<span class="recent-label"><i class="fas fa-clock"></i> Recent</span>';
+    recent.forEach(function(t) {
+      var a = document.createElement('a');
+      a.href = t.href;
+      a.className = 'recent-chip';
+      a.textContent = t.title;
+      div.appendChild(a);
+    });
+
+    if (searchSection && searchSection.nextSibling) {
+      searchSection.parentNode.insertBefore(div, searchSection.nextSibling);
+    } else if (insertTarget.firstChild) {
+      insertTarget.insertBefore(div, insertTarget.firstChild);
+    }
+  }
+
   /* ---------- Initialise ---------- */
   function init() {
     applyTheme(getTheme());
@@ -235,6 +277,8 @@
     injectNavbar();
     bindNavbar();
     injectShareButton();
+    trackRecentTool();
+    injectRecentTools();
     initScrollAnimations();
     initPageEnter();
     initSmoothScroll();

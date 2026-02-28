@@ -8,6 +8,7 @@
     <meta property="og:title" content="Contact - Multietools">
     <meta property="og:description" content="Get in touch with the Multietools team. We'd love to hear from you.">
     <meta property="og:type" content="website">
+    <link rel="canonical" href="https://ranjit-15.github.io/multietools/htdocs/contact.html">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/global.css">
     <style>
@@ -159,26 +160,37 @@
         /* Email verify row */
         .email-row { display: flex; gap: 0.75rem; align-items: flex-start; }
         .email-row input { flex: 1; }
-        .verify-btn {
-            flex-shrink: 0; padding: 0.85rem 1.2rem;
-            border-radius: var(--radius-md); border: none; cursor: pointer;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: #fff; font-weight: 700; font-size: 0.85rem;
-            white-space: nowrap; transition: transform 0.15s ease, box-shadow 0.25s ease;
-            box-shadow: 0 2px 8px rgba(124,58,237,0.2);
+
+        /* CAPTCHA row */
+        .captcha-box {
+            grid-column: 1 / -1;
+            display: flex; align-items: center; gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-md);
+            background: var(--bg-alt);
+            border: 1.5px solid var(--border);
+            transition: border-color 0.25s ease;
         }
-        .verify-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(124,58,237,0.3); }
-        .verify-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .verify-badge {
+        .captcha-box.verified { border-color: var(--success); background: rgba(16,185,129,0.06); }
+        .captcha-question {
+            font-weight: 800; font-size: 1rem; color: var(--text);
+            white-space: nowrap;
+        }
+        .captcha-question span { color: var(--primary); }
+        .captcha-input {
+            width: 80px; text-align: center; font-weight: 700; font-size: 1rem;
+            padding: 0.6rem; border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border); background: var(--surface);
+            color: var(--text); font-family: inherit;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+        .captcha-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
+        .captcha-status {
             display: inline-flex; align-items: center; gap: 0.35rem;
-            padding: 0.3rem 0.7rem; border-radius: var(--radius-full);
-            font-size: 0.78rem; font-weight: 700; margin-top: 0.25rem;
+            font-size: 0.82rem; font-weight: 700;
         }
-        .verify-badge.verified { background: rgba(16,185,129,0.12); color: #059669; }
-        .verify-badge.unverified { background: rgba(239,68,68,0.1); color: #dc2626; }
-        .otp-row { display: none; gap: 0.75rem; align-items: flex-start; margin-top: 0.5rem; }
-        .otp-row.show { display: flex; }
-        .otp-row input { flex: 1; letter-spacing: 0.3em; text-align: center; font-weight: 700; font-size: 1.1rem; }
+        .captcha-status.pass { color: #059669; }
+        .captcha-status.fail { color: #dc2626; }
 
         /* Toast */
         .toast {
@@ -303,15 +315,7 @@
 
                 <div class="form-group">
                     <label for="user_email">Your Email <span class="required">*</span></label>
-                    <div class="email-row">
-                        <input type="email" id="user_email" name="user_email" placeholder="john@example.com" required>
-                        <button type="button" class="verify-btn" id="verify-btn" onclick="sendOTP()"><i class="fas fa-shield-alt"></i> Verify</button>
-                    </div>
-                    <div id="email-badge"></div>
-                    <div class="otp-row" id="otp-row">
-                        <input type="text" id="otp-input" maxlength="6" placeholder="Enter 6-digit code">
-                        <button type="button" class="verify-btn" onclick="verifyOTP()"><i class="fas fa-check"></i> Confirm</button>
-                    </div>
+                    <input type="email" id="user_email" name="user_email" placeholder="john@example.com" required>
                 </div>
 
                 <div class="form-group full">
@@ -322,6 +326,13 @@
                 <div class="form-group full">
                     <label for="message">Message <span class="required">*</span></label>
                     <textarea id="message" name="message" placeholder="Write your message here..." required></textarea>
+                </div>
+
+                <div class="captcha-box" id="captcha-box">
+                    <i class="fas fa-robot" style="font-size:1.3rem;color:var(--primary);"></i>
+                    <span class="captcha-question" id="captcha-q"></span>
+                    <input type="text" class="captcha-input" id="captcha-input" placeholder="?" autocomplete="off">
+                    <span class="captcha-status" id="captcha-status"></span>
                 </div>
 
                 <button type="submit" class="submit-btn" id="submit-btn">
@@ -365,70 +376,48 @@
             }
         }
 
-        /* ---- Email Verification OTP ---- */
-        let generatedOTP = '';
-        let emailVerified = false;
+        /* ---- CAPTCHA Challenge ---- */
+        let captchaAnswer = 0;
+        let captchaPassed = false;
 
-        function sendOTP() {
-            const emailInput = document.getElementById('user_email');
-            const email = emailInput.value.trim();
-            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showToast('Please enter a valid email first.');
+        function generateCaptcha() {
+            const ops = [
+                () => { const a = Math.floor(Math.random()*20)+1, b = Math.floor(Math.random()*20)+1; return { q: `${a} + ${b}`, a: a+b }; },
+                () => { const a = Math.floor(Math.random()*20)+5, b = Math.floor(Math.random()*a)+1; return { q: `${a} − ${b}`, a: a-b }; },
+                () => { const a = Math.floor(Math.random()*10)+2, b = Math.floor(Math.random()*10)+2; return { q: `${a} × ${b}`, a: a*b }; }
+            ];
+            const op = ops[Math.floor(Math.random()*ops.length)]();
+            captchaAnswer = op.a;
+            captchaPassed = false;
+            document.getElementById('captcha-q').innerHTML = `<span>${op.q}</span> = `;
+            document.getElementById('captcha-input').value = '';
+            document.getElementById('captcha-status').innerHTML = '';
+            document.getElementById('captcha-box').classList.remove('verified');
+        }
+
+        document.getElementById('captcha-input').addEventListener('input', function() {
+            const val = parseInt(this.value.trim());
+            const statusEl = document.getElementById('captcha-status');
+            if (this.value.trim() === '') {
+                statusEl.innerHTML = '';
+                captchaPassed = false;
+                document.getElementById('captcha-box').classList.remove('verified');
                 return;
             }
-            // Generate 6-digit OTP
-            generatedOTP = String(Math.floor(100000 + Math.random() * 900000));
-
-            // Send OTP via EmailJS (uses a separate template for verification)
-            const verifyBtn = document.getElementById('verify-btn');
-            verifyBtn.disabled = true;
-            verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-
-            emailjs.send('service_4jtgwzp', 'template_contact', {
-                from_name: 'Multietools Email Verification',
-                user_email: email,
-                subject: 'Your Verification Code',
-                message: 'Your Multietools email verification code is: ' + generatedOTP + '\n\nThis code expires in 10 minutes. If you did not request this, please ignore this email.'
-            }).then(() => {
-                document.getElementById('otp-row').classList.add('show');
-                showToast('Verification code sent to ' + email);
-                updateBadge(false);
-            }).catch((err) => {
-                console.error('OTP send error:', err);
-                showToast('Failed to send code. Try again.');
-            }).finally(() => {
-                verifyBtn.disabled = false;
-                verifyBtn.innerHTML = '<i class="fas fa-shield-alt"></i> Verify';
-            });
-        }
-
-        function verifyOTP() {
-            const code = document.getElementById('otp-input').value.trim();
-            if (code === generatedOTP && code.length === 6) {
-                emailVerified = true;
-                updateBadge(true);
-                document.getElementById('otp-row').classList.remove('show');
-                showToast('Email verified successfully!');
+            if (val === captchaAnswer) {
+                captchaPassed = true;
+                statusEl.className = 'captcha-status pass';
+                statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Verified';
+                document.getElementById('captcha-box').classList.add('verified');
             } else {
-                showToast('Invalid code. Please try again.');
+                captchaPassed = false;
+                statusEl.className = 'captcha-status fail';
+                statusEl.innerHTML = '<i class="fas fa-times-circle"></i>';
+                document.getElementById('captcha-box').classList.remove('verified');
             }
-        }
-
-        function updateBadge(verified) {
-            const el = document.getElementById('email-badge');
-            if (verified) {
-                el.innerHTML = '<span class="verify-badge verified"><i class="fas fa-check-circle"></i> Email Verified</span>';
-            } else {
-                el.innerHTML = '<span class="verify-badge unverified"><i class="fas fa-clock"></i> Code sent — check your inbox</span>';
-            }
-        }
-
-        // Reset verification when email changes
-        document.getElementById('user_email').addEventListener('input', function() {
-            emailVerified = false;
-            document.getElementById('email-badge').innerHTML = '';
-            document.getElementById('otp-row').classList.remove('show');
         });
+
+        generateCaptcha();
 
         // Form submission
         const form = document.getElementById('contact-form');
@@ -454,9 +443,9 @@
                 return;
             }
 
-            // Check email verification
-            if (!emailVerified) {
-                showStatus('Please verify your email address before sending.', 'error');
+            // CAPTCHA check
+            if (!captchaPassed) {
+                showStatus('Please solve the verification challenge above.', 'error');
                 return;
             }
 
@@ -469,9 +458,9 @@
             emailjs.sendForm('service_4jtgwzp', 'template_contact', form)
                 .then(() => {
                     showStatus('Message sent successfully! We\'ll get back to you soon.', 'success');
+                    showToast('Message sent! ✓');
                     form.reset();
-                    emailVerified = false;
-                    document.getElementById('email-badge').innerHTML = '';
+                    generateCaptcha();
                 })
                 .catch((err) => {
                     console.error('EmailJS Error:', err);
