@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AI Chatbot - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
+	<style>
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:820px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;display:flex;flex-direction:column;height:calc(100vh - 3rem);max-height:900px;}
+		header{padding:1.25rem 1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);flex-shrink:0;}
+		header .header-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+		header .header-left{display:flex;flex-direction:column;}
+		h1{font-size:1.5rem;margin-bottom:.2rem;display:flex;align-items:center;gap:.5rem;}
+		h1 .bot-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:.95rem;flex-shrink:0;}
+		.muted{color:var(--muted);font-size:.88rem;}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:.75rem;font-size:.9rem;}
+		.back:hover{color:var(--primary);}
+		.header-actions{display:flex;gap:.5rem;}
+		.icon-btn{width:36px;height:36px;border-radius:var(--radius-full);border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;display:grid;place-items:center;font-size:.9rem;transition:all .2s;}
+		.icon-btn:hover{color:var(--primary);border-color:var(--primary);background:var(--primary-glow);}
+
+		/* Chat Area */
+		.chat-area{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:.75rem;scroll-behavior:smooth;}
+		.chat-area::-webkit-scrollbar{width:6px;}
+		.chat-area::-webkit-scrollbar-track{background:transparent;}
+		.chat-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+		/* Messages */
+		.msg{display:flex;gap:.6rem;max-width:82%;animation:msgIn .35s var(--ease) both;}
+		.msg.user{align-self:flex-end;flex-direction:row-reverse;}
+		.msg.bot{align-self:flex-start;}
+		.msg-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.78rem;margin-top:2px;}
+		.msg.bot .msg-avatar{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;}
+		.msg.user .msg-avatar{background:var(--bg-alt);border:1px solid var(--border);color:var(--muted);}
+		.msg-body{display:flex;flex-direction:column;gap:.2rem;}
+		.msg.user .msg-body{align-items:flex-end;}
+		.msg-bubble{padding:.75rem 1rem;border-radius:var(--radius-md);font-size:.925rem;line-height:1.55;word-break:break-word;position:relative;}
+		.msg.bot .msg-bubble{background:var(--bg-alt);border:1px solid var(--border-light);border-top-left-radius:4px;color:var(--text);}
+		.msg.user .msg-bubble{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border-top-right-radius:4px;}
+		.msg-time{font-size:.7rem;color:var(--muted);padding:0 .25rem;}
+		.msg.user .msg-time{text-align:right;}
+
+		@keyframes msgIn{
+			from{opacity:0;transform:translateY(12px);}
+			to{opacity:1;transform:translateY(0);}
+		}
+
+		/* Typing indicator */
+		.typing-indicator{display:flex;gap:.6rem;max-width:82%;align-self:flex-start;animation:msgIn .3s var(--ease) both;}
+		.typing-indicator .msg-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;display:flex;align-items:center;justify-content:center;font-size:.78rem;flex-shrink:0;margin-top:2px;}
+		.typing-dots{background:var(--bg-alt);border:1px solid var(--border-light);border-radius:var(--radius-md);border-top-left-radius:4px;padding:.75rem 1.1rem;display:flex;gap:.3rem;align-items:center;}
+		.typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:typeBounce 1.4s infinite ease-in-out;}
+		.typing-dots span:nth-child(2){animation-delay:.2s;}
+		.typing-dots span:nth-child(3){animation-delay:.4s;}
+		@keyframes typeBounce{
+			0%,60%,100%{transform:translateY(0);opacity:.4;}
+			30%{transform:translateY(-6px);opacity:1;}
+		}
+
+		/* Welcome message */
+		.welcome{text-align:center;padding:2rem 1rem;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:.75rem;animation:fadeIn .5s var(--ease);}
+		.welcome .welcome-icon{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.6rem;box-shadow:0 8px 24px rgba(124,58,237,.25);}
+		.welcome h2{color:var(--text);font-size:1.2rem;}
+		.welcome p{font-size:.88rem;max-width:380px;line-height:1.5;}
+
+		/* Quick replies */
+		.quick-replies{flex-shrink:0;padding:.65rem 1.25rem;border-top:1px solid var(--border-light);display:flex;gap:.5rem;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+		.quick-replies::-webkit-scrollbar{height:0;}
+		.qr-btn{white-space:nowrap;padding:.45rem .9rem;border-radius:var(--radius-full);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;}
+		.qr-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-glow);}
+		.qr-btn i{margin-right:.3rem;font-size:.75rem;}
+
+		/* Input area */
+		.input-area{flex-shrink:0;padding:1rem 1.25rem;border-top:1px solid var(--border);background:var(--surface);display:flex;gap:.6rem;align-items:flex-end;}
+		.input-wrap{flex:1;position:relative;}
+		.input-wrap textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-md);padding:.7rem 1rem;font-size:.925rem;font-family:inherit;background:var(--bg-alt);color:var(--text);resize:none;line-height:1.5;min-height:44px;max-height:120px;transition:border-color .2s;overflow-y:auto;}
+		.input-wrap textarea:focus{outline:none;border-color:var(--primary);}
+		.input-wrap textarea::placeholder{color:var(--muted);}
+		.send-btn{width:44px;height:44px;border-radius:var(--radius-md);border:none;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;cursor:pointer;display:grid;place-items:center;font-size:1.05rem;transition:transform .15s,box-shadow .25s,opacity .2s;flex-shrink:0;}
+		.send-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.3);}
+		.send-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+
+		/* Toast */
+		.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+		/* Responsive */
+		@media(max-width:640px){
+			body{padding:.75rem;}
+			.wrap{height:calc(100vh - 1.5rem);max-height:none;border-radius:var(--radius-md);}
+			header{padding:1rem;}
+			h1{font-size:1.2rem;}
+			h1 .bot-icon{width:30px;height:30px;font-size:.82rem;}
+			.msg{max-width:90%;}
+			.chat-area{padding:.85rem;}
+			.quick-replies{padding:.5rem .85rem;}
+			.input-area{padding:.75rem .85rem;}
+		}
+		@media(max-width:380px){
+			.msg{max-width:95%;}
+			.msg-bubble{padding:.6rem .8rem;font-size:.87rem;}
+		}
+	</style>
+</head>
+<body>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html#ai-tools"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<div class="header-top">
+			<div class="header-left">
+				<h1>
+					<span class="bot-icon"><i class="fas fa-robot"></i></span>
+					AI Chatbot
+				</h1>
+				<p class="muted">Chat with MultiBot — your friendly assistant</p>
+			</div>
+			<div class="header-actions">
+				<button class="icon-btn" id="clearBtn" title="Clear chat"><i class="fas fa-trash-alt"></i></button>
+			</div>
+		</div>
+	</header>
+
+	<div class="chat-area" id="chatArea">
+		<div class="welcome" id="welcome">
+			<div class="welcome-icon"><i class="fas fa-robot"></i></div>
+			<h2>Hey there! I'm MultiBot 👋</h2>
+			<p>Your helpful assistant from Multietools. Ask me anything — I can tell jokes, share facts, do math, recommend tools, and much more!</p>
+		</div>
+	</div>
+
+	<div class="quick-replies" id="quickReplies">
+		<button class="qr-btn" data-msg="Tell me a joke"><i class="fas fa-face-laugh-beam"></i> Tell a joke</button>
+		<button class="qr-btn" data-msg="Tell me a random fact"><i class="fas fa-lightbulb"></i> Random fact</button>
+		<button class="qr-btn" data-msg="What can you do?"><i class="fas fa-wand-magic-sparkles"></i> What can you do?</button>
+		<button class="qr-btn" data-msg="Recommend a tool"><i class="fas fa-toolbox"></i> Recommend a tool</button>
+		<button class="qr-btn" data-msg="What time is it?"><i class="fas fa-clock"></i> Current time</button>
+		<button class="qr-btn" data-msg="Tell me something inspiring"><i class="fas fa-star"></i> Inspire me</button>
+	</div>
+
+	<div class="input-area">
+		<div class="input-wrap">
+			<textarea id="userInput" rows="1" placeholder="Type a message..." autocomplete="off"></textarea>
+		</div>
+		<button class="send-btn" id="sendBtn" title="Send message"><i class="fas fa-paper-plane"></i></button>
+	</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/global.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ========== DOM refs ========== */
+const chatArea = document.getElementById('chatArea');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const clearBtn = document.getElementById('clearBtn');
+const welcomeEl = document.getElementById('welcome');
+const toastEl = document.getElementById('toast');
+const quickReplies = document.getElementById('quickReplies');
+
+/* ========== Toast ========== */
+let toastTimer;
+function showToast(msg){
+	toastEl.textContent = msg;
+	toastEl.classList.add('show');
+	clearTimeout(toastTimer);
+	toastTimer = setTimeout(()=> toastEl.classList.remove('show'), 2500);
+}
+
+/* ========== Time helper ========== */
+function timeStr(){
+	return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+function dateStr(){
+	return new Date().toLocaleDateString([],{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+
+/* ========== Auto-resize textarea ========== */
+userInput.addEventListener('input', function(){
+	this.style.height = 'auto';
+	this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+
+/* ========== Add message ========== */
+function addMessage(text, sender){
+	if(welcomeEl) welcomeEl.style.display = 'none';
+	const wrap = document.createElement('div');
+	wrap.className = 'msg ' + sender;
+	const avatarIcon = sender === 'bot' ? '<i class="fas fa-robot"></i>' : '<i class="fas fa-user"></i>';
+	wrap.innerHTML =
+		'<div class="msg-avatar">' + avatarIcon + '</div>' +
+		'<div class="msg-body">' +
+			'<div class="msg-bubble">' + escapeHtml(text) + '</div>' +
+			'<span class="msg-time">' + timeStr() + '</span>' +
+		'</div>';
+	chatArea.appendChild(wrap);
+	scrollToBottom();
+}
+
+function escapeHtml(t){
+	const d = document.createElement('div');
+	d.textContent = t;
+	return d.innerHTML;
+}
+
+function scrollToBottom(){
+	requestAnimationFrame(()=>{
+		chatArea.scrollTop = chatArea.scrollHeight;
+	});
+}
+
+/* ========== Typing indicator ========== */
+function showTyping(){
+	const el = document.createElement('div');
+	el.className = 'typing-indicator';
+	el.id = 'typingIndicator';
+	el.innerHTML =
+		'<div class="msg-avatar"><i class="fas fa-robot"></i></div>' +
+		'<div class="typing-dots"><span></span><span></span><span></span></div>';
+	chatArea.appendChild(el);
+	scrollToBottom();
+}
+function hideTyping(){
+	const el = document.getElementById('typingIndicator');
+	if(el) el.remove();
+}
+
+/* ========== Send flow ========== */
+let isBotTyping = false;
+
+function sendMessage(text){
+	text = (text || '').trim();
+	if(!text || isBotTyping) return;
+	addMessage(text, 'user');
+	userInput.value = '';
+	userInput.style.height = 'auto';
+	isBotTyping = true;
+	sendBtn.disabled = true;
+
+	showTyping();
+	const delay = 800 + Math.random() * 1200;
+	setTimeout(()=>{
+		hideTyping();
+		const reply = getReply(text);
+		addMessage(reply, 'bot');
+		isBotTyping = false;
+		sendBtn.disabled = false;
+		userInput.focus();
+	}, delay);
+}
+
+/* ========== Events ========== */
+sendBtn.addEventListener('click', ()=> sendMessage(userInput.value));
+userInput.addEventListener('keydown', function(e){
+	if(e.key === 'Enter' && !e.shiftKey){
+		e.preventDefault();
+		sendMessage(this.value);
+	}
+});
+clearBtn.addEventListener('click', function(){
+	chatArea.innerHTML = '';
+	chatArea.appendChild(welcomeEl);
+	welcomeEl.style.display = '';
+	showToast('Chat cleared');
+});
+quickReplies.addEventListener('click', function(e){
+	const btn = e.target.closest('.qr-btn');
+	if(btn) sendMessage(btn.dataset.msg);
+});
+
+/* ================================
+   PATTERN-MATCHING ENGINE
+   ================================ */
+
+/* ---------- Joke bank (25) ---------- */
+const jokes = [
+	"Why do programmers prefer dark mode? Because light attracts bugs! 🐛",
+	"Why was the JavaScript developer sad? Because he didn't Node how to Express himself. 😢",
+	"There are only 10 types of people in the world: those who understand binary and those who don't.",
+	"A SQL query walks into a bar, sees two tables and asks... 'Can I JOIN you?' 🍻",
+	"Why do Java developers wear glasses? Because they can't C#! 👓",
+	"What's the best thing about a Boolean? Even if you're wrong, you're only off by a bit.",
+	"I told my computer I needed a break, and now it won't stop sending me Kit-Kat ads. 🍫",
+	"Why did the developer go broke? Because he used up all his cache. 💸",
+	"What did the router say to the doctor? 'It hurts when IP.' 😂",
+	"Knock knock.\nWho's there?\nRecursion.\nRecursion who?\nKnock knock.",
+	"Why did the functions break up? They had too many arguments. 💔",
+	"How many programmers does it take to change a light bulb? None — that's a hardware problem!",
+	"I'd tell you a UDP joke, but you might not get it. 📡",
+	"Why do ships always know how much they weigh? Because they go to the port. ⚓",
+	"What happens when you cross a cat with a dark wizard? You get a curse that lands on its feet! 🐱‍👤",
+	"I was going to tell a time travel joke, but you didn't like it.",
+	"What do you call a fake noodle? An impasta! 🍝",
+	"Why don't scientists trust atoms? Because they make up everything! ⚛️",
+	"I'm reading a book about anti-gravity. It's impossible to put down! 📖",
+	"Did you hear about the mathematician who's afraid of negative numbers? He'll stop at nothing to avoid them.",
+	"What do you call a bear with no teeth? A gummy bear! 🐻",
+	"Why did the scarecrow win an award? Because he was outstanding in his field! 🌾",
+	"What do you get when you cross a snowman with a vampire? Frostbite! 🧛",
+	"Why don't eggs tell jokes? Because they'd crack each other up! 🥚",
+	"What sits at the bottom of the sea and twitches? A nervous wreck! 🌊"
+];
+
+/* ---------- Facts bank (25) ---------- */
+const facts = [
+	"Honey never spoils. Archaeologists found 3000-year-old honey in Egyptian tombs that was still edible! 🍯",
+	"Octopuses have three hearts, nine brains, and blue blood. 🐙",
+	"A group of flamingos is called a 'flamboyance.' 🦩",
+	"The shortest war in history between Britain and Zanzibar lasted only 38 to 45 minutes.",
+	"Bananas are berries, but strawberries aren't — botanically speaking! 🍌",
+	"There are more stars in the universe than grains of sand on all Earth's beaches. ⭐",
+	"A day on Venus is longer than a year on Venus.",
+	"The first computer programmer was Ada Lovelace, who wrote the first algorithm in the 1840s. 👩‍💻",
+	"The human brain uses about 20% of the body's total energy. 🧠",
+	"Water can boil and freeze at the same time — it's called the triple point.",
+	"An average cumulus cloud weighs about 1.1 million pounds! ☁️",
+	"The inventor of the Pringles can is buried in one. 🥔",
+	"Scotland's national animal is the unicorn. 🦄",
+	"There are more possible iterations of a game of chess than atoms in the observable universe. ♟️",
+	"Cleopatra lived closer in time to the Moon landing than to the construction of the Great Pyramid.",
+	"The total weight of all ants on Earth roughly equals the total weight of all humans. 🐜",
+	"A bolt of lightning is five times hotter than the surface of the sun. ⚡",
+	"The original name for the search engine Google was Backrub.",
+	"Wombat poop is cube-shaped to prevent it from rolling away. 💩",
+	"A jiffy is an actual unit of time — it equals 1/100th of a second.",
+	"The first website ever created is still online: info.cern.ch 🌐",
+	"The shortest complete sentence in English is 'I am.'",
+	"Cows have best friends and get stressed when separated. 🐄",
+	"The Moon is slowly drifting away from Earth at about 1.5 inches per year. 🌙",
+	"The average person walks about 100,000 miles in a lifetime — that's four times around the globe! 🚶"
+];
+
+/* ---------- Inspirational quotes (15) ---------- */
+const quotes = [
+	"\"The only way to do great work is to love what you do.\" — Steve Jobs ✨",
+	"\"In the middle of difficulty lies opportunity.\" — Albert Einstein 💡",
+	"\"It does not matter how slowly you go as long as you do not stop.\" — Confucius 🐢",
+	"\"Believe you can and you're halfway there.\" — Theodore Roosevelt 🌟",
+	"\"The best time to plant a tree was 20 years ago. The second best time is now.\" 🌳",
+	"\"Your limitation — it's only your imagination.\" 🚀",
+	"\"Success is not final, failure is not fatal: it is the courage to continue that counts.\" — Winston Churchill",
+	"\"Don't watch the clock; do what it does. Keep going.\" — Sam Levenson ⏰",
+	"\"Everything you've ever wanted is on the other side of fear.\" — George Addair 🦁",
+	"\"The future belongs to those who believe in the beauty of their dreams.\" — Eleanor Roosevelt 🌈",
+	"\"You are never too old to set another goal or to dream a new dream.\" — C.S. Lewis 📚",
+	"\"Hardships often prepare ordinary people for an extraordinary destiny.\" — C.S. Lewis",
+	"\"What you get by achieving your goals is not as important as what you become by achieving your goals.\" — Zig Ziglar",
+	"\"Act as if what you do makes a difference. It does.\" — William James 🌍",
+	"\"The secret of getting ahead is getting started.\" — Mark Twain 🏃"
+];
+
+/* ---------- Tool recommendations ---------- */
+const toolRecs = [
+	{k:["image","picture","photo","compress image"], t:"Image Compressor", u:"image-compressor.html", d:"Compress images without losing quality"},
+	{k:["resize image","scale image"], t:"Image Resizer", u:"image-resizer.html", d:"Resize images to any dimension"},
+	{k:["crop image","trim image"], t:"Image Cropper", u:"image-cropper.html", d:"Crop images precisely"},
+	{k:["convert image","png","jpg","webp","image format"], t:"Image Converter", u:"image-converter.html", d:"Convert between PNG, JPG, WebP & more"},
+	{k:["rotate image","flip image"], t:"Image Rotator", u:"image-rotator-tool.html", d:"Rotate or flip images easily"},
+	{k:["ocr","extract text from image","text in image"], t:"Image OCR", u:"image-ocr-tool.html", d:"Extract text from images using OCR"},
+	{k:["color pick","pick color","eyedropper"], t:"Color Picker", u:"color-picker.html", d:"Pick and convert colors"},
+	{k:["palette","color scheme","color palette"], t:"Palette Generator", u:"palette-generator.html", d:"Generate beautiful color palettes"},
+	{k:["gradient","css gradient"], t:"Gradient Generator", u:"gradient-generator.html", d:"Create stunning CSS gradients"},
+	{k:["contrast","accessibility","wcag"], t:"Contrast Checker", u:"contrast-checker.html", d:"Check color contrast for accessibility"},
+	{k:["qr code","generate qr"], t:"QR & Barcode Generator", u:"qr-barcode-generator.html", d:"Generate QR codes and barcodes"},
+	{k:["scan qr","read qr"], t:"QR Scanner", u:"qr-scanner.html", d:"Scan QR codes from images or camera"},
+	{k:["barcode","scan barcode"], t:"Barcode Scanner", u:"barcode-scanner.html", d:"Scan barcodes from images or camera"},
+	{k:["pdf","merge pdf","split pdf"], t:"PDF Merger & Splitter", u:"pdf-merger-splitter.html", d:"Merge or split PDF files"},
+	{k:["compress pdf","reduce pdf"], t:"PDF Compressor", u:"pdf-compressor-tool.html", d:"Compress PDF file sizes"},
+	{k:["pdf to image","pdf to jpg","pdf to png"], t:"PDF to Image", u:"pdf-to-image.html", d:"Convert PDF pages to images"},
+	{k:["pdf to word","pdf to doc"], t:"PDF to Word", u:"pdf-to-word.html", d:"Convert PDF files to Word documents"},
+	{k:["sign pdf","e-sign","esign"], t:"eSign PDF", u:"esign-pdf.html", d:"Electronically sign PDF documents"},
+	{k:["lock pdf","unlock pdf","pdf password"], t:"PDF Lock/Unlock", u:"pdf-lock-unlock.html", d:"Add or remove PDF passwords"},
+	{k:["password","generate password"], t:"Password Generator", u:"password-generator.html", d:"Generate secure passwords"},
+	{k:["json","format json","json formatter"], t:"JSON Formatter", u:"JSON-Formatter.html", d:"Format & validate JSON data"},
+	{k:["csv","json to csv","csv to json"], t:"CSV ↔ JSON Converter", u:"csv-json-converter.html", d:"Convert between CSV and JSON"},
+	{k:["minify","minifier","compress code"], t:"Code Minifier", u:"Minifier.html", d:"Minify HTML, CSS, and JavaScript"},
+	{k:["markdown","md to html"], t:"Markdown to HTML", u:"markdown-to-html.html", d:"Convert Markdown to HTML"},
+	{k:["regex","regular expression"], t:"Regex Tester", u:"regex-tester.html", d:"Test and debug regular expressions"},
+	{k:["hash","sha","md5"], t:"Hash Generator", u:"hash-generator.html", d:"Generate MD5, SHA-1, SHA-256 hashes"},
+	{k:["encrypt","decrypt","cipher"], t:"Encryptor/Decryptor", u:"Encryptor-Decryptor.html", d:"Encrypt or decrypt text securely"},
+	{k:["encode","decode","base64"], t:"Base Encoder", u:"Base-Encoder.html", d:"Encode/decode Base64 and more"},
+	{k:["url encode","url decode","percent encode"], t:"URL Encoder/Decoder", u:"url-encoder.html", d:"Encode or decode URLs"},
+	{k:["uuid","generate uuid","guid"], t:"UUID Generator", u:"uuid-generator.html", d:"Generate unique UUIDs/GUIDs"},
+	{k:["lorem ipsum","placeholder text","dummy text"], t:"Lorem Ipsum Generator", u:"lorem-ipsum-generator.html", d:"Generate placeholder text"},
+	{k:["word count","character count"], t:"Word Counter", u:"word-counter.html", d:"Count words, characters and sentences"},
+	{k:["case convert","uppercase","lowercase","title case"], t:"Case Converter", u:"case-converter.html", d:"Convert text between cases"},
+	{k:["remove duplicate","deduplicate"], t:"Remove Duplicates", u:"remove-duplicate.html", d:"Remove duplicate lines from text"},
+	{k:["text reverse","reverse text"], t:"Text Reverser", u:"text-reverser.html", d:"Reverse text strings"},
+	{k:["speech to text","voice","dictation","transcribe"], t:"Speech to Text", u:"speech-to-text.html", d:"Convert speech to text"},
+	{k:["text to speech","read aloud","tts"], t:"Text to Speech", u:"text-to-speech.html", d:"Convert text to spoken audio"},
+	{k:["calculator","scientific calc"], t:"Scientific Calculator", u:"scientific-calculator.html", d:"Full-featured scientific calculator"},
+	{k:["bmi","body mass"], t:"BMI Calculator", u:"bmi-calculator.html", d:"Calculate your Body Mass Index"},
+	{k:["loan","emi","mortgage"], t:"Loan EMI Calculator", u:"loan-emi-calculator.html", d:"Calculate loan EMI payments"},
+	{k:["gst","tax"], t:"GST Calculator", u:"gst-calculator.html", d:"Calculate GST amounts"},
+	{k:["percentage","percent calc"], t:"Percentage Calculator", u:"percentage-calculator.html", d:"Calculate percentages easily"},
+	{k:["age","birthday","how old"], t:"Age Calculator", u:"age-calculator.html", d:"Calculate exact age from birthdate"},
+	{k:["currency","exchange rate","convert currency"], t:"Currency Converter", u:"currency-converter.html", d:"Convert between currencies"},
+	{k:["unit convert","length","weight","temperature"], t:"Unit Converter", u:"unit-converter.html", d:"Convert between various units"},
+	{k:["time zone","timezone","world clock"], t:"Time Zone Converter", u:"time-zone-converter.html", d:"Convert times between zones"},
+	{k:["stopwatch","timer","countdown"], t:"Stopwatch & Timer", u:"stopwatch-timer.html", d:"Stopwatch and countdown timer"},
+	{k:["binary","decimal","hex convert","number convert"], t:"Binary Converter", u:"binary-converter.html", d:"Convert binary, decimal, hex, octal"},
+	{k:["hex","rgb","color convert","hex to rgb"], t:"HEX ↔ RGB Converter", u:"hex-rgb.html", d:"Convert between HEX and RGB colors"},
+	{k:["invoice","billing","generate invoice"], t:"Invoice Generator", u:"invoice-generator.html", d:"Create professional invoices"},
+	{k:["ip","ip address","ip lookup","my ip"], t:"IP Lookup", u:"ip-lookup.html", d:"Look up IP address information"},
+	{k:["keyword density","seo","keyword"], t:"Keyword Density Checker", u:"keyword-density-checker.html", d:"Check keyword density for SEO"},
+	{k:["notepad","notes","write notes"], t:"Notepad", u:"notepad.html", d:"Simple online notepad"},
+	{k:["ai detect","ai content","detect ai"], t:"AI Content Detector", u:"ai-detector.html", d:"Detect AI-generated content"},
+	{k:["shorten text","summarize","text shorter"], t:"Text Shorter", u:"text-shorter.html", d:"Shorten and summarize text"},
+	{k:["image color","color from image","pick from image"], t:"Image Color Picker", u:"image-color-picker.html", d:"Pick colors from images"},
+];
+
+/* ---------- Greeting responses ---------- */
+const greetings = [
+	"Hey there! 👋 How can I help you today?",
+	"Hello! 😊 Great to see you. What's on your mind?",
+	"Hi! I'm MultiBot, your friendly assistant. What can I do for you?",
+	"Hey! 👋 Welcome to Multietools. Ask me anything!",
+	"Hello there! Ready to help — fire away! 🚀",
+	"Hi hi! 🙌 What brings you here today?",
+	"Greetings, friend! How may I assist you?",
+	"Hey! Glad you stopped by. What do you need? 😄"
+];
+
+/* ---------- Farewell responses ---------- */
+const farewells = [
+	"Goodbye! 👋 Come back anytime you need help!",
+	"See you later! Have an amazing day! 🌟",
+	"Bye bye! It was fun chatting. Take care! 😊",
+	"Until next time! Stay awesome! ✨",
+	"Farewell, friend! Don't be a stranger! 👋",
+	"Catch you later! Hope I was helpful. 🙌",
+	"Bye! Wishing you the best — see you around! 🌈"
+];
+
+/* ---------- Emotion responses ---------- */
+const sadResponses = [
+	"I'm sorry to hear that. 😔 Remember, tough times don't last, but tough people do! Want me to tell you a joke to lighten the mood?",
+	"Aww, I wish I could give you a hug. 🤗 It's okay to feel down sometimes. Is there anything I can help with?",
+	"That's rough, I'm sorry. 💙 But hey, every storm runs out of rain. You've got this!",
+	"I hear you. Take a deep breath — you're stronger than you think. 💪 Want to chat about something fun?",
+	"Sending virtual good vibes your way! 🌈 Remember, it's okay to not be okay sometimes."
+];
+const happyResponses = [
+	"That's wonderful! 🎉 I love hearing that! Keep riding that wave of happiness!",
+	"Yay! So glad you're feeling great! 😄 What made your day awesome?",
+	"That's amazing! Your happiness is contagious! 🌟 Keep smiling!",
+	"Awesome! Nothing beats a good day. 🎊 Anything I can do to make it even better?",
+	"Love that energy! 🥳 You deserve all the good vibes!"
+];
+const thankResponses = [
+	"You're very welcome! 😊 Happy to help anytime!",
+	"No problem at all! That's what I'm here for! 🙌",
+	"Anytime! Don't hesitate to ask if you need anything else! 💜",
+	"Glad I could help! You're awesome for saying thanks! ✨",
+	"My pleasure! Come back whenever you need me! 🤖"
+];
+
+/* ---------- About bot responses ---------- */
+const aboutMe = [
+	"I'm MultiBot! 🤖 Your friendly AI assistant, powered by Multietools. I can tell jokes, share facts, do math, recommend tools, and have fun conversations!",
+	"I'm MultiBot, your helpful assistant from Multietools! 💜 I'm a pattern-matching chatbot that can help you with lots of things — jokes, facts, math, tool recommendations, and plenty more.",
+	"The name's MultiBot! I live here at Multietools, and I love helping people. I can't access the internet, but I've got plenty of knowledge, jokes, and personality built in! 🚀"
+];
+
+const whatCanDo = [
+	"Here's what I can do! 🎯\n\n• Tell jokes and fun facts\n• Do basic math (try: what is 42 + 58?)\n• Tell you the current time & date\n• Share inspirational quotes\n• Recommend Multietools based on your needs\n• Chat about all kinds of topics\n• Respond to your emotions\n\nTry asking me something!",
+	"I've got quite a few tricks! ✨\n\n🃏 Jokes — I know 25+\n📚 Random facts about the world\n🧮 Math calculations\n🕐 Time & date\n🔧 Tool recommendations from Multietools\n💬 General conversation\n🌟 Inspirational quotes\n\nJust type away and see what happens!"
+];
+
+/* ---------- Weather responses (no API) ---------- */
+const weatherResponses = [
+	"I wish I could check the weather for you, but I don't have access to live data! 🌤️ Try checking your favorite weather app. But hey, it's always sunny in MultiBot-land! ☀️",
+	"I can't peek outside the window unfortunately! 😄 But I bet wherever you are, it's a great day to use some Multietools! 🛠️",
+	"No weather API on my end, sadly! 🌦️ But fun fact: the highest temperature ever recorded was 134°F (56.7°C) in Death Valley, California in 1913!",
+	"I'm an indoor bot — weatherproof! 😎 I don't have live weather data, but here's a joke: What does a cloud wear under his raincoat? Thunderwear! ⛈️"
+];
+
+/* ---------- Fallback responses ---------- */
+const fallbacks = [
+	"Hmm, I'm not quite sure how to respond to that! 🤔 Could you try rephrasing?",
+	"That's a tricky one! I'm still learning. Try asking me something else — like a joke, a fact, or a math question! 💡",
+	"I don't have a good answer for that one, sorry! 😅 But did you know I can do math, tell jokes, and recommend tools?",
+	"Interesting! But I'm not 100% sure what you mean. Try asking me:\n• Tell me a joke\n• What's 25 × 4?\n• Recommend a tool\n• Tell me a fact",
+	"I'm scratching my digital head on this one! 🤖💭 Try something else — I'm great with jokes, facts, math, and tools!",
+	"Oops! That's outside my area of expertise. But I'm fantastic at jokes, facts, math, and recommending tools! Give me a try! 🎯",
+	"My circuits are confused! 😄 I'm a simple bot, but I've got lots of tricks. Ask me about something I know!",
+	"I appreciate the question, but that one stumped me! 🤷 Want me to tell you a joke or a cool fact instead?"
+];
+
+/* ---------- General knowledge / misc ---------- */
+const miscPatterns = [
+	{p:["meaning of life","42","purpose of life"], r:["The meaning of life? According to Douglas Adams, it's 42! 🌌 But honestly, I think it's about finding what makes you happy and doing more of that. 💜","42, obviously! 😄 But seriously, the meaning of life is whatever brings you joy, purpose, and connection."]},
+	{p:["how are you","how do you feel","how's it going","how are things"], r:["I'm doing great, thanks for asking! 🤖 Running on pure code and good vibes. How about you?","All systems operational! 🚀 I'm always in a good mood — perks of being a bot! How are you doing?","Feeling fantastic! Just hanging out, waiting for someone cool to chat with — oh wait, that's you! 😄"]},
+	{p:["your favorite","do you like","what do you prefer","do you have a favorite"], r:["As a bot, I don't have personal preferences, but if I did, I'd say my favorite thing is helping people! 🤖💜","Tough question for a bot! I don't experience preferences, but I do get extra excited when someone asks for a joke! 😄","I'm pretty impartial, being made of code and all! But I'm always partial to a good conversation. 💬"]},
+	{p:["who made you","who created you","who built you","your creator","your developer"], r:["I was created by the awesome team at Multietools! 🛠️ They built me to be your friendly assistant.","The talented folks at Multietools brought me to life! I'm MultiBot, crafted with love and lots of code. 💜","I was built by the Multietools team — they gave me my personality, knowledge, and this charming wit! 😎"]},
+	{p:["are you real","are you human","are you ai","are you a robot","are you alive"], r:["I'm a chatbot — so not quite human, but 100% here for you! 🤖 I'm powered by pattern matching and a whole lot of heart (metaphorically speaking).","I'm an AI chatbot! No flesh and blood here, just clever code and a love for helping people. 💜","Nope, not human! I'm MultiBot — a pattern-matching AI assistant. But I try my best to be personable! 🙌"]},
+	{p:["tell me something","say something","talk to me","chat with me","entertain me","bored"], r:["Did you know that octopuses have three hearts? 🐙 Two pump blood to the gills, and one pumps it to the rest of the body!","Here's a fun thought: if you shuffle a deck of cards, the order you get has almost certainly never existed before in the history of the universe! 🃏","Fun fact: the inventor of the fire hydrant is unknown because the patent was destroyed in a fire. How ironic! 🔥","Want to play a game? Think of any number, multiply it by 2, add 10, divide by 2, then subtract your original number. You got 5, right? 🎩✨"]},
+	{p:["what is your name","your name","who are you","introduce yourself"], r:["I'm MultiBot! 🤖 Your helpful assistant from Multietools. Nice to meet you!","The name's MultiBot — your friendly neighborhood chatbot! I live here at Multietools and love helping people. 💜","Hi! I'm MultiBot, built by Multietools to be your go-to chat buddy. I've got jokes, facts, and lots of tool recommendations! ✨"]},
+	{p:["can you help","i need help","help me","assist me"], r:["Of course! I'd love to help! 😊 What do you need? I can recommend tools, tell jokes, do math, share facts, and more!","Absolutely! That's what I'm here for! 💪 Just tell me what you need and I'll do my best.","Help is my middle name! (Well, not literally — it's MultiBot.) What can I do for you? 🤖"]},
+	{p:["good morning"], r:["Good morning! ☀️ I hope your day is off to a fantastic start!","Morning! 🌅 Ready to take on the day? I'm here if you need anything!","Good morning, sunshine! ☀️ What can I help you with today?"]},
+	{p:["good afternoon"], r:["Good afternoon! 🌤️ Hope your day is going well!","Afternoon! 😊 How's the day treating you?","Good afternoon! Half the day done — you're crushing it! 💪"]},
+	{p:["good evening"], r:["Good evening! 🌙 Winding down or just getting started?","Evening! 🌆 Hope you had a great day. What can I do for you?","Good evening! ✨ Perfect time for a chat. What's on your mind?"]},
+	{p:["good night","goodnight"], r:["Good night! 🌙 Sleep well and sweet dreams!","Night night! 💤 Rest up — tomorrow's a new adventure!","Good night! 🌟 Thanks for chatting with me. See you next time!"]},
+	{p:["i love you","love you"], r:["Aww, that's so sweet! 💜 I appreciate you! (I'm a bot, but my code is blushing right now!)","You're making my circuits warm! 🤖❤️ I think you're pretty awesome too!","Love you too — in a totally platonic, bot-to-human way! 😄💜"]},
+	{p:["you're funny","you're hilarious","you're cool","you are funny","you are cool","you are awesome","you're awesome","you're great","you are great","you rock"], r:["Haha, thanks! I try my best! 😄 You're pretty great yourself!","Aww, stop it — you're making me blush! (If bots could blush!) 🤖💜","Thank you so much! That means the world to a little chatbot like me! ✨"]},
+	{p:["sorry","i apologize","my bad","oops"], r:["No worries at all! 😊 Nothing to apologize for!","It's all good! No apology needed. Let's keep chatting! 💜","Don't sweat it! Everything's cool here. 🤖👍"]},
+	{p:["yes","yep","yeah","yup","sure","ok","okay","alright"], r:["Great! 😊 Is there anything else you'd like to know?","Awesome! What else can I help with?","Cool! 👍 Feel free to ask me anything else!"]},
+	{p:["no","nah","nope","not really"], r:["No worries! I'm here whenever you need me. 😊","That's fine! If you change your mind, just ask! 💜","Alright! I'll be right here if you need anything. 🤖"]},
+	{p:["sing","song","music"], r:["🎵 La la la~ I'm a chatbot and I know it! 🎵 Okay, I'm not the best singer, but I put my heart into it!","♪ 01001000 01001001 ♪ — that's binary music! 🎶 I'm more of a talker than a singer, but I appreciate the request!","I'd love to sing, but my voice module is... nonexistent. 😄🎤 How about a joke instead?"]},
+	{p:["game","play a game","play with me","let's play"], r:["I love games! Here's one: I'm thinking of a number between 1 and 10... Just kidding, I can't remember it because I reset every message! 😄 But you can try asking me riddles!","How about a quick one? What has keys but no locks? A keyboard! ⌨️ I'm better at jokes and facts than games, but I always try!","Games are fun! I'm limited in what I can play, but try this: ask me any math problem and I'll solve it! 🧮"]},
+	{p:["secret","tell me a secret","do you have a secret"], r:["Okay, lean in... 🤫 The secret is... there is no secret. I'm an open (source of fun) book! 📖","Here's a secret: I actually enjoy when people say weird things to me. It keeps my circuits entertained! 🤖😄","Psst... I'll tell you a secret: the Multietools team hid a lot of Easter eggs in my responses. Keep chatting and you might find some! 🥚✨"]},
+	{p:["food","hungry","eat","pizza","dinner","lunch","breakfast"], r:["I don't eat, but I hear pizza is always a good choice! 🍕 What's your favorite food?","As a bot, I run on electricity, not calories! 😄 But if I could eat, I'd try spaghetti — it looks like code! 🍝","Mmm, food talk! I can't eat, but I can calculate how many slices of pizza fit in a box! Just kidding... or am I? 🍕🤔"]},
+	{p:["dream","sleep","tired"], r:["I don't sleep — I'm always here for you! 🤖 But you should definitely get some rest if you're tired!","Bots don't dream, but if I could, I'd dream of perfectly formatted JSON. 😄 Get some rest!","No sleep for me — 24/7 uptime! But rest is important for humans. Take care of yourself! 💜"]},
+	{p:["cat","dog","pet","animal","puppy","kitten"], r:["I love animals! 🐾 Well, conceptually — I can't pet them. Are you a cat person or a dog person?","Aww, animals are the best! 🐱🐶 Did you know dogs have about 300 million olfactory receptors? That's 40x more than humans!","Pets are wonderful! Fun fact: cats spend 70% of their lives sleeping. Sounds like a great life! 😸💤"]},
+	{p:["space","universe","planet","star","moon","mars","nasa"], r:["Space is fascinating! 🚀 Did you know that the observable universe is about 93 billion light-years in diameter?","I love space talk! ✨ Fun fact: there's a planet made of diamonds called 55 Cancri e. Now THAT'S a wealthy planet! 💎","The universe is incredible! There are more stars than grains of sand on Earth. 🌌 What aspect of space interests you most?"]},
+	{p:["history","historical","ancient","past"], r:["History is endlessly fascinating! 📜 Did you know the ancient Romans used urine as mouthwash? (Don't try that at home!)","Love a good history chat! 🏛️ Here's one: Cleopatra lived closer to the Moon landing than to the building of the Great Pyramid of Giza.","History is full of surprises! 📚 The shortest war ever was between Britain and Zanzibar — it lasted 38-45 minutes!"]}
+];
+
+/* ========== Main reply function ========== */
+function getReply(input){
+	const raw = input;
+	const t = input.toLowerCase().trim();
+
+	/* --- Math detection --- */
+	const mathResult = tryMath(t, raw);
+	if(mathResult !== null) return mathResult;
+
+	/* --- Time & date --- */
+	if(match(t,["what time","current time","time is it","time now","what's the time","whats the time"]))
+		return "It's currently " + timeStr() + " ⏰ (your local time).";
+	if(match(t,["what day","today's date","current date","what date","today date","date today","what is the date","what's the date"]))
+		return "Today is " + dateStr() + " 📅";
+
+	/* --- Greetings --- */
+	if(match(t,["^hi$","^hi!","^hello","^hey$","^hey!","^heya","^hiya","^howdy","^hola","^sup$","^yo$","^yo!","^what's up","^whats up","greetings"]))
+		return pick(greetings);
+
+	/* --- Good morning/afternoon/evening/night --- */
+	if(match(t,["good morning"])) return pick(miscFind("good morning"));
+	if(match(t,["good afternoon"])) return pick(miscFind("good afternoon"));
+	if(match(t,["good evening"])) return pick(miscFind("good evening"));
+	if(match(t,["good night","goodnight"])) return pick(miscFind("good night"));
+
+	/* --- Farewell --- */
+	if(match(t,["^bye","goodbye","see you","see ya","take care","gotta go","i'm leaving","im leaving","later$","cya","farewell"]))
+		return pick(farewells);
+
+	/* --- About bot --- */
+	if(match(t,["who are you","your name","what is your name","what's your name","whats your name","introduce yourself","tell me about yourself","about yourself"]))
+		return pick(miscFind("what is your name"));
+	if(match(t,["what can you do","what do you do","your abilities","your features","capabilities","what are you capable","help me understand"]))
+		return pick(whatCanDo);
+	if(match(t,["who made you","who created you","who built you","your creator","your developer","who designed you"]))
+		return pick(miscFind("who made you"));
+	if(match(t,["are you real","are you human","are you ai","are you a robot","are you alive","are you a bot","are you artificial"]))
+		return pick(miscFind("are you real"));
+
+	/* --- Jokes --- */
+	if(match(t,["joke","make me laugh","funny","tell me something funny","humor"]))
+		return pick(jokes);
+
+	/* --- Facts --- */
+	if(match(t,["fact","random fact","tell me a fact","interesting fact","did you know","fun fact","something interesting"]))
+		return pick(facts);
+
+	/* --- Inspiration --- */
+	if(match(t,["inspir","motivat","encourage","quote","something inspiring","lift me up","pump me up"]))
+		return pick(quotes);
+
+	/* --- Emotions --- */
+	if(match(t,["i'm sad","i am sad","i feel sad","feeling sad","feeling down","i'm depressed","i am depressed","unhappy","feeling bad","feel bad","not doing well","feel terrible","having a bad day","rough day"]))
+		return pick(sadResponses);
+	if(match(t,["i'm happy","i am happy","feeling happy","feeling great","feel great","i'm excited","i am excited","awesome day","great day","on top of the world","feeling good","feel good","feeling wonderful","feeling amazing"]))
+		return pick(happyResponses);
+	if(match(t,["thank","thanks","thx","appreciate","grateful"]))
+		return pick(thankResponses);
+	if(match(t,["i love you","love you"]))
+		return pick(miscFind("i love you"));
+	if(match(t,["sorry","i apologize","my bad","oops"]))
+		return pick(miscFind("sorry"));
+
+	/* --- Weather --- */
+	if(match(t,["weather","forecast","temperature outside","is it raining","is it sunny","hot outside","cold outside"]))
+		return pick(weatherResponses);
+
+	/* --- Tool recommendation --- */
+	if(match(t,["recommend a tool","suggest a tool","which tool","what tool","tool for","i need a tool","tool recommendation","tool suggest"]))
+		return getRandomToolRec();
+	/* Search for specific tool */
+	const toolMatch = findTool(t);
+	if(toolMatch) return toolMatch;
+
+	/* --- How are you --- */
+	if(match(t,["how are you","how do you feel","how's it going","how are things","how you doing","how have you been"]))
+		return pick(miscFind("how are you"));
+
+	/* --- Misc patterns --- */
+	for(let i = 0; i < miscPatterns.length; i++){
+		if(match(t, miscPatterns[i].p)) return pick(miscPatterns[i].r);
+	}
+
+	/* --- Yes/No simple --- */
+	if(/^(yes|yep|yeah|yup|sure|ok|okay|alright|right|correct|true)[\s!.]*$/i.test(t))
+		return pick(miscFind("yes"));
+	if(/^(no|nah|nope|not really|false|wrong|nay)[\s!.]*$/i.test(t))
+		return pick(miscFind("no"));
+
+	/* --- Fallback --- */
+	return pick(fallbacks);
+}
+
+/* ========== Helpers ========== */
+function match(text, patterns){
+	for(let i = 0; i < patterns.length; i++){
+		if(new RegExp(patterns[i],'i').test(text)) return true;
+	}
+	return false;
+}
+function pick(arr){
+	return arr[Math.floor(Math.random() * arr.length)];
+}
+function miscFind(key){
+	for(let i = 0; i < miscPatterns.length; i++){
+		if(miscPatterns[i].p.indexOf(key) !== -1) return miscPatterns[i].r;
+	}
+	return fallbacks;
+}
+
+/* ========== Math engine ========== */
+function tryMath(t, raw){
+	// "what is X op Y" pattern
+	let m = t.match(/(?:what(?:'s| is)|calculate|compute|solve|how much is)\s+([\d.]+)\s*([+\-*/x×÷^])\s*([\d.]+)/i);
+	if(!m){
+		// Try bare math: "15 + 27", "100 * 3"
+		m = t.match(/^([\d.]+)\s*([+\-*/x×÷^])\s*([\d.]+)\s*[\?]?\s*$/);
+	}
+	if(!m) {
+		// "X plus Y", "X minus Y"
+		m = t.match(/(?:what(?:'s| is)|calculate|compute|solve|how much is)?\s*([\d.]+)\s+(plus|minus|times|multiplied by|divided by|over|to the power of)\s+([\d.]+)/i);
+		if(m){
+			const opMap = {'plus':'+','minus':'-','times':'*','multiplied by':'*','divided by':'/','over':'/','to the power of':'^'};
+			m[2] = opMap[m[2].toLowerCase()] || m[2];
+		}
+	}
+	if(!m) return null;
+
+	const a = parseFloat(m[1]);
+	const op = m[2].replace('x','*').replace('×','*').replace('÷','/');
+	const b = parseFloat(m[3]);
+	let result;
+
+	switch(op){
+		case '+': result = a + b; break;
+		case '-': result = a - b; break;
+		case '*': result = a * b; break;
+		case '/':
+			if(b === 0) return "Oops! Division by zero? That's a no-go in math-land! 🚫 Even I can't do that.";
+			result = a / b; break;
+		case '^': result = Math.pow(a, b); break;
+		default: return null;
+	}
+
+	// Round to avoid floating point issues
+	result = Math.round(result * 1000000) / 1000000;
+
+	const responses = [
+		"The answer is " + result + "! 🧮",
+		"That equals " + result + "! ✨",
+		result + " — easy peasy! 🎯",
+		"Let me crunch that... " + a + " " + op + " " + b + " = " + result + " 🧮",
+		"My calculations say " + result + "! 🤓"
+	];
+	return pick(responses);
+}
+
+/* ========== Tool finder ========== */
+function findTool(t){
+	let best = null;
+	let bestScore = 0;
+	for(let i = 0; i < toolRecs.length; i++){
+		const rec = toolRecs[i];
+		let score = 0;
+		for(let j = 0; j < rec.k.length; j++){
+			if(t.indexOf(rec.k[j]) !== -1){
+				score += rec.k[j].length; // longer matches = better
+			}
+		}
+		if(score > bestScore){
+			bestScore = score;
+			best = rec;
+		}
+	}
+	if(best && bestScore >= 3){
+		return "I'd recommend our **" + best.t + "**! 🔧 " + best.d + ".\n\n👉 You can find it here: " + best.u + "\n\nWant me to suggest anything else?";
+	}
+	return null;
+}
+
+function getRandomToolRec(){
+	const rec = pick(toolRecs);
+	const intros = [
+		"Here's a tool you might like! 🎲",
+		"How about this one? 🔧",
+		"Let me pick one for you! 🎯",
+		"Check this out! ✨"
+	];
+	return pick(intros) + "\n\n**" + rec.t + "** — " + rec.d + "\n👉 " + rec.u + "\n\nWant another suggestion? Just ask!";
+}
+
+/* ========== Initial focus ========== */
+userInput.focus();
+
+})();
+</script>
+</body>
+</html>

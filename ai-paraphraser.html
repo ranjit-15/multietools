@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AI Paraphraser - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
+	<style>
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:1100px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;}
+		.muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		.back:hover{color:var(--primary);}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+
+		/* Mode Selector */
+		.mode-selector{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;}
+		.mode-btn{padding:.55rem 1.1rem;border-radius:var(--radius-full);border:1.5px solid var(--border);background:var(--bg-alt);color:var(--text);font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.4rem;}
+		.mode-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-glow);}
+		.mode-btn.active{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border-color:transparent;box-shadow:0 2px 10px rgba(124,58,237,.25);}
+		.mode-btn i{font-size:.8rem;}
+
+		/* Editor Grid */
+		.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;}
+		.editor-col{display:flex;flex-direction:column;gap:.5rem;}
+		.editor-label{font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:.5rem;}
+		.editor-label .badge{font-size:.75rem;font-weight:600;padding:.15rem .55rem;border-radius:var(--radius-full);background:var(--bg-alt);color:var(--muted);border:1px solid var(--border);}
+		textarea{width:100%;min-height:260px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.95rem;font-family:inherit;resize:vertical;transition:border-color .2s;line-height:1.7;}
+		textarea:focus{outline:none;border-color:var(--primary);}
+		.output-area{width:100%;min-height:260px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.95rem;font-family:inherit;line-height:1.7;overflow-y:auto;white-space:pre-wrap;word-wrap:break-word;}
+		.output-area .diff-added{background:rgba(16,185,129,.15);border-radius:3px;padding:0 2px;}
+		.output-area .diff-removed{background:rgba(239,68,68,.12);text-decoration:line-through;border-radius:3px;padding:0 2px;color:var(--muted);}
+
+		/* Controls */
+		.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:.5rem;}
+		.btn{padding:.75rem 1.3rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.92rem;transition:transform .15s,box-shadow .25s;display:inline-flex;align-items:center;gap:.5rem;}
+		.btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.3);}
+		.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+		.btn-outline{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);}
+		.btn-outline:hover{background:var(--primary-glow);transform:translateY(-1px);}
+		.btn-success{background:linear-gradient(135deg,var(--success),#059669);}
+		.btn-success:hover{box-shadow:0 4px 16px rgba(16,185,129,.3);}
+		.word-count{color:var(--muted);font-size:.85rem;margin-left:auto;}
+
+		/* Stats Bar */
+		.stats-bar{display:flex;flex-wrap:wrap;gap:1rem;padding:.85rem 1rem;background:var(--bg-alt);border-radius:var(--radius-sm);margin-top:.5rem;}
+		.stat-item{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.35rem;}
+		.stat-item strong{color:var(--text);font-weight:700;}
+		.stat-item i{color:var(--primary);font-size:.75rem;}
+		.stat-divider{width:1px;background:var(--border);align-self:stretch;}
+
+		/* Loading */
+		.loading{display:none;align-items:center;justify-content:center;gap:.75rem;padding:2rem;font-weight:600;color:var(--muted);}
+		.loading.active{display:flex;}
+		.spinner{width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;}
+		@keyframes spin{to{transform:rotate(360deg);}}
+
+		/* Info Box */
+		.info-box{background:var(--bg-alt);border-left:3px solid var(--primary);border-radius:var(--radius-sm);padding:.85rem 1rem;font-size:.85rem;color:var(--muted);line-height:1.6;margin-top:.75rem;}
+
+		/* Toast */
+		.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;display:flex;align-items:center;gap:.5rem;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+		.toast i{color:var(--success);}
+
+		/* Diff toggle */
+		.diff-toggle{display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:var(--muted);cursor:pointer;user-select:none;}
+		.diff-toggle input{accent-color:var(--primary);}
+
+		/* Responsive */
+		@media(max-width:768px){
+			.editor-grid{grid-template-columns:1fr;}
+			.controls{flex-direction:column;align-items:stretch;}
+			.controls .btn{justify-content:center;}
+			.word-count{margin-left:0;text-align:center;}
+			.mode-selector{justify-content:center;}
+			.stats-bar{flex-direction:column;gap:.5rem;}
+			.stat-divider{width:100%;height:1px;}
+		}
+		@media(max-width:480px){
+			body{padding:.75rem;}
+			header{padding:1.25rem;}
+			main{padding:1rem;}
+			h1{font-size:1.4rem;}
+			textarea,.output-area{min-height:180px;font-size:.88rem;}
+		}
+	</style>
+</head>
+<body>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html#ai-tools"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-wand-magic-sparkles"></i> AI Paraphraser</h1>
+		<p class="muted">Rewrite text in different styles — Standard, Formal, Casual, Creative, or Shortened.</p>
+	</header>
+	<main>
+		<!-- Mode Selector -->
+		<div class="panel">
+			<div style="font-weight:700;font-size:.9rem;margin-bottom:.65rem;"><i class="fas fa-sliders"></i> Paraphrase Mode</div>
+			<div class="mode-selector" id="modeSelector">
+				<button class="mode-btn active" data-mode="standard"><i class="fas fa-pen"></i> Standard</button>
+				<button class="mode-btn" data-mode="formal"><i class="fas fa-user-tie"></i> Formal</button>
+				<button class="mode-btn" data-mode="casual"><i class="fas fa-face-smile"></i> Casual</button>
+				<button class="mode-btn" data-mode="creative"><i class="fas fa-palette"></i> Creative</button>
+				<button class="mode-btn" data-mode="shortened"><i class="fas fa-compress"></i> Shortened</button>
+			</div>
+			<div class="info-box" id="modeInfo">
+				<i class="fas fa-info-circle"></i> <strong>Standard</strong> — Balanced rewriting with synonym replacement and sentence restructuring. Preserves meaning while varying vocabulary and structure.
+			</div>
+		</div>
+
+		<!-- Editor -->
+		<div class="panel">
+			<div class="editor-grid">
+				<div class="editor-col">
+					<div class="editor-label">
+						<i class="fas fa-file-lines" style="color:var(--primary)"></i> Original Text
+						<span class="badge" id="inputWordCount">0 words</span>
+					</div>
+					<textarea id="inputText" placeholder="Paste or type your text here to paraphrase..."></textarea>
+				</div>
+				<div class="editor-col">
+					<div class="editor-label" style="justify-content:space-between;">
+						<span style="display:flex;align-items:center;gap:.5rem;">
+							<i class="fas fa-sparkles" style="color:var(--accent)"></i> Paraphrased Text
+							<span class="badge" id="outputWordCount">0 words</span>
+						</span>
+						<label class="diff-toggle" title="Highlight changes">
+							<input type="checkbox" id="diffToggle" checked> <i class="fas fa-highlighter"></i> Diff
+						</label>
+					</div>
+					<div class="output-area" id="outputArea">Your paraphrased text will appear here...</div>
+				</div>
+			</div>
+
+			<!-- Controls -->
+			<div class="controls">
+				<button class="btn" id="paraphraseBtn" onclick="paraphraseText()"><i class="fas fa-wand-magic-sparkles"></i> Paraphrase</button>
+				<button class="btn btn-outline" id="rerunBtn" onclick="rerunParaphrase()" disabled><i class="fas fa-rotate"></i> Paraphrase Again</button>
+				<button class="btn btn-success" id="copyBtn" onclick="copyOutput()" disabled><i class="fas fa-copy"></i> Copy</button>
+				<button class="btn btn-outline" onclick="clearAll()"><i class="fas fa-trash"></i> Clear</button>
+				<span class="word-count" id="charCount">0 characters</span>
+			</div>
+
+			<!-- Loading -->
+			<div class="loading" id="loading">
+				<div class="spinner"></div>
+				Paraphrasing your text...
+			</div>
+
+			<!-- Stats Bar (hidden until output exists) -->
+			<div class="stats-bar" id="statsBar" style="display:none;">
+				<div class="stat-item"><i class="fas fa-arrow-right"></i> Words: <strong id="statInputWords">0</strong> → <strong id="statOutputWords">0</strong></div>
+				<div class="stat-divider"></div>
+				<div class="stat-item"><i class="fas fa-percentage"></i> Change: <strong id="statChangePercent">0%</strong></div>
+				<div class="stat-divider"></div>
+				<div class="stat-item"><i class="fas fa-font"></i> Characters: <strong id="statInputChars">0</strong> → <strong id="statOutputChars">0</strong></div>
+				<div class="stat-divider"></div>
+				<div class="stat-item"><i class="fas fa-shuffle"></i> Words Changed: <strong id="statWordsChanged">0</strong></div>
+			</div>
+		</div>
+	</main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastText">Copied!</span></div>
+
+<script src="js/global.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ======================== SYNONYM MAP (120+ entries) ======================== */
+const SYNONYMS = {
+	// Common verbs
+	"use": ["utilize","employ","apply","leverage","make use of"],
+	"make": ["create","produce","generate","construct","build"],
+	"get": ["obtain","acquire","receive","gain","secure"],
+	"give": ["provide","offer","supply","deliver","present"],
+	"show": ["demonstrate","display","illustrate","reveal","exhibit"],
+	"help": ["assist","aid","support","facilitate","enable"],
+	"start": ["begin","commence","initiate","launch","embark on"],
+	"stop": ["cease","halt","discontinue","terminate","end"],
+	"keep": ["maintain","retain","preserve","sustain","hold"],
+	"change": ["alter","modify","adjust","transform","revise"],
+	"try": ["attempt","endeavor","strive","seek to","aim to"],
+	"need": ["require","necessitate","demand","call for"],
+	"want": ["desire","wish for","seek","aspire to"],
+	"think": ["believe","consider","regard","deem","reckon"],
+	"know": ["understand","recognize","comprehend","be aware of"],
+	"find": ["discover","locate","identify","uncover","detect"],
+	"tell": ["inform","notify","advise","communicate to"],
+	"ask": ["inquire","request","query","question"],
+	"work": ["function","operate","perform","labor"],
+	"run": ["operate","execute","manage","conduct"],
+	"move": ["relocate","shift","transfer","transport"],
+	"grow": ["expand","increase","develop","flourish"],
+	"build": ["construct","assemble","establish","develop"],
+	"take": ["seize","grab","acquire","accept","claim"],
+	"put": ["place","position","set","arrange","deposit"],
+	"say": ["state","declare","assert","mention","remark"],
+	"go": ["proceed","advance","travel","head","move"],
+	"see": ["observe","notice","perceive","witness","view"],
+	"come": ["arrive","approach","reach","appear"],
+	"look": ["examine","inspect","observe","glance at","view"],
+	"bring": ["deliver","carry","convey","transport","fetch"],
+	"happen": ["occur","transpire","take place","come about"],
+	"allow": ["permit","enable","authorize","let","grant"],
+	"improve": ["enhance","upgrade","refine","boost","optimize"],
+	"increase": ["raise","elevate","amplify","augment","boost"],
+	"reduce": ["decrease","diminish","lessen","lower","minimize"],
+	"remove": ["eliminate","discard","erase","delete","get rid of"],
+	"create": ["produce","generate","develop","design","craft"],
+	"develop": ["evolve","advance","progress","cultivate","refine"],
+	"include": ["incorporate","encompass","comprise","contain","cover"],
+	"provide": ["supply","furnish","deliver","offer","present"],
+	"consider": ["examine","evaluate","contemplate","ponder","deliberate on"],
+	"suggest": ["propose","recommend","advise","advocate","put forward"],
+	"explain": ["clarify","elucidate","describe","illustrate","elaborate on"],
+	"manage": ["handle","oversee","administer","supervise","coordinate"],
+	"support": ["endorse","uphold","back","sustain","champion"],
+	"achieve": ["accomplish","attain","reach","realize","fulfill"],
+	"establish": ["found","set up","create","institute","form"],
+	"maintain": ["preserve","uphold","sustain","keep up","continue"],
+	"require": ["demand","necessitate","call for","need","entail"],
+	"determine": ["ascertain","establish","identify","figure out","conclude"],
+	"involve": ["entail","include","encompass","engage","comprise"],
+	"produce": ["generate","yield","manufacture","create","make"],
+	"ensure": ["guarantee","confirm","verify","secure","make certain"],
+	"expect": ["anticipate","foresee","predict","look forward to"],
+	"affect": ["influence","impact","alter","shape","determine"],
+	"occur": ["happen","arise","emerge","take place","come about"],
+	"represent": ["symbolize","signify","stand for","embody","denote"],
+	"indicate": ["suggest","signal","imply","point to","denote"],
+	"describe": ["depict","portray","characterize","outline","detail"],
+	"obtain": ["acquire","get","secure","procure","gain"],
+
+	// Common adjectives
+	"good": ["excellent","great","superb","outstanding","fine"],
+	"bad": ["poor","terrible","dreadful","inferior","subpar"],
+	"big": ["large","huge","enormous","substantial","massive"],
+	"small": ["tiny","little","compact","miniature","modest"],
+	"important": ["significant","crucial","vital","essential","critical"],
+	"different": ["distinct","diverse","varied","various","unique"],
+	"new": ["novel","fresh","recent","modern","innovative"],
+	"old": ["ancient","aged","former","previous","outdated"],
+	"long": ["extended","lengthy","prolonged","extensive","sustained"],
+	"great": ["remarkable","exceptional","magnificent","splendid","wonderful"],
+	"first": ["initial","primary","foremost","earliest","leading"],
+	"last": ["final","ultimate","concluding","closing","terminal"],
+	"many": ["numerous","several","multiple","various","countless"],
+	"much": ["considerable","substantial","significant","extensive"],
+	"hard": ["difficult","challenging","demanding","tough","arduous"],
+	"easy": ["simple","straightforward","effortless","uncomplicated"],
+	"fast": ["quick","rapid","swift","speedy","prompt"],
+	"slow": ["gradual","unhurried","leisurely","sluggish"],
+	"clear": ["obvious","evident","apparent","transparent","plain"],
+	"possible": ["feasible","viable","achievable","attainable","plausible"],
+	"likely": ["probable","expected","anticipated","presumable"],
+	"certain": ["definite","sure","particular","specific","assured"],
+	"whole": ["entire","complete","full","total","comprehensive"],
+	"main": ["primary","principal","chief","key","central"],
+	"strong": ["powerful","robust","potent","sturdy","formidable"],
+	"real": ["genuine","authentic","actual","true","legitimate"],
+	"able": ["capable","competent","skilled","proficient","qualified"],
+	"available": ["accessible","obtainable","at hand","on hand"],
+	"effective": ["efficient","productive","successful","powerful","impactful"],
+	"necessary": ["essential","required","needed","vital","indispensable"],
+	"significant": ["notable","meaningful","important","considerable","substantial"],
+	"specific": ["particular","precise","exact","definite","explicit"],
+	"similar": ["alike","comparable","analogous","like","akin"],
+	"common": ["widespread","prevalent","frequent","typical","usual"],
+	"general": ["broad","overall","wide","universal","comprehensive"],
+
+	// Common nouns
+	"problem": ["issue","challenge","difficulty","obstacle","dilemma"],
+	"way": ["method","approach","manner","technique","means"],
+	"part": ["component","element","segment","portion","section"],
+	"place": ["location","site","area","spot","venue"],
+	"thing": ["item","object","entity","element","aspect"],
+	"fact": ["reality","truth","detail","datum","piece of information"],
+	"result": ["outcome","consequence","effect","finding","conclusion"],
+	"reason": ["cause","motive","basis","rationale","justification"],
+	"area": ["region","domain","field","zone","sector"],
+	"idea": ["concept","notion","thought","proposal","vision"],
+	"point": ["aspect","detail","matter","topic","argument"],
+	"group": ["team","collection","set","cluster","assembly"],
+	"example": ["instance","illustration","case","sample","demonstration"],
+	"method": ["technique","approach","procedure","strategy","system"],
+	"type": ["kind","sort","category","variety","class"],
+	"level": ["degree","extent","measure","standard","tier"],
+	"plan": ["strategy","scheme","blueprint","outline","proposal"],
+	"goal": ["objective","aim","target","purpose","ambition"],
+	"process": ["procedure","operation","method","system","mechanism"],
+	"issue": ["matter","concern","problem","subject","topic"],
+	"answer": ["response","reply","solution","resolution"],
+	"source": ["origin","root","basis","foundation","cause"],
+	"feature": ["characteristic","attribute","quality","trait","property"],
+	"benefit": ["advantage","merit","gain","asset","perk"],
+	"role": ["function","position","purpose","part","capacity"],
+
+	// Common adverbs
+	"very": ["extremely","highly","remarkably","exceptionally","immensely"],
+	"really": ["truly","genuinely","indeed","actually","certainly"],
+	"also": ["additionally","furthermore","moreover","likewise","too"],
+	"often": ["frequently","regularly","commonly","repeatedly","routinely"],
+	"always": ["consistently","invariably","perpetually","constantly","unfailingly"],
+	"never": ["at no time","not once","under no circumstances"],
+	"quickly": ["rapidly","swiftly","promptly","speedily","hastily"],
+	"slowly": ["gradually","steadily","unhurriedly","leisurely"],
+	"usually": ["typically","generally","normally","commonly","ordinarily"],
+	"however": ["nevertheless","nonetheless","yet","still","on the other hand"],
+	"therefore": ["consequently","thus","hence","accordingly","as a result"],
+	"already": ["previously","by now","beforehand","at this point"],
+	"especially": ["particularly","notably","specifically","chiefly"],
+	"actually": ["in fact","indeed","truly","really","as a matter of fact"],
+	"just": ["simply","merely","only","solely"],
+	"about": ["approximately","roughly","around","nearly","close to"],
+	"almost": ["nearly","practically","virtually","close to","all but"],
+	"enough": ["sufficient","adequate","ample","plenty of"],
+	"sometimes": ["occasionally","at times","now and then","periodically"],
+	"probably": ["likely","presumably","perhaps","possibly","in all likelihood"],
+	"certainly": ["undoubtedly","definitely","surely","without doubt","assuredly"],
+	"completely": ["entirely","fully","totally","wholly","altogether"],
+	"immediately": ["instantly","right away","at once","promptly","straightaway"],
+	"recently": ["lately","not long ago","of late","in recent times"],
+
+	// More verbs
+	"solve": ["resolve","address","fix","tackle","work out"],
+	"connect": ["link","join","associate","relate","bond"],
+	"choose": ["select","pick","opt for","decide on","settle on"],
+	"protect": ["safeguard","shield","defend","secure","guard"],
+	"share": ["distribute","divide","allocate","spread","disseminate"],
+	"focus": ["concentrate","center","zero in on","emphasize","prioritize"],
+	"lead": ["guide","direct","steer","head","conduct"],
+	"learn": ["study","absorb","grasp","master","acquire knowledge of"],
+	"follow": ["pursue","adhere to","observe","comply with","trail"],
+	"discuss": ["debate","examine","talk about","deliberate on","explore"],
+	"gain": ["acquire","earn","achieve","attain","secure"],
+	"avoid": ["evade","prevent","steer clear of","dodge","bypass"],
+	"reach": ["attain","arrive at","achieve","get to","accomplish"],
+	"continue": ["proceed","persist","carry on","resume","go on"],
+	"remain": ["stay","persist","endure","linger","last"],
+	"exist": ["be present","subsist","prevail","persist"],
+	"apply": ["implement","utilize","employ","use","put into practice"],
+	"accept": ["agree to","acknowledge","embrace","adopt","receive"],
+	"prepare": ["ready","arrange","organize","set up","gear up"],
+	"handle": ["manage","deal with","address","tackle","cope with"]
+};
+
+/* ======================== FORMAL / CASUAL / CREATIVE WORD MAPS ======================== */
+const FORMAL_MAP = {
+	"get":"obtain","got":"obtained","getting":"obtaining",
+	"big":"substantial","small":"minor","start":"commence","stop":"cease","help":"assist",
+	"buy":"purchase","ask":"inquire","try":"endeavor","need":"require","want":"desire",
+	"think":"consider","use":"utilize","show":"demonstrate","give":"provide","tell":"inform",
+	"look":"examine","find":"identify","make":"construct","keep":"maintain","end":"conclude",
+	"fix":"rectify","seem":"appear","let":"permit","pick":"select","set up":"establish",
+	"go on":"continue","kind of":"somewhat","a lot of":"numerous","lots of":"a great deal of",
+	"thing":"matter","things":"matters","stuff":"material","ok":"acceptable","okay":"acceptable",
+	"pretty":"rather","really":"truly","very":"exceedingly","about":"approximately",
+	"but":"however","so":"therefore","also":"furthermore","anyway":"nevertheless",
+	"kids":"children","guys":"individuals","right now":"at present","later":"subsequently",
+	"before":"prior to","after":"following","enough":"sufficient","hard":"challenging",
+	"easy":"straightforward","fast":"expedient","good":"commendable","bad":"unsatisfactory"
+};
+
+const CASUAL_MAP = {
+	"obtain":"get","acquire":"get","purchase":"buy","commence":"start","cease":"stop",
+	"assist":"help","require":"need","utilize":"use","demonstrate":"show","provide":"give",
+	"inform":"tell","examine":"look at","identify":"find","construct":"make","maintain":"keep",
+	"however":"but","therefore":"so","furthermore":"also","nevertheless":"anyway",
+	"approximately":"about","sufficient":"enough","challenging":"tough",
+	"substantial":"big","endeavor":"try","inquire":"ask","desire":"want","consider":"think about",
+	"establish":"set up","conclude":"wrap up","numerous":"a bunch of","subsequently":"later",
+	"prior to":"before","following":"after","exceedingly":"super","individuals":"people",
+	"at present":"right now","expedient":"quick","commendable":"great","unsatisfactory":"not great",
+	"facilitate":"help with","implement":"put in place","significant":"major","additional":"more",
+	"regarding":"about","in order to":"to","due to the fact that":"because","in the event that":"if"
+};
+
+const CREATIVE_ADJECTIVES = [
+	"remarkable","astonishing","captivating","riveting","breathtaking","magnificent",
+	"dazzling","extraordinary","phenomenal","striking","compelling","fascinating",
+	"mesmerizing","spellbinding","awe-inspiring","brilliant","stunning","spectacular",
+	"marvelous","exquisite","electrifying","enchanting","radiant","vibrant","luminous"
+];
+
+/* ======================== SENTENCE TRANSFORMATIONS ======================== */
+const TRANSITION_WORDS = {
+	standard: ["Moreover,","In addition,","Furthermore,","Also,","Besides,","Notably,","Importantly,"],
+	formal: ["Furthermore,","Moreover,","Additionally,","In addition,","It is worth noting that","Consequently,","Accordingly,"],
+	casual: ["Plus,","Also,","On top of that,","And hey,","Not to mention,","Besides,","What's more,"],
+	creative: ["Interestingly,","Remarkably,","Strikingly,","Fascinatingly,","Curiously,","Wonderfully,","Notably,"],
+	shortened: ["Also,","Plus,","Moreover,","Additionally,"]
+};
+
+const SENTENCE_STARTERS = {
+	formal: ["It is evident that","One may observe that","It should be noted that","It is important to recognize that","Research suggests that"],
+	casual: ["Basically,","The thing is,","Here's the deal:","So basically,","In simple terms,","Look,"],
+	creative: ["Picture this:","Imagine a world where","In the grand tapestry of ideas,","Here's an intriguing thought:","Consider the possibility that"]
+};
+
+/* ======================== STATE ======================== */
+let currentMode = 'standard';
+let lastInput = '';
+let lastOutput = '';
+let rawOutput = '';
+
+/* ======================== UI BINDINGS ======================== */
+const inputEl = document.getElementById('inputText');
+const outputEl = document.getElementById('outputArea');
+const loadingEl = document.getElementById('loading');
+const statsBar = document.getElementById('statsBar');
+const toastEl = document.getElementById('toast');
+const toastText = document.getElementById('toastText');
+const diffToggle = document.getElementById('diffToggle');
+
+// Mode buttons
+document.querySelectorAll('.mode-btn').forEach(btn => {
+	btn.addEventListener('click', () => {
+		document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+		btn.classList.add('active');
+		currentMode = btn.dataset.mode;
+		updateModeInfo();
+	});
+});
+
+// Character/word count on input
+inputEl.addEventListener('input', updateInputCounts);
+
+// Diff toggle
+diffToggle.addEventListener('change', () => {
+	if (rawOutput) renderOutput();
+});
+
+function updateInputCounts() {
+	const text = inputEl.value.trim();
+	const words = text ? text.split(/\s+/).length : 0;
+	const chars = inputEl.value.length;
+	document.getElementById('inputWordCount').textContent = words + ' word' + (words !== 1 ? 's' : '');
+	document.getElementById('charCount').textContent = chars + ' character' + (chars !== 1 ? 's' : '');
+}
+
+const MODE_DESCRIPTIONS = {
+	standard: '<i class="fas fa-info-circle"></i> <strong>Standard</strong> — Balanced rewriting with synonym replacement and sentence restructuring. Preserves meaning while varying vocabulary and structure.',
+	formal: '<i class="fas fa-info-circle"></i> <strong>Formal</strong> — Elevates language to a professional, academic tone. Uses formal vocabulary, complex sentence structures, and removes colloquialisms.',
+	casual: '<i class="fas fa-info-circle"></i> <strong>Casual</strong> — Makes text conversational and approachable. Simplifies complex language, shortens sentences, and adds a relaxed tone.',
+	creative: '<i class="fas fa-info-circle"></i> <strong>Creative</strong> — Transforms text with vivid, imaginative language. Uses metaphors, expressive adjectives, and dynamic sentence structures.',
+	shortened: '<i class="fas fa-info-circle"></i> <strong>Shortened</strong> — Condenses text to its essential meaning. Removes filler words, combines sentences, and delivers the core message concisely.'
+};
+
+function updateModeInfo() {
+	document.getElementById('modeInfo').innerHTML = MODE_DESCRIPTIONS[currentMode];
+}
+
+/* ======================== TOAST ======================== */
+function showToast(msg) {
+	toastText.textContent = msg;
+	toastEl.classList.add('show');
+	setTimeout(() => toastEl.classList.remove('show'), 2200);
+}
+
+/* ======================== PARAPHRASE ENGINE ======================== */
+
+function randomPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function countWords(text) {
+	const t = text.trim();
+	return t ? t.split(/\s+/).length : 0;
+}
+
+/* --- Word-level synonym replacement --- */
+function replaceSynonyms(word, mode) {
+	const lower = word.toLowerCase();
+
+	// Mode-specific maps first
+	if (mode === 'formal' && FORMAL_MAP[lower]) {
+		return matchCase(word, FORMAL_MAP[lower]);
+	}
+	if (mode === 'casual' && CASUAL_MAP[lower]) {
+		return matchCase(word, CASUAL_MAP[lower]);
+	}
+
+	// General synonym map
+	if (SYNONYMS[lower]) {
+		const syns = SYNONYMS[lower];
+		const chosen = randomPick(syns);
+		return matchCase(word, chosen);
+	}
+	return null;
+}
+
+function matchCase(original, replacement) {
+	if (!original || !replacement) return replacement;
+	if (original === original.toUpperCase() && original.length > 1) return replacement.toUpperCase();
+	if (original[0] === original[0].toUpperCase()) return replacement.charAt(0).toUpperCase() + replacement.slice(1);
+	return replacement;
+}
+
+/* --- Sentence-level transformations --- */
+
+// Passive/active voice swap (simple heuristic)
+function tryPassiveToActive(sentence) {
+	// Pattern: "X was/were [verb]ed by Y" → "Y [verb]ed X"
+	const passiveRe = /^(.+?)\s+(was|were)\s+(\w+ed)\s+by\s+(.+)$/i;
+	const m = sentence.match(passiveRe);
+	if (m) {
+		const subject = m[4].trim();
+		const verb = m[3];
+		const object = m[1].trim();
+		return capitalize(subject) + ' ' + verb.replace(/ed$/,'s') + ' ' + uncapitalize(object);
+	}
+	return null;
+}
+
+function tryActiveToPassive(sentence) {
+	// Simple: "Subject verbs Object." → "Object was verbed by Subject."
+	const parts = sentence.split(/\s+/);
+	if (parts.length >= 3 && parts.length <= 12) {
+		const subject = parts[0];
+		const verb = parts[1];
+		const rest = parts.slice(2).join(' ');
+		if (/^[a-z]+s$/i.test(verb) && rest.length > 0) {
+			const pastVerb = verb.replace(/s$/i,'') + 'ed';
+			return capitalize(rest) + ' was ' + pastVerb + ' by ' + uncapitalize(subject);
+		}
+	}
+	return null;
+}
+
+// Clause reordering
+function reorderClauses(sentence) {
+	// Split on commas or semicolons that separate clauses
+	const commaSplit = sentence.split(/,\s*/);
+	if (commaSplit.length >= 2 && commaSplit.length <= 4) {
+		const reordered = [...commaSplit];
+		// Move last clause to front
+		const last = reordered.pop();
+		reordered.unshift(capitalize(last));
+		reordered[reordered.length - 1] = uncapitalize(reordered[reordered.length - 1]);
+		return reordered.join(', ');
+	}
+	// Split on "because", "since", "although", "while", "when", "if"
+	const conjRe = /\b(because|since|although|while|when|if)\b/i;
+	const cMatch = sentence.match(conjRe);
+	if (cMatch) {
+		const idx = sentence.indexOf(cMatch[0]);
+		const before = sentence.substring(0, idx).trim();
+		const after = sentence.substring(idx).trim();
+		if (before && after) {
+			return capitalize(after) + ', ' + uncapitalize(before);
+		}
+	}
+	return null;
+}
+
+// Add transition word at beginning
+function addTransition(sentence, mode) {
+	const transitions = TRANSITION_WORDS[mode] || TRANSITION_WORDS.standard;
+	// Don't add if sentence already starts with a transition
+	const firstWord = sentence.split(/\s+/)[0].replace(/[,;:]/g,'').toLowerCase();
+	const allTransitions = Object.values(TRANSITION_WORDS).flat().map(t => t.replace(/[,;:]/g,'').toLowerCase());
+	if (allTransitions.includes(firstWord)) return null;
+	return randomPick(transitions) + ' ' + uncapitalize(sentence);
+}
+
+// Sentence starter (formal/casual/creative)
+function addSentenceStarter(sentence, mode) {
+	if (!SENTENCE_STARTERS[mode]) return null;
+	if (Math.random() < 0.7) return null; // don't overuse
+	return randomPick(SENTENCE_STARTERS[mode]) + ' ' + uncapitalize(sentence);
+}
+
+// Creative: inject vivid adjective before a noun (simple heuristic)
+function injectCreativeAdjective(sentence) {
+	const words = sentence.split(/\s+/);
+	if (words.length < 4) return null;
+	// Find "the/a/an/this/that" + noun pattern and insert adjective
+	const articles = ['the','a','an','this','that','each','every'];
+	for (let i = 0; i < words.length - 1; i++) {
+		const clean = words[i].toLowerCase().replace(/[^a-z]/g,'');
+		if (articles.includes(clean)) {
+			const adj = randomPick(CREATIVE_ADJECTIVES);
+			words.splice(i + 1, 0, adj);
+			return words.join(' ');
+		}
+	}
+	return null;
+}
+
+// Shortened: remove filler/redundant words
+function shortenSentence(sentence) {
+	let s = sentence;
+	const fillers = [
+		/\b(very|really|quite|rather|somewhat|basically|actually|literally|just|simply|merely|in fact)\b\s*/gi,
+		/\b(it is important to note that|it should be noted that|it is worth mentioning that|as a matter of fact)\b\s*/gi,
+		/\b(in order to)\b/gi,
+		/\b(due to the fact that)\b/gi,
+		/\b(at this point in time)\b/gi,
+		/\b(each and every)\b/gi,
+		/\b(first and foremost)\b/gi,
+		/\b(in the event that)\b/gi
+	];
+	const fillerReplacements = {
+		'in order to': 'to',
+		'due to the fact that': 'because',
+		'at this point in time': 'now',
+		'each and every': 'every',
+		'first and foremost': 'first',
+		'in the event that': 'if'
+	};
+
+	for (const [phrase, replacement] of Object.entries(fillerReplacements)) {
+		s = s.replace(new RegExp('\\b' + phrase.replace(/\s+/g,'\\s+') + '\\b', 'gi'), replacement);
+	}
+	// Remove individual fillers
+	s = s.replace(/\b(very|really|quite|rather|somewhat|basically|actually|literally)\b\s*/gi, '');
+	// Clean up double spaces
+	s = s.replace(/\s{2,}/g, ' ').trim();
+	return s !== sentence ? capitalize(s) : null;
+}
+
+/* --- Combine sentences for shortened mode --- */
+function combineSentences(sentences) {
+	if (sentences.length < 2) return sentences;
+	const combined = [];
+	let i = 0;
+	while (i < sentences.length) {
+		if (i + 1 < sentences.length && sentences[i].split(/\s+/).length < 8 && sentences[i+1].split(/\s+/).length < 8) {
+			combined.push(sentences[i].replace(/\.\s*$/, '') + ' and ' + uncapitalize(sentences[i+1]));
+			i += 2;
+		} else {
+			combined.push(sentences[i]);
+			i++;
+		}
+	}
+	return combined;
+}
+
+/* --- Main paraphrase function --- */
+function paraphrase(text, mode) {
+	if (!text.trim()) return '';
+
+	// Split into sentences
+	let sentences = splitSentences(text);
+
+	// Process each sentence
+	let processed = sentences.map((sentence, idx) => {
+		let result = sentence.trim();
+		if (!result) return result;
+
+		// 1. Word-level synonym replacement
+		result = replaceWordsInSentence(result, mode);
+
+		// 2. Sentence-level transformations
+		result = applySentenceTransform(result, mode, idx, sentences.length);
+
+		return result;
+	}).filter(s => s.trim());
+
+	// Shortened mode: combine short sentences
+	if (mode === 'shortened') {
+		processed = combineSentences(processed);
+	}
+
+	return processed.join(' ');
+}
+
+function splitSentences(text) {
+	// Split on sentence boundaries, keeping the delimiter
+	const raw = text.match(/[^.!?]+[.!?]+[\s]*/g);
+	if (!raw) return [text];
+	// Check for leftover text
+	const joined = raw.join('');
+	const leftover = text.substring(joined.length).trim();
+	if (leftover) raw.push(leftover);
+	return raw.map(s => s.trim()).filter(Boolean);
+}
+
+function replaceWordsInSentence(sentence, mode) {
+	// Determine replacement probability based on mode
+	let prob;
+	switch(mode) {
+		case 'standard': prob = 0.40; break;
+		case 'formal': prob = 0.55; break;
+		case 'casual': prob = 0.50; break;
+		case 'creative': prob = 0.50; break;
+		case 'shortened': prob = 0.30; break;
+		default: prob = 0.40;
+	}
+
+	// Tokenize preserving punctuation
+	const tokens = sentence.match(/[\w']+|[^\w\s]+|\s+/g) || [sentence];
+	const result = tokens.map(token => {
+		// Skip punctuation and whitespace
+		if (/^[^\w]+$/.test(token) || /^\s+$/.test(token)) return token;
+		// Skip very short words (1-2 chars) except known ones
+		if (token.length <= 2 && !SYNONYMS[token.toLowerCase()]) return token;
+		// Random chance to replace
+		if (Math.random() > prob) return token;
+		const replacement = replaceSynonyms(token, mode);
+		return replacement || token;
+	});
+
+	return result.join('');
+}
+
+function applySentenceTransform(sentence, mode, idx, totalSentences) {
+	let result = sentence;
+
+	// Mode-specific transforms
+	switch(mode) {
+		case 'standard': {
+			// Randomly apply one structural transform
+			const roll = Math.random();
+			if (roll < 0.15) {
+				const r = reorderClauses(result);
+				if (r) result = r;
+			} else if (roll < 0.25) {
+				const r = tryPassiveToActive(result);
+				if (r) result = ensurePunctuation(r);
+			} else if (roll < 0.35 && idx > 0 && idx < totalSentences - 1) {
+				const r = addTransition(result, mode);
+				if (r) result = r;
+			}
+			break;
+		}
+		case 'formal': {
+			const roll = Math.random();
+			if (roll < 0.2 && idx > 0) {
+				const r = addTransition(result, mode);
+				if (r) result = r;
+			} else if (roll < 0.35) {
+				const r = addSentenceStarter(result, mode);
+				if (r) result = r;
+			} else if (roll < 0.45) {
+				const r = tryActiveToPassive(result);
+				if (r) result = ensurePunctuation(r);
+			} else if (roll < 0.55) {
+				const r = reorderClauses(result);
+				if (r) result = r;
+			}
+			break;
+		}
+		case 'casual': {
+			const roll = Math.random();
+			if (roll < 0.2 && idx > 0) {
+				const r = addTransition(result, mode);
+				if (r) result = r;
+			} else if (roll < 0.35) {
+				const r = addSentenceStarter(result, mode);
+				if (r) result = r;
+			}
+			// Casual: simplify long sentences by breaking at conjunctions
+			if (result.split(/\s+/).length > 15) {
+				result = result.replace(/\b(and|but|or|yet)\b/i, (m) => '.' + capitalize(m));
+			}
+			break;
+		}
+		case 'creative': {
+			const roll = Math.random();
+			if (roll < 0.2) {
+				const r = injectCreativeAdjective(result);
+				if (r) result = r;
+			} else if (roll < 0.35 && idx > 0) {
+				const r = addTransition(result, mode);
+				if (r) result = r;
+			} else if (roll < 0.5) {
+				const r = addSentenceStarter(result, mode);
+				if (r) result = r;
+			} else if (roll < 0.6) {
+				const r = reorderClauses(result);
+				if (r) result = r;
+			}
+			break;
+		}
+		case 'shortened': {
+			const r = shortenSentence(result);
+			if (r) result = r;
+			break;
+		}
+	}
+
+	return ensurePunctuation(result.trim());
+}
+
+function ensurePunctuation(s) {
+	if (!s) return s;
+	const last = s[s.length - 1];
+	if (!/[.!?]/.test(last)) s += '.';
+	return s;
+}
+
+function capitalize(s) {
+	if (!s) return s;
+	return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function uncapitalize(s) {
+	if (!s) return s;
+	return s.charAt(0).toLowerCase() + s.slice(1);
+}
+
+/* ======================== DIFF HIGHLIGHTING ======================== */
+function computeDiff(original, paraphrased) {
+	const origWords = original.split(/\s+/);
+	const paraWords = paraphrased.split(/\s+/);
+
+	// Simple word-level diff using LCS (Longest Common Subsequence)
+	const lcs = lcsMatrix(origWords, paraWords);
+	const aligned = backtrackLCS(lcs, origWords, paraWords);
+
+	let html = '';
+	let changedCount = 0;
+
+	for (const item of aligned) {
+		if (item.type === 'same') {
+			html += escapeHtml(item.word) + ' ';
+		} else if (item.type === 'added') {
+			html += '<span class="diff-added">' + escapeHtml(item.word) + '</span> ';
+			changedCount++;
+		} else if (item.type === 'removed') {
+			html += '<span class="diff-removed">' + escapeHtml(item.word) + '</span> ';
+		}
+	}
+
+	return { html: html.trim(), changedCount };
+}
+
+function lcsMatrix(a, b) {
+	const m = a.length, n = b.length;
+	const dp = Array.from({length: m + 1}, () => new Array(n + 1).fill(0));
+	for (let i = 1; i <= m; i++) {
+		for (let j = 1; j <= n; j++) {
+			if (a[i-1].toLowerCase().replace(/[^a-z']/g,'') === b[j-1].toLowerCase().replace(/[^a-z']/g,'')) {
+				dp[i][j] = dp[i-1][j-1] + 1;
+			} else {
+				dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+			}
+		}
+	}
+	return dp;
+}
+
+function backtrackLCS(dp, a, b) {
+	const result = [];
+	let i = a.length, j = b.length;
+	while (i > 0 || j > 0) {
+		if (i > 0 && j > 0 && a[i-1].toLowerCase().replace(/[^a-z']/g,'') === b[j-1].toLowerCase().replace(/[^a-z']/g,'')) {
+			result.unshift({ type: 'same', word: b[j-1] });
+			i--; j--;
+		} else if (j > 0 && (i === 0 || dp[i][j-1] >= dp[i-1][j])) {
+			result.unshift({ type: 'added', word: b[j-1] });
+			j--;
+		} else {
+			result.unshift({ type: 'removed', word: a[i-1] });
+			i--;
+		}
+	}
+	return result;
+}
+
+function escapeHtml(str) {
+	const div = document.createElement('div');
+	div.textContent = str;
+	return div.innerHTML;
+}
+
+/* ======================== RENDER OUTPUT ======================== */
+function renderOutput() {
+	if (!rawOutput) return;
+
+	const showDiff = diffToggle.checked;
+
+	if (showDiff && lastInput) {
+		const diff = computeDiff(lastInput, rawOutput);
+		outputEl.innerHTML = diff.html;
+		document.getElementById('statWordsChanged').textContent = diff.changedCount;
+	} else {
+		outputEl.textContent = rawOutput;
+		document.getElementById('statWordsChanged').textContent = '—';
+	}
+}
+
+function updateStats() {
+	const inWords = countWords(lastInput);
+	const outWords = countWords(rawOutput);
+	const inChars = lastInput.length;
+	const outChars = rawOutput.length;
+
+	document.getElementById('statInputWords').textContent = inWords;
+	document.getElementById('statOutputWords').textContent = outWords;
+	document.getElementById('statInputChars').textContent = inChars;
+	document.getElementById('statOutputChars').textContent = outChars;
+
+	// Change percent
+	const origWords = lastInput.split(/\s+/).filter(Boolean);
+	const paraWords = rawOutput.split(/\s+/).filter(Boolean);
+	let changed = 0;
+	const minLen = Math.min(origWords.length, paraWords.length);
+	for (let i = 0; i < minLen; i++) {
+		if (origWords[i].toLowerCase().replace(/[^a-z']/g,'') !== paraWords[i].toLowerCase().replace(/[^a-z']/g,'')) {
+			changed++;
+		}
+	}
+	changed += Math.abs(origWords.length - paraWords.length);
+	const pct = origWords.length > 0 ? Math.round((changed / origWords.length) * 100) : 0;
+	document.getElementById('statChangePercent').textContent = Math.min(pct, 100) + '%';
+
+	document.getElementById('outputWordCount').textContent = outWords + ' word' + (outWords !== 1 ? 's' : '');
+
+	statsBar.style.display = 'flex';
+}
+
+/* ======================== MAIN ACTIONS ======================== */
+window.paraphraseText = function() {
+	const text = inputEl.value.trim();
+	if (!text) {
+		showToast('Please enter some text to paraphrase.');
+		return;
+	}
+	if (countWords(text) < 3) {
+		showToast('Please enter at least 3 words.');
+		return;
+	}
+
+	lastInput = text;
+
+	// Show loading
+	loadingEl.classList.add('active');
+	document.getElementById('paraphraseBtn').disabled = true;
+
+	// Simulated delay for UX
+	const delay = Math.min(300 + countWords(text) * 15, 2000);
+	setTimeout(() => {
+		rawOutput = paraphrase(text, currentMode);
+		lastOutput = rawOutput;
+
+		renderOutput();
+		updateStats();
+
+		loadingEl.classList.remove('active');
+		document.getElementById('paraphraseBtn').disabled = false;
+		document.getElementById('rerunBtn').disabled = false;
+		document.getElementById('copyBtn').disabled = false;
+
+		showToast('Text paraphrased successfully!');
+	}, delay);
+};
+
+window.rerunParaphrase = function() {
+	if (!lastInput) return;
+	inputEl.value = lastInput;
+	window.paraphraseText();
+};
+
+window.copyOutput = function() {
+	if (!rawOutput) return;
+	navigator.clipboard.writeText(rawOutput).then(() => {
+		showToast('Copied to clipboard!');
+	}).catch(() => {
+		// Fallback
+		const ta = document.createElement('textarea');
+		ta.value = rawOutput;
+		document.body.appendChild(ta);
+		ta.select();
+		document.execCommand('copy');
+		document.body.removeChild(ta);
+		showToast('Copied to clipboard!');
+	});
+};
+
+window.clearAll = function() {
+	inputEl.value = '';
+	outputEl.innerHTML = 'Your paraphrased text will appear here...';
+	rawOutput = '';
+	lastInput = '';
+	lastOutput = '';
+	statsBar.style.display = 'none';
+	document.getElementById('inputWordCount').textContent = '0 words';
+	document.getElementById('outputWordCount').textContent = '0 words';
+	document.getElementById('charCount').textContent = '0 characters';
+	document.getElementById('rerunBtn').disabled = true;
+	document.getElementById('copyBtn').disabled = true;
+	showToast('Cleared!');
+};
+
+// Init
+updateInputCounts();
+
+})();
+</script>
+</body>
+</html>

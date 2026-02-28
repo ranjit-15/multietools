@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Text Summarizer - Multietools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/global.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+textarea{width:100%;min-height:220px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.95rem;font-family:inherit;resize:vertical;transition:border-color .2s;}
+textarea:focus{outline:none;border-color:var(--primary);}
+
+/* Input stats */
+.input-stats{display:flex;flex-wrap:wrap;gap:1rem;margin-top:.6rem;font-size:.82rem;color:var(--muted);font-weight:600;}
+.input-stats span i{margin-right:.25rem;}
+
+/* Controls */
+.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:1rem;}
+.btn{padding:.8rem 1.4rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.95rem;transition:transform .15s,box-shadow .25s;}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.3);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-outline{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);}
+.btn-outline:hover{background:var(--primary-glow);}
+
+/* Mode selector */
+.mode-group{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem;}
+.mode-group label{display:inline-flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.88rem;font-weight:600;padding:.55rem 1rem;border-radius:var(--radius-full);border:1.5px solid var(--border);background:var(--bg-alt);transition:all .2s;}
+.mode-group input[type="radio"]{display:none;}
+.mode-group input[type="radio"]:checked+label{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 2px 10px rgba(124,58,237,.25);}
+
+/* Toggle switch */
+.toggle-row{display:flex;align-items:center;gap:.65rem;margin-top:.75rem;font-size:.88rem;font-weight:600;}
+.toggle{position:relative;width:44px;height:24px;cursor:pointer;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle .slider{position:absolute;inset:0;background:var(--border);border-radius:24px;transition:.3s;}
+.toggle .slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;}
+.toggle input:checked+.slider{background:var(--primary);}
+.toggle input:checked+.slider::before{transform:translateX(20px);}
+
+/* Title input */
+.title-input{width:100%;padding:.65rem 1rem;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:.9rem;font-family:inherit;margin-bottom:.75rem;transition:border-color .2s;}
+.title-input:focus{outline:none;border-color:var(--primary);}
+
+/* Loading */
+.loading{display:none;align-items:center;justify-content:center;gap:.75rem;padding:2rem;font-weight:600;color:var(--muted);}
+.loading.active{display:flex;}
+.spinner{width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Results */
+.result-area{display:none;}
+.result-area.active{display:block;}
+.result-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;}
+.result-header h2{font-size:1.15rem;}
+
+/* Comparison stats */
+.comparison-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:.65rem;margin-bottom:1.25rem;}
+.comp-stat{background:var(--bg-alt);border:1px solid var(--border-light);padding:.75rem .85rem;border-radius:var(--radius-md);text-align:center;}
+.comp-stat .label{color:var(--muted);font-size:.78rem;font-weight:600;margin-bottom:.2rem;text-transform:uppercase;letter-spacing:.03em;}
+.comp-stat .value{font-size:1.2rem;font-weight:800;color:var(--primary);}
+.comp-stat .value.success{color:var(--success);}
+
+/* Compression bar */
+.compression-bar{height:8px;background:var(--border);border-radius:4px;margin-bottom:1.25rem;overflow:hidden;}
+.compression-bar .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--success),var(--primary));transition:width .6s ease;}
+
+/* Summary output */
+.summary-output{background:var(--bg-alt);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.15rem;line-height:1.75;font-size:.93rem;min-height:80px;max-height:400px;overflow-y:auto;white-space:pre-wrap;}
+.summary-output ul{list-style:disc;padding-left:1.5rem;margin:0;}
+.summary-output ul li{margin-bottom:.4rem;}
+
+/* Key points */
+.key-points{margin-top:1.25rem;}
+.key-points h3{font-size:1rem;margin-bottom:.65rem;display:flex;align-items:center;gap:.4rem;}
+.key-point{display:flex;align-items:flex-start;gap:.6rem;padding:.7rem .85rem;background:var(--bg-alt);border:1px solid var(--border-light);border-radius:var(--radius-sm);margin-bottom:.5rem;font-size:.9rem;line-height:1.55;}
+.key-point i{color:var(--primary);margin-top:.2rem;flex-shrink:0;}
+
+/* Result actions */
+.result-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem;}
+
+/* Toast */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Responsive */
+@media(max-width:640px){
+	.controls{flex-direction:column;align-items:stretch;}
+	.result-header{flex-direction:column;align-items:flex-start;}
+	.comparison-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html#ai-tools"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-compress-alt"></i> AI Text Summarizer</h1>
+		<p class="muted">Summarize any text with extractive AI — pick brief, medium, or detailed mode.</p>
+	</header>
+	<main>
+		<!-- Input Panel -->
+		<div class="panel">
+			<input type="text" class="title-input" id="titleInput" placeholder="Optional: Enter the title or topic of your text (helps improve summary)…">
+			<textarea id="inputText" placeholder="Paste or type your text here to summarize…"></textarea>
+			<div class="input-stats">
+				<span><i class="fas fa-font"></i> <span id="charCount">0</span> chars</span>
+				<span><i class="fas fa-file-word"></i> <span id="wordCount">0</span> words</span>
+				<span><i class="fas fa-align-left"></i> <span id="sentCount">0</span> sentences</span>
+				<span><i class="fas fa-clock"></i> <span id="readTimeOrig">0s</span> read</span>
+			</div>
+
+			<!-- Summary Mode -->
+			<div style="margin-top:1rem;">
+				<span style="font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Summary Mode</span>
+				<div class="mode-group">
+					<input type="radio" name="mode" id="modeBrief" value="brief">
+					<label for="modeBrief"><i class="fas fa-bolt"></i> Brief (25%)</label>
+					<input type="radio" name="mode" id="modeMedium" value="medium" checked>
+					<label for="modeMedium"><i class="fas fa-align-center"></i> Medium (50%)</label>
+					<input type="radio" name="mode" id="modeDetailed" value="detailed">
+					<label for="modeDetailed"><i class="fas fa-align-justify"></i> Detailed (75%)</label>
+				</div>
+			</div>
+
+			<!-- Bullet Points Toggle -->
+			<div class="toggle-row">
+				<label class="toggle">
+					<input type="checkbox" id="bulletToggle">
+					<span class="slider"></span>
+				</label>
+				<span>Output as bullet points</span>
+			</div>
+
+			<!-- Actions -->
+			<div class="controls">
+				<button class="btn" id="summarizeBtn" onclick="runSummarize()"><i class="fas fa-magic"></i> Summarize</button>
+				<button class="btn btn-outline" onclick="clearAll()"><i class="fas fa-trash"></i> Clear</button>
+				<button class="btn btn-outline" onclick="loadSample()"><i class="fas fa-flask"></i> Sample Text</button>
+			</div>
+		</div>
+
+		<!-- Loading -->
+		<div class="loading" id="loading">
+			<div class="spinner"></div>
+			Analyzing and summarizing text…
+		</div>
+
+		<!-- Results Panel -->
+		<div class="panel result-area" id="resultArea">
+			<div class="result-header">
+				<h2><i class="fas fa-file-alt"></i> Summary</h2>
+			</div>
+
+			<!-- Comparison Stats -->
+			<div class="comparison-grid">
+				<div class="comp-stat"><div class="label">Original Words</div><div class="value" id="origWords">0</div></div>
+				<div class="comp-stat"><div class="label">Summary Words</div><div class="value" id="sumWords">0</div></div>
+				<div class="comp-stat"><div class="label">Compression</div><div class="value success" id="compression">0%</div></div>
+				<div class="comp-stat"><div class="label">Orig. Read Time</div><div class="value" id="origRead">0s</div></div>
+				<div class="comp-stat"><div class="label">Summary Read Time</div><div class="value" id="sumRead">0s</div></div>
+			</div>
+
+			<!-- Compression Bar -->
+			<div class="compression-bar"><div class="fill" id="compBar" style="width:0%"></div></div>
+
+			<!-- Summary Output -->
+			<div class="summary-output" id="summaryOutput"></div>
+
+			<!-- Key Points -->
+			<div class="key-points" id="keyPointsSection">
+				<h3><i class="fas fa-lightbulb"></i> Key Takeaways</h3>
+				<div id="keyPointsList"></div>
+			</div>
+
+			<!-- Result Actions -->
+			<div class="result-actions">
+				<button class="btn" onclick="copySummary()"><i class="fas fa-copy"></i> Copy Summary</button>
+				<button class="btn btn-outline" onclick="downloadTxt()"><i class="fas fa-download"></i> Download TXT</button>
+			</div>
+		</div>
+	</main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ========== DOM Refs ========== */
+const inputEl = document.getElementById('inputText');
+const titleEl = document.getElementById('titleInput');
+const charCountEl = document.getElementById('charCount');
+const wordCountEl = document.getElementById('wordCount');
+const sentCountEl = document.getElementById('sentCount');
+const readTimeOrigEl = document.getElementById('readTimeOrig');
+const loadingEl = document.getElementById('loading');
+const resultArea = document.getElementById('resultArea');
+
+/* ========== Live Stats ========== */
+inputEl.addEventListener('input', updateInputStats);
+function updateInputStats() {
+	const text = inputEl.value;
+	charCountEl.textContent = text.length;
+	const words = countWords(text);
+	wordCountEl.textContent = words;
+	sentCountEl.textContent = splitSentences(text).length;
+	readTimeOrigEl.textContent = fmtTime(words / 200);
+}
+
+function countWords(t) {
+	const trimmed = t.trim();
+	return trimmed ? trimmed.split(/\s+/).length : 0;
+}
+
+function fmtTime(min) {
+	const sec = Math.round(min * 60);
+	if (sec < 60) return sec + 's';
+	const m = Math.floor(sec / 60), s = sec % 60;
+	return m + 'm' + (s ? ' ' + s + 's' : '');
+}
+
+/* ========== Sentence Splitting ========== */
+function splitSentences(text) {
+	if (!text.trim()) return [];
+	// Regex: split on sentence-ending punctuation followed by space/newline or end
+	const raw = text.replace(/\n+/g, ' ').trim();
+	const parts = raw.match(/[^.!?]*[.!?]+[\s]?|[^.!?]+$/g);
+	if (!parts) return [raw];
+	return parts.map(s => s.trim()).filter(s => s.length > 0);
+}
+
+/* ========== Stop Words ========== */
+const STOP_WORDS = new Set([
+	'the','a','an','in','on','at','to','for','of','and','but','or','is','it','this',
+	'that','was','with','as','by','be','are','from','has','had','have','not','no',
+	'do','did','will','would','can','could','should','so','if','its','he','she','we',
+	'they','them','you','i','my','me','his','her','our','am','been','were','being',
+	'than','also','just','about','into','more','very','some','all','other','which',
+	'what','when','where','who','how','there','then','these','those','their','your',
+	'such','each','any','only','may','might','most','much','own','same','both','does',
+	'us','like','even','after','before','because','between','while','during','through',
+	'above','below','under','over','out','up','down','off','here','now','again','once',
+	'still','already','yet','too','else','well','back','get','got','gets','make','made',
+	'take','took','come','came','go','went','see','saw','know','knew','think','thought',
+	'say','said','tell','told','use','used','find','found','give','gave','way','many',
+	'new','one','two','first','last','long','great','little','right','old','big','high',
+	'small','large','next','early','young','important','few','public','good','world',
+	'need','time','part','people','thing','things','man','woman','child','number','case'
+]);
+
+/* ========== Indicator/Signal Words ========== */
+const INDICATOR_WORDS = new Set([
+	'important','significant','crucial','essential','key','critical','notably',
+	'conclusion','therefore','consequently','thus','hence','result','summary',
+	'overall','furthermore','moreover','however','nevertheless','primarily',
+	'fundamental','remarkable','demonstrate','demonstrates','demonstrated',
+	'evidence','findings','study','research','analysis','impact','effect',
+	'according','major','main','central','principal','highlight','highlights',
+	'underscores','reveals','reveal','showed','shown','indicate','indicates',
+	'suggest','suggests','prove','proves','establish','confirm','determines'
+]);
+
+/* ========== TF Scoring ========== */
+function computeTF(sentences) {
+	// Build term frequency across all sentences
+	const docFreq = {};
+	let totalTerms = 0;
+
+	const sentenceTokens = sentences.map(s => {
+		const tokens = s.toLowerCase().replace(/[^a-z0-9\s'-]/g, '').split(/\s+/).filter(w => w.length > 1 && !STOP_WORDS.has(w));
+		tokens.forEach(t => {
+			docFreq[t] = (docFreq[t] || 0) + 1;
+			totalTerms++;
+		});
+		return tokens;
+	});
+
+	// Normalize TF: freq / max_freq (relative to most common meaningful word)
+	const maxFreq = Math.max(...Object.values(docFreq), 1);
+	const normalizedTF = {};
+	for (const [word, count] of Object.entries(docFreq)) {
+		normalizedTF[word] = count / maxFreq;
+	}
+
+	return { normalizedTF, sentenceTokens, docFreq };
+}
+
+/* ========== Sentence Scoring ========== */
+function scoreSentences(sentences, titleText) {
+	if (!sentences.length) return [];
+
+	const { normalizedTF, sentenceTokens, docFreq } = computeTF(sentences);
+
+	// Title words for bonus
+	const titleWords = new Set(
+		(titleText || '').toLowerCase().replace(/[^a-z0-9\s'-]/g, '').split(/\s+/).filter(w => w.length > 1 && !STOP_WORDS.has(w))
+	);
+
+	const scores = sentences.map((sent, idx) => {
+		const tokens = sentenceTokens[idx];
+		if (tokens.length === 0) return { index: idx, score: 0, sentence: sent };
+
+		// 1) TF Score — average normalized TF of tokens in this sentence
+		let tfScore = 0;
+		tokens.forEach(t => { tfScore += (normalizedTF[t] || 0); });
+		tfScore = tfScore / tokens.length;
+
+		// 2) Position score — first and last sentences of document get bonus;
+		//    first 20% and last 10% get smaller bonuses
+		let positionScore = 0;
+		const relPos = idx / Math.max(sentences.length - 1, 1);
+		if (idx === 0) positionScore = 1.0;
+		else if (idx === sentences.length - 1) positionScore = 0.8;
+		else if (relPos < 0.2) positionScore = 0.5;
+		else if (relPos > 0.9) positionScore = 0.4;
+		else positionScore = 0.1;
+
+		// 3) Length score — penalize very short (<5 words) and very long (>40 words) sentences
+		const wordCount = sent.split(/\s+/).length;
+		let lengthScore = 0;
+		if (wordCount < 4) lengthScore = 0.0;
+		else if (wordCount < 8) lengthScore = 0.4;
+		else if (wordCount <= 35) lengthScore = 1.0;
+		else if (wordCount <= 50) lengthScore = 0.6;
+		else lengthScore = 0.3;
+
+		// 4) Indicator words score
+		let indicatorScore = 0;
+		tokens.forEach(t => {
+			if (INDICATOR_WORDS.has(t)) indicatorScore += 0.3;
+		});
+		indicatorScore = Math.min(indicatorScore, 1.0);
+
+		// 5) Title relevance score
+		let titleScore = 0;
+		if (titleWords.size > 0) {
+			let titleHits = 0;
+			tokens.forEach(t => { if (titleWords.has(t)) titleHits++; });
+			titleScore = Math.min(titleHits / Math.max(titleWords.size, 1), 1.0);
+		}
+
+		// 6) Numerical data bonus — sentences with numbers are often factual/important
+		const numMatches = sent.match(/\d+/g);
+		const numScore = numMatches ? Math.min(numMatches.length * 0.15, 0.4) : 0;
+
+		// Weighted combination
+		const finalScore =
+			tfScore       * 0.30 +
+			positionScore * 0.20 +
+			lengthScore   * 0.15 +
+			indicatorScore* 0.15 +
+			titleScore    * 0.10 +
+			numScore      * 0.10;
+
+		return { index: idx, score: finalScore, sentence: sent };
+	});
+
+	return scores;
+}
+
+/* ========== Key Points Extraction ========== */
+function extractKeyPoints(scoredSentences, count) {
+	// Pick top N non-overlapping sentences as key takeaways
+	const sorted = [...scoredSentences].sort((a, b) => b.score - a.score);
+	const picked = [];
+	const usedIndices = new Set();
+
+	for (const s of sorted) {
+		if (picked.length >= count) break;
+		// Skip very short sentences
+		if (s.sentence.split(/\s+/).length < 5) continue;
+		// Avoid adjacent overlap
+		if (usedIndices.has(s.index - 1) || usedIndices.has(s.index + 1)) continue;
+		picked.push(s);
+		usedIndices.add(s.index);
+	}
+
+	// Return in original order
+	return picked.sort((a, b) => a.index - b.index).map(s => s.sentence.trim());
+}
+
+/* ========== Main Summarize ========== */
+function runSummarize() {
+	const text = inputEl.value.trim();
+	if (!text) { showToast('Please enter some text to summarize.'); return; }
+
+	const words = countWords(text);
+	if (words < 20) { showToast('Please enter at least 20 words for a meaningful summary.'); return; }
+
+	// Show loading
+	resultArea.classList.remove('active');
+	loadingEl.classList.add('active');
+
+	// Simulate brief processing delay for UX
+	setTimeout(() => {
+		try {
+			performSummarization(text);
+		} catch (e) {
+			showToast('Error during summarization.');
+			console.error(e);
+		}
+		loadingEl.classList.remove('active');
+	}, 600);
+}
+
+function performSummarization(text) {
+	const titleText = titleEl.value.trim();
+	const mode = document.querySelector('input[name="mode"]:checked').value;
+	const bullets = document.getElementById('bulletToggle').checked;
+
+	const ratioMap = { brief: 0.25, medium: 0.50, detailed: 0.75 };
+	const ratio = ratioMap[mode] || 0.50;
+
+	const sentences = splitSentences(text);
+	if (sentences.length <= 2) {
+		// Too short to meaningfully summarize — return as-is
+		displayResult(text, text, sentences, sentences.length, bullets);
+		return;
+	}
+
+	// Score sentences
+	const scored = scoreSentences(sentences, titleText);
+
+	// Determine how many sentences to keep (at least 1)
+	let targetCount = Math.max(1, Math.round(sentences.length * ratio));
+	// Ensure at least 1, at most all
+	targetCount = Math.min(targetCount, sentences.length);
+
+	// Rank and pick top N
+	const ranked = [...scored].sort((a, b) => b.score - a.score);
+	const selectedIndices = new Set(ranked.slice(0, targetCount).map(s => s.index));
+
+	// Build summary in original order
+	const summarySentences = scored
+		.filter(s => selectedIndices.has(s.index))
+		.sort((a, b) => a.index - b.index)
+		.map(s => s.sentence.trim());
+
+	const summaryText = summarySentences.join(' ');
+
+	// Key points (3-5)
+	const keyPointCount = Math.min(5, Math.max(3, Math.floor(sentences.length * 0.1)));
+	const keyPoints = extractKeyPoints(scored, keyPointCount);
+
+	displayResult(text, summaryText, keyPoints, sentences.length, bullets, summarySentences);
+}
+
+function displayResult(originalText, summaryText, keyPoints, totalSentences, bullets, summarySentences) {
+	const origWords = countWords(originalText);
+	const sumWords = countWords(summaryText);
+	const compressionPct = origWords > 0 ? Math.round((1 - sumWords / origWords) * 100) : 0;
+	const origReadTime = fmtTime(origWords / 200);
+	const sumReadTime = fmtTime(sumWords / 200);
+
+	document.getElementById('origWords').textContent = origWords;
+	document.getElementById('sumWords').textContent = sumWords;
+	document.getElementById('compression').textContent = compressionPct + '%';
+	document.getElementById('origRead').textContent = origReadTime;
+	document.getElementById('sumRead').textContent = sumReadTime;
+	document.getElementById('compBar').style.width = (100 - compressionPct) + '%';
+
+	// Render summary
+	const outputEl = document.getElementById('summaryOutput');
+	if (bullets && summarySentences && summarySentences.length > 0) {
+		outputEl.innerHTML = '<ul>' + summarySentences.map(s => '<li>' + escapeHtml(s) + '</li>').join('') + '</ul>';
+	} else {
+		outputEl.textContent = summaryText;
+	}
+
+	// Key points
+	const kpList = document.getElementById('keyPointsList');
+	if (keyPoints && keyPoints.length > 0) {
+		kpList.innerHTML = keyPoints.map(kp =>
+			'<div class="key-point"><i class="fas fa-check-circle"></i><span>' + escapeHtml(kp) + '</span></div>'
+		).join('');
+		document.getElementById('keyPointsSection').style.display = 'block';
+	} else {
+		document.getElementById('keyPointsSection').style.display = 'none';
+	}
+
+	resultArea.classList.add('active');
+	resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function escapeHtml(str) {
+	const div = document.createElement('div');
+	div.textContent = str;
+	return div.innerHTML;
+}
+
+/* ========== Copy / Download ========== */
+function copySummary() {
+	const outputEl = document.getElementById('summaryOutput');
+	const text = outputEl.innerText;
+	if (!text) { showToast('Nothing to copy.'); return; }
+	navigator.clipboard.writeText(text).then(() => showToast('Summary copied!'));
+}
+
+function downloadTxt() {
+	const outputEl = document.getElementById('summaryOutput');
+	const summaryText = outputEl.innerText;
+	if (!summaryText) { showToast('Nothing to download.'); return; }
+
+	// Build full content
+	const origWords = document.getElementById('origWords').textContent;
+	const sumWords = document.getElementById('sumWords').textContent;
+	const compression = document.getElementById('compression').textContent;
+
+	let content = '=== AI Text Summary ===\n\n';
+	content += 'Original Words: ' + origWords + '\n';
+	content += 'Summary Words: ' + sumWords + '\n';
+	content += 'Compression: ' + compression + '\n\n';
+	content += '--- Summary ---\n\n' + summaryText + '\n\n';
+
+	// Key points
+	const kpEls = document.querySelectorAll('#keyPointsList .key-point span');
+	if (kpEls.length) {
+		content += '--- Key Takeaways ---\n\n';
+		kpEls.forEach((el, i) => { content += (i + 1) + '. ' + el.textContent + '\n'; });
+	}
+
+	const blob = new Blob([content], { type: 'text/plain' });
+	const a = document.createElement('a');
+	a.href = URL.createObjectURL(blob);
+	a.download = 'summary.txt';
+	a.click();
+	URL.revokeObjectURL(a.href);
+	showToast('Downloaded summary.txt');
+}
+
+/* ========== Clear ========== */
+function clearAll() {
+	inputEl.value = '';
+	titleEl.value = '';
+	resultArea.classList.remove('active');
+	updateInputStats();
+	showToast('Cleared');
+}
+
+/* ========== Sample Text ========== */
+function loadSample() {
+	const sample = `Artificial intelligence (AI) has rapidly transformed from a niche area of computer science into one of the most significant technological forces shaping the modern world. At its core, AI refers to the development of computer systems capable of performing tasks that typically require human intelligence, including visual perception, speech recognition, decision-making, and language translation. The field has experienced remarkable growth over the past decade, driven primarily by advances in machine learning, the availability of massive datasets, and exponential increases in computing power.
+
+One of the most important breakthroughs in recent years has been the development of deep learning, a subset of machine learning that uses artificial neural networks with multiple layers to model complex patterns in data. Deep learning has demonstrated extraordinary capabilities in image recognition, natural language processing, and game playing. For instance, language models trained on billions of parameters can now generate human-like text, translate between languages, and even write functional computer code.
+
+The impact of AI extends across virtually every industry. In healthcare, AI algorithms are being used to detect diseases from medical images with accuracy that rivals or exceeds human specialists. Studies have shown that AI systems can identify certain cancers, such as breast cancer and lung cancer, at earlier stages than traditional screening methods. In finance, machine learning models analyze vast quantities of market data to detect fraud, assess credit risk, and optimize trading strategies. The transportation sector is being revolutionized by autonomous vehicles, which rely on a combination of computer vision, sensor fusion, and reinforcement learning to navigate complex environments.
+
+However, the rapid advancement of AI also raises significant ethical and societal concerns. Issues of bias in AI systems have become a major focus of research and public debate. When AI models are trained on historical data that contains biases, they can perpetuate and even amplify those biases in their predictions and decisions. This has important implications for areas such as hiring, criminal justice, and lending, where biased AI systems could lead to unfair outcomes for marginalized communities.
+
+Furthermore, the increasing automation capabilities of AI have sparked discussions about the future of work. While AI is expected to create new types of jobs and increase productivity, it may also displace workers in certain industries, particularly those involving routine and repetitive tasks. Economists and policymakers are therefore exploring strategies such as retraining programs, universal basic income, and education reform to help societies adapt to the changing employment landscape.
+
+Privacy and security concerns represent another critical challenge. AI systems often require large amounts of personal data to function effectively, raising questions about data collection, consent, and surveillance. The development of AI-powered deepfakes — synthetic media that can convincingly mimic real people — poses threats to information integrity and personal security. Consequently, governments and organizations worldwide are working to establish regulatory frameworks that balance innovation with the protection of individual rights.
+
+In conclusion, artificial intelligence represents both an extraordinary opportunity and a profound challenge for humanity. The technology has the potential to solve some of the world's most pressing problems, from climate change to disease prevention, while simultaneously introducing new risks that must be carefully managed. The key to realizing the benefits of AI while minimizing its dangers lies in responsible development, inclusive governance, and ongoing collaboration between technologists, policymakers, and the public. As AI continues to evolve at an unprecedented pace, the decisions we make today about its development and deployment will shape the trajectory of human civilization for generations to come.`;
+
+	inputEl.value = sample;
+	titleEl.value = 'Artificial Intelligence: Impact, Ethics, and Future';
+	updateInputStats();
+	showToast('Sample text loaded');
+}
+
+/* ========== Toast ========== */
+function showToast(msg) {
+	const t = document.getElementById('toast');
+	t.textContent = msg;
+	t.classList.add('show');
+	setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ========== Init ========== */
+updateInputStats();
+</script>
+<script src="js/global.js"></script>
+</body>
+</html>

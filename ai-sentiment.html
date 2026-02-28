@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AI Sentiment Analyzer - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
+	<style>
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:1040px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;}
+		.muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		.panel h2{font-size:1.15rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem;}
+		.tabs{display:flex;gap:.5rem;margin-bottom:1rem;}
+		.tab{padding:.6rem 1.2rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--bg-alt);color:var(--text);font-weight:600;cursor:pointer;font-size:.88rem;transition:all .2s;}
+		.tab.active{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border-color:transparent;}
+		.tab:hover:not(.active){border-color:var(--primary);color:var(--primary);}
+		textarea{width:100%;min-height:200px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.95rem;font-family:inherit;resize:vertical;transition:border-color .2s;}
+		textarea:focus{outline:none;border-color:var(--primary);}
+		.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:.75rem;}
+		.btn{padding:.8rem 1.4rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.95rem;transition:transform .15s,box-shadow .25s;}
+		.btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.3);}
+		.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+		.btn-outline{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);}
+		.btn-outline:hover{background:var(--primary-glow);}
+		.btn-sm{padding:.5rem 1rem;font-size:.85rem;}
+		.word-count{color:var(--muted);font-size:.85rem;margin-left:auto;}
+
+		/* Gauge */
+		.gauge-section{text-align:center;padding:1.5rem 0;}
+		.sentiment-face{font-size:4rem;margin-bottom:.5rem;transition:all .3s;}
+		.gauge-container{position:relative;width:280px;height:150px;margin:0 auto 1rem;}
+		.gauge-svg{width:100%;height:100%;}
+		.gauge-bg-arc{fill:none;stroke:var(--border);stroke-width:18;stroke-linecap:round;}
+		.gauge-fill-arc{fill:none;stroke-width:18;stroke-linecap:round;transition:stroke-dashoffset .8s ease,stroke .5s;}
+		.gauge-label{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);text-align:center;}
+		.gauge-label .score{font-size:2rem;font-weight:900;line-height:1;}
+		.gauge-label .label{font-size:.82rem;color:var(--muted);margin-top:.2rem;}
+		.sentiment-verdict{font-size:1.5rem;font-weight:800;margin:.5rem 0 .25rem;}
+		.confidence-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem;border-radius:var(--radius-full);font-size:.85rem;font-weight:600;background:var(--bg-alt);border:1px solid var(--border);}
+
+		/* Score bar */
+		.score-bar-wrap{margin:1.25rem auto;max-width:400px;}
+		.score-bar{height:12px;border-radius:6px;background:linear-gradient(to right,#ef4444,#f59e0b,#a3a3a3,#84cc16,#10b981);overflow:hidden;position:relative;}
+		.score-indicator{position:absolute;top:-4px;width:4px;height:20px;background:#fff;border:2px solid var(--text);border-radius:2px;transition:left .6s ease;}
+		.score-labels{display:flex;justify-content:space-between;margin-top:.3rem;font-size:.72rem;color:var(--muted);}
+
+		/* Sentences */
+		.sentence-item{padding:.65rem .85rem;border-radius:var(--radius-sm);margin-bottom:.5rem;font-size:.9rem;line-height:1.6;display:flex;justify-content:space-between;align-items:center;gap:.75rem;transition:background .2s;}
+		.sentence-text{flex:1;}
+		.sentence-score{white-space:nowrap;font-weight:700;font-size:.82rem;padding:.2rem .55rem;border-radius:var(--radius-sm);min-width:70px;text-align:center;}
+		.sent-positive{background:rgba(16,185,129,.1);border-left:3px solid var(--success);}
+		.sent-negative{background:rgba(239,68,68,.1);border-left:3px solid var(--error);}
+		.sent-neutral{background:var(--bg-alt);border-left:3px solid var(--border);}
+		.score-pos{background:rgba(16,185,129,.15);color:#059669;}
+		.score-neg{background:rgba(239,68,68,.15);color:#dc2626;}
+		.score-neu{background:var(--bg-alt);color:var(--muted);}
+
+		/* Emotions */
+		.emotion-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;}
+		.emotion-card{background:var(--bg-alt);border-radius:var(--radius-sm);padding:.85rem;}
+		.emotion-card .emo-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;}
+		.emotion-card .emo-icon{font-size:1.3rem;}
+		.emotion-card .emo-name{font-weight:700;font-size:.9rem;}
+		.emotion-card .emo-pct{margin-left:auto;font-weight:800;font-size:.95rem;}
+		.emo-bar{height:6px;border-radius:3px;background:var(--border);overflow:hidden;}
+		.emo-bar-fill{height:100%;border-radius:3px;transition:width .6s ease;}
+
+		/* Word cloud */
+		.word-cloud{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;padding:.5rem 0;}
+		.cloud-word{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .75rem;border-radius:var(--radius-full);font-weight:600;font-size:.82rem;transition:transform .15s;}
+		.cloud-word:hover{transform:scale(1.08);}
+		.cloud-positive{background:rgba(16,185,129,.12);color:#059669;border:1px solid rgba(16,185,129,.3);}
+		.cloud-negative{background:rgba(239,68,68,.12);color:#dc2626;border:1px solid rgba(239,68,68,.3);}
+
+		/* Batch */
+		.batch-table{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:.75rem;}
+		.batch-table th,.batch-table td{padding:.65rem .85rem;text-align:left;border-bottom:1px solid var(--border);}
+		.batch-table th{background:var(--bg-alt);font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);}
+		.batch-table tr:hover td{background:var(--bg-alt);}
+		.batch-badge{padding:.2rem .6rem;border-radius:var(--radius-full);font-weight:700;font-size:.78rem;}
+		.badge-pos{background:rgba(16,185,129,.15);color:#059669;}
+		.badge-neg{background:rgba(239,68,68,.15);color:#dc2626;}
+		.badge-neu{background:var(--bg-alt);color:var(--muted);}
+
+		/* Loading */
+		.loading{display:none;align-items:center;justify-content:center;gap:.75rem;padding:2rem;font-weight:600;color:var(--muted);}
+		.loading.active{display:flex;}
+		.spinner{width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;}
+		@keyframes spin{to{transform:rotate(360deg);}}
+
+		/* Results hidden initially */
+		.results-area{display:none;}
+		.results-area.active{display:block;}
+
+		/* Toast */
+		.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+		/* Info box */
+		.info-box{background:var(--bg-alt);border-left:3px solid var(--primary);border-radius:var(--radius-sm);padding:.85rem 1rem;font-size:.85rem;color:var(--muted);line-height:1.6;margin-top:.75rem;}
+
+		/* Responsive */
+		@media(max-width:640px){
+			.controls{flex-direction:column;align-items:stretch;}
+			.word-count{margin-left:0;text-align:center;}
+			.gauge-container{width:220px;height:120px;}
+			.emotion-grid{grid-template-columns:1fr;}
+			.batch-table{font-size:.78rem;}
+			.batch-table th,.batch-table td{padding:.45rem .55rem;}
+			.tabs{flex-wrap:wrap;}
+		}
+	</style>
+</head>
+<body>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html#ai-tools"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-brain"></i> AI Sentiment Analyzer</h1>
+		<p class="muted">Analyze the emotional tone and sentiment of any text with detailed breakdowns.</p>
+	</header>
+	<main>
+		<!-- Mode Tabs -->
+		<div class="tabs">
+			<button class="tab active" onclick="switchMode('single')"><i class="fas fa-file-lines"></i> Single Text</button>
+			<button class="tab" onclick="switchMode('batch')"><i class="fas fa-layer-group"></i> Batch Mode</button>
+		</div>
+
+		<!-- Input Panel -->
+		<div class="panel" id="inputPanel">
+			<textarea id="inputText" placeholder="Type or paste your text here to analyze its sentiment..."></textarea>
+			<textarea id="batchInput" placeholder="Enter multiple texts, one per line, to compare their sentiment..." style="display:none;"></textarea>
+			<div class="controls">
+				<button class="btn" id="analyzeBtn" onclick="runAnalysis()"><i class="fas fa-magnifying-glass-chart"></i> Analyze Sentiment</button>
+				<button class="btn btn-outline" onclick="clearAll()"><i class="fas fa-trash"></i> Clear</button>
+				<button class="btn btn-outline" onclick="loadSample()"><i class="fas fa-flask"></i> Sample Text</button>
+				<button class="btn btn-outline" onclick="copyResults()" id="copyBtn" style="display:none;"><i class="fas fa-copy"></i> Copy Results</button>
+				<span class="word-count" id="wordCount">0 words</span>
+			</div>
+			<div class="info-box">
+				<i class="fas fa-info-circle"></i> This analyzer uses a built-in lexicon of 400+ scored words, negation handling, intensifier/diminisher detection, emoji analysis, and emotion keyword mapping. All processing is done locally in your browser — no data is sent anywhere.
+			</div>
+		</div>
+
+		<!-- Loading -->
+		<div class="loading" id="loading"><div class="spinner"></div> Analyzing sentiment...</div>
+
+		<!-- Results -->
+		<div class="results-area" id="resultsArea">
+			<!-- Overall Sentiment Gauge -->
+			<div class="panel" id="gaugePanel">
+				<h2><i class="fas fa-gauge-high"></i> Overall Sentiment</h2>
+				<div class="gauge-section">
+					<div class="sentiment-face" id="sentimentFace">😐</div>
+					<div class="gauge-container">
+						<svg class="gauge-svg" viewBox="0 0 280 150">
+							<path class="gauge-bg-arc" d="M 30 140 A 110 110 0 0 1 250 140"/>
+							<path class="gauge-fill-arc" id="gaugeFill" d="M 30 140 A 110 110 0 0 1 250 140" stroke-dasharray="345.6" stroke-dashoffset="345.6"/>
+						</svg>
+						<div class="gauge-label">
+							<div class="score" id="gaugeScore">0</div>
+							<div class="label" id="gaugeLabel">Neutral</div>
+						</div>
+					</div>
+					<div class="sentiment-verdict" id="verdictText">Neutral</div>
+					<div class="confidence-badge" id="confidenceBadge"><i class="fas fa-shield-check"></i> Confidence: <span id="confidencePct">0%</span></div>
+					<div class="score-bar-wrap">
+						<div class="score-bar"><div class="score-indicator" id="scoreIndicator" style="left:50%"></div></div>
+						<div class="score-labels"><span>Very Negative</span><span>Negative</span><span>Neutral</span><span>Positive</span><span>Very Positive</span></div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Emotion Detection -->
+			<div class="panel" id="emotionPanel">
+				<h2><i class="fas fa-masks-theater"></i> Emotion Detection</h2>
+				<div class="emotion-grid" id="emotionGrid"></div>
+			</div>
+
+			<!-- Sentence Breakdown -->
+			<div class="panel" id="sentencePanel">
+				<h2><i class="fas fa-list-ol"></i> Sentence Breakdown</h2>
+				<div id="sentenceList"></div>
+			</div>
+
+			<!-- Word Cloud -->
+			<div class="panel" id="wordCloudPanel">
+				<h2><i class="fas fa-cloud"></i> Key Words Found</h2>
+				<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+					<div>
+						<h3 style="font-size:.9rem;color:var(--success);margin-bottom:.5rem;"><i class="fas fa-plus-circle"></i> Positive Words</h3>
+						<div class="word-cloud" id="posCloud"></div>
+					</div>
+					<div>
+						<h3 style="font-size:.9rem;color:var(--error);margin-bottom:.5rem;"><i class="fas fa-minus-circle"></i> Negative Words</h3>
+						<div class="word-cloud" id="negCloud"></div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Batch Results -->
+			<div class="panel" id="batchPanel" style="display:none;">
+				<h2><i class="fas fa-table"></i> Batch Comparison</h2>
+				<div style="overflow-x:auto;" id="batchResults"></div>
+			</div>
+		</div>
+	</main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="js/global.js"></script>
+<script>
+/* =========================================
+   AI Sentiment Analyzer — Full Lexicon & Engine
+   ========================================= */
+
+// ── Positive Lexicon (word: score 1-5) ──
+const POSITIVE_WORDS = {
+	// 5 — Extremely positive
+	"amazing":5,"awesome":5,"breathtaking":5,"brilliant":5,"ecstatic":5,"excellent":5,"exceptional":5,"extraordinary":5,"fabulous":5,"fantastic":5,
+	"flawless":5,"glorious":5,"incredible":5,"magnificent":5,"marvelous":5,"masterpiece":5,"outstanding":5,"perfect":5,"phenomenal":5,"sensational":5,
+	"spectacular":5,"splendid":5,"stunning":5,"sublime":5,"superb":5,"supreme":5,"terrific":5,"thrilling":5,"tremendous":5,"unbelievable":5,
+	"wonderful":5,"exquisite":5,
+	// 4 — Very positive
+	"admirable":4,"beautiful":4,"blissful":4,"captivating":4,"charming":4,"cheerful":4,"commendable":4,"delightful":4,"elegant":4,"enchanting":4,
+	"enjoyable":4,"euphoric":4,"exciting":4,"exhilarating":4,"favorable":4,"generous":4,"graceful":4,"great":4,"harmonious":4,"heartwarming":4,
+	"heroic":4,"impressive":4,"inspiring":4,"joyful":4,"joyous":4,"lovable":4,"lovely":4,"majestic":4,"miraculous":4,"noble":4,
+	"passionate":4,"pleasing":4,"powerful":4,"radiant":4,"remarkable":4,"rewarding":4,"shining":4,"thriving":4,"triumphant":4,"vibrant":4,
+	"victorious":4,"vivid":4,"warm":4,"wholesome":4,"worthy":4,
+	// 3 — Positive
+	"accomplished":3,"agreeable":3,"appealing":3,"balanced":3,"beneficial":3,"brave":3,"bright":3,"calm":3,"capable":3,"caring":3,
+	"clean":3,"comfortable":3,"competent":3,"confident":3,"constructive":3,"courageous":3,"creative":3,"dedicated":3,"dependable":3,"diligent":3,
+	"effective":3,"efficient":3,"encouraging":3,"energetic":3,"engaging":3,"enriching":3,"enthusiastic":3,"faithful":3,"flourishing":3,"focused":3,
+	"friendly":3,"fulfilled":3,"generous":3,"gentle":3,"genuine":3,"glad":3,"good":3,"grateful":3,"happy":3,"healthy":3,
+	"helpful":3,"honest":3,"hopeful":3,"humble":3,"innovative":3,"intelligent":3,"interesting":3,"kind":3,"knowledgeable":3,"lively":3,
+	"loyal":3,"meaningful":3,"mindful":3,"motivating":3,"neat":3,"nice":3,"nurturing":3,"optimistic":3,"organized":3,"peaceful":3,
+	"pleasant":3,"polite":3,"positive":3,"productive":3,"professional":3,"progressive":3,"promising":3,"proud":3,"pure":3,"quick":3,
+	"rational":3,"refreshing":3,"reliable":3,"resilient":3,"resourceful":3,"respectful":3,"responsible":3,"safe":3,"secure":3,"sincere":3,
+	"skilled":3,"smart":3,"smooth":3,"solid":3,"stable":3,"strong":3,"successful":3,"supportive":3,"sweet":3,"talented":3,
+	"thankful":3,"thoughtful":3,"trustworthy":3,"upbeat":3,"useful":3,"valuable":3,"versatile":3,"wise":3,"witty":3,"youthful":3,
+	// 2 — Slightly positive
+	"acceptable":2,"adequate":2,"amusing":2,"appropriate":2,"attentive":2,"aware":2,"better":2,"certain":2,"civil":2,"clear":2,
+	"composed":2,"content":2,"correct":2,"decent":2,"easy":2,"fair":2,"feasible":2,"fine":2,"fit":2,"functional":2,
+	"handy":2,"intact":2,"logical":2,"manageable":2,"modest":2,"normal":2,"notable":2,"okay":2,"open":2,"orderly":2,
+	"patient":2,"possible":2,"practical":2,"proper":2,"ready":2,"reasonable":2,"relaxed":2,"relevant":2,"satisfactory":2,"simple":2,
+	"sound":2,"steady":2,"suitable":2,"tidy":2,"tolerant":2,"typical":2,"unified":2,"usual":2,"valid":2,"welcome":2,
+	// 1 — Mildly positive
+	"alright":1,"available":1,"basic":1,"common":1,"consistent":1,"expected":1,"familiar":1,"general":1,"granted":1,"known":1,
+	"mainstream":1,"moderate":1,"neutral":1,"ordinary":1,"regular":1,"routine":1,"standard":1,"sufficient":1,"trivial":1,"understood":1,
+	"like":2,"love":4,"loved":4,"loves":4,"liked":2,"enjoy":3,"enjoyed":3,"enjoying":3,"recommend":3,"recommended":3,
+	"appreciate":3,"appreciated":3,"praise":3,"praised":3,"celebrate":3,"celebratory":3,"win":3,"winning":3,"won":3,"succeed":3,
+	"success":3,"successful":3,"achieve":3,"achieved":3,"achievement":3,"progress":3,"improve":3,"improved":3,"improvement":3,"upgrade":3,
+	"best":5,"better":2,"top":3,"elite":4,"superior":4,"premium":4,"prime":3,"ideal":4,"optimal":4,"peak":3
+};
+
+// ── Negative Lexicon (word: score -1 to -5) ──
+const NEGATIVE_WORDS = {
+	// -5 — Extremely negative
+	"abhorrent":-5,"abominable":-5,"appalling":-5,"atrocious":-5,"catastrophic":-5,"deplorable":-5,"despicable":-5,"devastating":-5,"disastrous":-5,"disgusting":-5,
+	"dreadful":-5,"execrable":-5,"ghastly":-5,"grotesque":-5,"heinous":-5,"horrendous":-5,"horrible":-5,"horrific":-5,"loathsome":-5,"monstrous":-5,
+	"nightmarish":-5,"outrageous":-5,"repugnant":-5,"repulsive":-5,"revolting":-5,"sickening":-5,"terrible":-5,"terrifying":-5,"tragic":-5,"vile":-5,
+	"wretched":-5,"abysmal":-5,
+	// -4 — Very negative
+	"abusive":-4,"agonizing":-4,"alarming":-4,"angry":-4,"anguished":-4,"apprehensive":-4,"awful":-4,"bitter":-4,"bleak":-4,"brutal":-4,
+	"callous":-4,"corrupt":-4,"cruel":-4,"damaging":-4,"dangerous":-4,"deceitful":-4,"defective":-4,"degrading":-4,"depraved":-4,"depressing":-4,
+	"destructive":-4,"detestable":-4,"dishonest":-4,"dismal":-4,"distressing":-4,"dreadful":-4,"envious":-4,"evil":-4,"fearful":-4,"foolish":-4,
+	"frightening":-4,"furious":-4,"grim":-4,"grumpy":-4,"guilty":-4,"harmful":-4,"harsh":-4,"hateful":-4,"heartbreaking":-4,"heartless":-4,
+	"hopeless":-4,"hostile":-4,"humiliating":-4,"ignorant":-4,"inferior":-4,"insulting":-4,"livid":-4,"malicious":-4,"menacing":-4,"merciless":-4,
+	"miserable":-4,"nasty":-4,"offensive":-4,"oppressive":-4,"painful":-4,"pathetic":-4,"pitiless":-4,"poisonous":-4,"reckless":-4,"ruthless":-4,
+	"savage":-4,"shameful":-4,"sinister":-4,"spiteful":-4,"toxic":-4,"treacherous":-4,"unacceptable":-4,"unforgivable":-4,"unkind":-4,"vengeful":-4,
+	"vicious":-4,"violent":-4,"wicked":-4,"worthless":-4,
+	// -3 — Negative
+	"abnormal":-3,"aggravating":-3,"annoying":-3,"anxious":-3,"arrogant":-3,"ashamed":-3,"awkward":-3,"bad":-3,"biased":-3,"bored":-3,
+	"boring":-3,"broken":-3,"careless":-3,"chaotic":-3,"clumsy":-3,"cold":-3,"complicated":-3,"confused":-3,"confusing":-3,"cowardly":-3,
+	"cranky":-3,"critical":-3,"cynical":-3,"damaged":-3,"deceived":-3,"deficient":-3,"demanding":-3,"denied":-3,"difficult":-3,"dirty":-3,
+	"disappointed":-3,"disappointing":-3,"discomfort":-3,"discouraging":-3,"disgrace":-3,"dishonest":-3,"dislike":-3,"dismiss":-3,"displeased":-3,"dispute":-3,
+	"disturbing":-3,"doubtful":-3,"dreary":-3,"dull":-3,"embarrassing":-3,"empty":-3,"enraged":-3,"erratic":-3,"exhausting":-3,"failing":-3,
+	"failure":-3,"faulty":-3,"fed up":-3,"flawed":-3,"fragile":-3,"frustrated":-3,"frustrating":-3,"gloomy":-3,"greedy":-3,"hated":-3,
+	"helpless":-3,"hesitant":-3,"hurtful":-3,"impatient":-3,"imperfect":-3,"inadequate":-3,"incompetent":-3,"insecure":-3,"irritated":-3,"irritating":-3,
+	"jealous":-3,"lazy":-3,"lonely":-3,"lost":-3,"lying":-3,"manipulative":-3,"mediocre":-3,"messy":-3,"moody":-3,"negative":-3,
+	"neglected":-3,"nervous":-3,"obnoxious":-3,"obsessive":-3,"outdated":-3,"overrated":-3,"pessimistic":-3,"petty":-3,"pitiful":-3,"poor":-3,
+	"powerless":-3,"problematic":-3,"rejected":-3,"resentful":-3,"restless":-3,"rigid":-3,"rude":-3,"sad":-3,"selfish":-3,"shallow":-3,
+	"sluggish":-3,"sour":-3,"stagnant":-3,"stressed":-3,"stuck":-3,"stubborn":-3,"stupid":-3,"suffering":-3,"suspicious":-3,"tense":-3,
+	"terrible":-3,"tired":-3,"troubled":-3,"ugly":-3,"uncertain":-3,"uncomfortable":-3,"unfair":-3,"unfortunate":-3,"unhappy":-3,"uninspired":-3,
+	"unpleasant":-3,"unreliable":-3,"unsatisfied":-3,"unstable":-3,"upset":-3,"useless":-3,"vain":-3,"vulnerable":-3,"weak":-3,"worried":-3,
+	"wrong":-3,
+	// -2 — Slightly negative
+	"ambiguous":-2,"bland":-2,"blunt":-2,"cautious":-2,"complex":-2,"concern":-2,"costly":-2,"delay":-2,"dense":-2,"doubt":-2,
+	"drab":-2,"dry":-2,"flat":-2,"forced":-2,"gray":-2,"hard":-2,"heavy":-2,"idle":-2,"impractical":-2,"inconvenient":-2,
+	"indifferent":-2,"indirect":-2,"lacking":-2,"late":-2,"limited":-2,"minor":-2,"miss":-2,"mixed":-2,"mundane":-2,"narrow":-2,
+	"noisy":-2,"odd":-2,"old":-2,"ordinary":-2,"overdue":-2,"plain":-2,"questionable":-2,"reluctant":-2,"repetitive":-2,"rough":-2,
+	"scarce":-2,"scattered":-2,"slow":-2,"stale":-2,"static":-2,"steep":-2,"stiff":-2,"tedious":-2,"thin":-2,"tight":-2,
+	"tricky":-2,"unclear":-2,"uneven":-2,"unfamiliar":-2,"unlikely":-2,"unpopular":-2,"vague":-2,"wasteful":-2,
+	// -1 — Mildly negative
+	"basic":-1,"busy":-1,"common":-1,"dated":-1,"generic":-1,"lengthy":-1,"long":-1,"mere":-1,"modest":-1,"neutral":-1,
+	"predictable":-1,"rare":-1,"raw":-1,"slight":-1,"standard":-1,"unchanged":-1,"unexpected":-1,"unknown":-1,"unnoticed":-1,
+	"hate":-4,"hated":-4,"hates":-4,"hating":-4,"dislike":-3,"disliked":-3,"dislikes":-3,"regret":-3,"regretted":-3,"regrets":-3,
+	"fail":-3,"failed":-3,"fails":-3,"lose":-3,"losing":-3,"lost":-3,"worst":-5,"worse":-3,"inferior":-4,"problem":-3,
+	"problems":-3,"issue":-3,"issues":-2,"bug":-2,"bugs":-2,"crash":-4,"crashed":-4,"error":-3,"errors":-3,"mistake":-3,
+	"mistakes":-3,"damage":-3,"risk":-2,"threat":-3,"danger":-4,"crisis":-4,"scam":-5,"fraud":-5,"spam":-3,"trash":-4,
+	"garbage":-4,"junk":-3,"waste":-3,"pain":-3,"suffer":-4,"suffering":-4,"death":-4,"kill":-4,"destroy":-4,"destroyed":-4
+};
+
+// ── Negation words ──
+const NEGATION_WORDS = new Set([
+	"not","no","never","neither","nobody","nothing","nowhere","nor",
+	"cannot","can't","couldn't","shouldn't","wouldn't","won't","don't",
+	"doesn't","didn't","isn't","aren't","wasn't","weren't","hasn't",
+	"haven't","hadn't","mustn't","needn't","barely","hardly","scarcely","seldom"
+]);
+
+// ── Intensifiers (multiply by factor) ──
+const INTENSIFIERS = {
+	"very":1.5,"extremely":1.8,"incredibly":1.8,"absolutely":1.7,"totally":1.6,
+	"completely":1.6,"utterly":1.7,"really":1.5,"truly":1.5,"highly":1.5,
+	"deeply":1.5,"enormously":1.7,"immensely":1.7,"remarkably":1.5,"exceptionally":1.7,
+	"particularly":1.4,"especially":1.5,"significantly":1.4,"substantially":1.4,"profoundly":1.6,
+	"awfully":1.5,"terribly":1.5,"super":1.5,"insanely":1.7,"ridiculously":1.6,
+	"so":1.3,"such":1.3,"too":1.3,"most":1.4,"quite":1.3
+};
+
+// ── Diminishers (multiply by factor) ──
+const DIMINISHERS = {
+	"slightly":0.5,"somewhat":0.6,"barely":0.4,"hardly":0.4,"marginally":0.5,
+	"mildly":0.5,"partly":0.6,"partially":0.6,"a bit":0.5,"a little":0.5,
+	"kind of":0.6,"sort of":0.6,"rather":0.7,"fairly":0.7,"relatively":0.7,
+	"moderately":0.6,"occasionally":0.6,"almost":0.7,"just":0.7,"merely":0.5
+};
+
+// ── Emoji Sentiment ──
+const EMOJI_SENTIMENT = {
+	"😀":3,"😃":3,"😄":4,"😁":4,"😆":4,"😂":4,"🤣":4,"😊":3,"😇":3,"🙂":2,
+	"😉":2,"😌":2,"😍":5,"🥰":5,"😘":4,"😗":2,"😙":2,"😚":3,"😋":3,"😛":2,
+	"😜":2,"🤪":2,"😝":2,"🤑":2,"🤗":3,"🤭":2,"🤫":1,"🤔":-1,"🤐":-1,"🤨":-1,
+	"😐":0,"😑":-1,"😶":0,"😏":-1,"😒":-2,"🙄":-2,"😬":-2,"🤥":-3,"😔":-3,"😪":-2,
+	"🤤":1,"😴":-1,"😷":-2,"🤒":-3,"🤕":-3,"🤢":-4,"🤮":-5,"🥵":-2,"🥶":-2,"🥴":-2,
+	"😵":-3,"🤯":2,"🤠":2,"🥳":4,"😎":3,"🤓":2,"🧐":1,"😕":-2,"😟":-3,"🙁":-3,
+	"☹️":-3,"😮":-1,"😯":-1,"😲":-1,"😳":-2,"🥺":-3,"😦":-3,"😧":-3,"😨":-4,"😰":-4,
+	"😥":-3,"😢":-4,"😭":-5,"😱":-5,"😖":-4,"😣":-3,"😞":-4,"😓":-3,"😩":-4,"😫":-4,
+	"🥱":-1,"😤":-3,"😡":-5,"😠":-4,"🤬":-5,"💀":-3,"☠️":-3,"💩":-4,"🤡":-2,"👿":-4,
+	"😈":-3,"👍":3,"👎":-3,"❤️":4,"💔":-4,"💯":4,"🔥":3,"✨":3,"🎉":4,"🎊":4,
+	"💪":3,"🙏":3,"👏":3,"🥇":4,"🏆":4,"⭐":3,"🌟":3,"💖":4,"💕":3,"😠":-4,
+	"💗":3,"💝":4,"💘":4,"💞":3,"💜":3,"🖤":-1,"❣️":3,"💙":3,"💚":3,"🧡":3
+};
+
+// ── Emotion Keywords ──
+const EMOTION_KEYWORDS = {
+	joy: {
+		icon:"😊",color:"#10b981",
+		words:["happy","joy","joyful","delighted","cheerful","excited","thrilled","ecstatic","elated","glad","pleased","content","amused","blissful","euphoric","enthusiastic","grateful","hopeful","optimistic","proud","satisfied","wonderful","amazing","love","loving","celebrate","celebrating","celebration","laugh","laughing","smile","smiling","fun","enjoy","enjoying","enjoyable","fantastic","fabulous","terrific","superb","brilliant","magnificent","splendid","glorious","radiant","vibrant","warm","heartwarming","blessed","fortunate","lucky","paradise","dream","dreamy","paradise","perfect","heaven","heavenly"]
+	},
+	sadness: {
+		icon:"😢",color:"#6366f1",
+		words:["sad","sadness","sorrow","sorrowful","grief","grieving","depressed","depression","melancholy","gloomy","gloom","unhappy","miserable","heartbroken","lonely","loneliness","dejected","despondent","hopeless","despair","despairing","mourning","mourn","crying","cry","tears","tear","weeping","weep","sobbing","sob","painful","pain","hurt","hurting","suffering","suffer","loss","lost","devastated","devastating","tragic","tragedy","regret","regretful","disappointed","disappointment","empty","emptiness","abandoned","neglected","isolated","isolation"]
+	},
+	anger: {
+		icon:"😡",color:"#ef4444",
+		words:["angry","anger","furious","enraged","livid","outraged","mad","irritated","irritating","annoyed","annoying","frustrated","frustrating","hostile","aggressive","violent","rage","raging","hate","hateful","hatred","resent","resentful","resentment","bitter","bitterness","infuriated","provoked","agitated","antagonized","incensed","irate","fuming","seething","wrathful","wrath","vengeance","vengeful","indignant","disgusted","offended","disrespected","betrayed","betrayal","unforgivable","inexcusable","outrageous"]
+	},
+	fear: {
+		icon:"😨",color:"#f59e0b",
+		words:["afraid","fear","fearful","scared","scary","terrified","terrifying","horrified","horrifying","anxious","anxiety","worried","worry","nervous","dread","dreading","panic","panicked","panicking","frightened","frightening","alarmed","alarming","startled","uneasy","apprehensive","paranoid","paranoia","phobia","intimidated","intimidating","threatened","threatening","trembling","shaking","petrified","spooked","creepy","eerie","sinister","menacing","ominous","vulnerable","helpless","powerless","overwhelmed","distressed","desperate"]
+	},
+	surprise: {
+		icon:"😲",color:"#8b5cf6",
+		words:["surprised","surprise","surprising","shocked","shocking","astonished","astonishing","amazed","amazing","stunned","stunning","astounded","astounding","bewildered","baffled","startled","dumbfounded","flabbergasted","speechless","unexpected","unbelievable","incredible","awe","awestruck","wonder","wonderful","miraculous","miracle","extraordinary","remarkable","jaw-dropping","mind-blowing","mindblowing","eye-opening","unprecedented","unreal","unforeseen","sudden","suddenly"]
+	},
+	disgust: {
+		icon:"🤢",color:"#78716c",
+		words:["disgusted","disgusting","disgust","revolting","repulsive","repugnant","gross","grossed","nauseating","nausea","sickening","sickened","vile","foul","nasty","loathsome","abhorrent","abominable","appalling","offensive","repelled","detestable","distasteful","unpleasant","horrible","hideous","ghastly","putrid","rotten","filthy","dirty","contaminated","toxic","poisonous","corrupt","corrupted","wretched","despicable","contempt","contemptible","deplorable","degrading","vulgar","obscene","grotesque"]
+	}
+};
+
+// ── Current mode ──
+let currentMode = "single";
+
+// ── Utility ──
+function toast(msg) {
+	const t = document.getElementById("toast");
+	t.textContent = msg;
+	t.classList.add("show");
+	setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+function switchMode(mode) {
+	currentMode = mode;
+	document.querySelectorAll(".tab").forEach((t, i) => t.classList.toggle("active", (i === 0 && mode === "single") || (i === 1 && mode === "batch")));
+	document.getElementById("inputText").style.display = mode === "single" ? "" : "none";
+	document.getElementById("batchInput").style.display = mode === "batch" ? "" : "none";
+	document.getElementById("resultsArea").classList.remove("active");
+	updateWordCount();
+}
+
+function getActiveTextarea() {
+	return currentMode === "single" ? document.getElementById("inputText") : document.getElementById("batchInput");
+}
+
+function updateWordCount() {
+	const text = getActiveTextarea().value.trim();
+	const words = text ? text.split(/\s+/).length : 0;
+	document.getElementById("wordCount").textContent = words + " word" + (words !== 1 ? "s" : "");
+}
+
+document.getElementById("inputText").addEventListener("input", updateWordCount);
+document.getElementById("batchInput").addEventListener("input", updateWordCount);
+
+function clearAll() {
+	document.getElementById("inputText").value = "";
+	document.getElementById("batchInput").value = "";
+	document.getElementById("resultsArea").classList.remove("active");
+	document.getElementById("copyBtn").style.display = "none";
+	updateWordCount();
+	toast("Cleared!");
+}
+
+function loadSample() {
+	if (currentMode === "single") {
+		document.getElementById("inputText").value = `I absolutely love this product! The quality is amazing and it exceeded all my expectations. The customer service team was incredibly helpful and friendly. However, the shipping was a bit slow and the packaging could have been better. The price is a little steep but honestly, it's worth every penny. I would highly recommend this to anyone looking for a premium experience. The design is beautiful and elegant. My only minor complaint is the instruction manual was confusing. Overall, a fantastic purchase that made me very happy! 😊👍`;
+	} else {
+		document.getElementById("batchInput").value = `I absolutely love this product! It's amazing and works perfectly.
+The service was terrible and the staff were extremely rude and unhelpful.
+The weather today is okay, nothing special but not bad either.
+This movie was a complete disaster. Worst film I've ever seen! 😡
+What a wonderful surprise! I'm so grateful and thrilled beyond words! 🎉
+The food was mediocre at best. Bland flavors and overcooked pasta.
+I'm deeply saddened by the tragic news. My heart goes out to everyone affected. 😢
+Incredible performance! The team showed remarkable skill and determination. 💪🏆`;
+	}
+	updateWordCount();
+	toast("Sample text loaded!");
+}
+
+// ── Core Sentiment Analysis ──
+function tokenize(text) {
+	return text.toLowerCase().replace(/[^\w\s'-😀-🏴]/gu, " ").split(/\s+/).filter(Boolean);
+}
+
+function splitSentences(text) {
+	// Split on sentence-ending punctuation, keeping the delimiter
+	const raw = text.split(/(?<=[.!?…])\s+|[\n\r]+/).filter(s => s.trim().length > 0);
+	return raw.map(s => s.trim());
+}
+
+function analyzeText(text) {
+	const sentences = splitSentences(text);
+	const tokens = tokenize(text);
+	let totalScore = 0;
+	let totalMag = 0; // magnitude
+	let wordScores = {};
+	let posWordsFound = {};
+	let negWordsFound = {};
+	let sentenceResults = [];
+	let emotionScores = {};
+
+	// Initialize emotions
+	for (const emo of Object.keys(EMOTION_KEYWORDS)) {
+		emotionScores[emo] = 0;
+	}
+
+	// ── Emoji scoring ──
+	let emojiScore = 0;
+	let emojiCount = 0;
+	for (const [emoji, score] of Object.entries(EMOJI_SENTIMENT)) {
+		const regex = new RegExp(emoji.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), "g");
+		const matches = text.match(regex);
+		if (matches) {
+			emojiScore += score * matches.length;
+			emojiCount += matches.length;
+		}
+	}
+
+	// ── Per-sentence analysis ──
+	for (const sentence of sentences) {
+		const sTokens = tokenize(sentence);
+		let sentScore = 0;
+		let negationActive = 0; // how many more words negation applies to
+		let intensifierMult = 1;
+
+		for (let i = 0; i < sTokens.length; i++) {
+			const word = sTokens[i];
+
+			// Check for multi-word diminishers
+			const bigram = i < sTokens.length - 1 ? word + " " + sTokens[i + 1] : "";
+			if (DIMINISHERS[bigram]) {
+				intensifierMult = DIMINISHERS[bigram];
+				i++; // skip next word
+				continue;
+			}
+
+			// Check negation
+			if (NEGATION_WORDS.has(word)) {
+				negationActive = 3; // affects next 3 words
+				continue;
+			}
+
+			// Check intensifier
+			if (INTENSIFIERS[word]) {
+				intensifierMult = INTENSIFIERS[word];
+				continue;
+			}
+
+			// Check diminisher (single word)
+			if (DIMINISHERS[word]) {
+				intensifierMult = DIMINISHERS[word];
+				continue;
+			}
+
+			// Score the word
+			let score = 0;
+			if (POSITIVE_WORDS[word] !== undefined) {
+				score = POSITIVE_WORDS[word];
+			} else if (NEGATIVE_WORDS[word] !== undefined) {
+				score = NEGATIVE_WORDS[word];
+			}
+
+			if (score !== 0) {
+				// Apply intensifier/diminisher
+				score = score * intensifierMult;
+				intensifierMult = 1; // reset
+
+				// Apply negation
+				if (negationActive > 0) {
+					score = score * -0.75; // flip and slightly dampen
+					negationActive--;
+				}
+
+				sentScore += score;
+				totalMag += Math.abs(score);
+
+				// Track words
+				const origWord = word;
+				if (score > 0) {
+					posWordsFound[origWord] = (posWordsFound[origWord] || 0) + score;
+				} else if (score < 0) {
+					negWordsFound[origWord] = (negWordsFound[origWord] || 0) + score;
+				}
+			} else {
+				if (negationActive > 0) negationActive--;
+				intensifierMult = 1;
+			}
+
+			// Emotion detection
+			for (const [emo, data] of Object.entries(EMOTION_KEYWORDS)) {
+				if (data.words.includes(word)) {
+					emotionScores[emo] += 1;
+				}
+			}
+		}
+
+		sentenceResults.push({ text: sentence, score: sentScore });
+		totalScore += sentScore;
+	}
+
+	// Add emoji contribution
+	totalScore += emojiScore;
+	totalMag += Math.abs(emojiScore);
+
+	// Normalize score to -1..1 range
+	const wordCount = tokens.length || 1;
+	const normalizedScore = Math.max(-1, Math.min(1, totalScore / (wordCount * 0.6)));
+
+	// Confidence: based on magnitude and word count
+	const rawConfidence = Math.min(1, (totalMag / wordCount) * 0.8 + Math.min(wordCount / 100, 0.3));
+	const confidence = Math.round(rawConfidence * 100);
+
+	// Normalize emotions
+	const totalEmoHits = Object.values(emotionScores).reduce((a, b) => a + b, 0) || 1;
+	const emotionPcts = {};
+	for (const [emo, val] of Object.entries(emotionScores)) {
+		emotionPcts[emo] = Math.round((val / totalEmoHits) * 100);
+	}
+
+	return {
+		score: normalizedScore,
+		rawScore: totalScore,
+		confidence,
+		sentences: sentenceResults,
+		positiveWords: posWordsFound,
+		negativeWords: negWordsFound,
+		emotions: emotionPcts,
+		wordCount,
+		emojiCount
+	};
+}
+
+// ── Render Results ──
+function getVerdictInfo(score) {
+	if (score >= 0.5) return { label: "Very Positive", face: "😄", color: "#10b981" };
+	if (score >= 0.15) return { label: "Positive", face: "🙂", color: "#84cc16" };
+	if (score > -0.15) return { label: "Neutral", face: "😐", color: "#a3a3a3" };
+	if (score > -0.5) return { label: "Negative", face: "😟", color: "#f59e0b" };
+	return { label: "Very Negative", face: "😡", color: "#ef4444" };
+}
+
+function renderGauge(result) {
+	const { score, confidence } = result;
+	const verdict = getVerdictInfo(score);
+
+	// Face
+	document.getElementById("sentimentFace").textContent = verdict.face;
+
+	// Gauge arc: 0 = fully left (negative), 1 = fully right (positive)
+	const pct = (score + 1) / 2; // normalize to 0..1
+	const arcLen = 345.6;
+	const offset = arcLen - (pct * arcLen);
+	const gaugeFill = document.getElementById("gaugeFill");
+	gaugeFill.style.stroke = verdict.color;
+	gaugeFill.style.strokeDashoffset = offset;
+
+	// Score display
+	const displayScore = Math.round(score * 100);
+	document.getElementById("gaugeScore").textContent = (displayScore > 0 ? "+" : "") + displayScore;
+	document.getElementById("gaugeScore").style.color = verdict.color;
+	document.getElementById("gaugeLabel").textContent = verdict.label;
+	document.getElementById("verdictText").textContent = verdict.label;
+	document.getElementById("verdictText").style.color = verdict.color;
+
+	// Confidence
+	document.getElementById("confidencePct").textContent = confidence + "%";
+
+	// Score bar indicator
+	document.getElementById("scoreIndicator").style.left = (pct * 100) + "%";
+}
+
+function renderEmotions(emotions) {
+	const grid = document.getElementById("emotionGrid");
+	grid.innerHTML = "";
+	const sorted = Object.entries(emotions).sort((a, b) => b[1] - a[1]);
+	for (const [emo, pct] of sorted) {
+		const data = EMOTION_KEYWORDS[emo];
+		const card = document.createElement("div");
+		card.className = "emotion-card";
+		card.innerHTML = `
+			<div class="emo-header">
+				<span class="emo-icon">${data.icon}</span>
+				<span class="emo-name">${emo.charAt(0).toUpperCase() + emo.slice(1)}</span>
+				<span class="emo-pct" style="color:${data.color}">${pct}%</span>
+			</div>
+			<div class="emo-bar"><div class="emo-bar-fill" style="width:${pct}%;background:${data.color}"></div></div>
+		`;
+		grid.appendChild(card);
+	}
+}
+
+function renderSentences(sentences) {
+	const list = document.getElementById("sentenceList");
+	list.innerHTML = "";
+	for (const s of sentences) {
+		const cls = s.score > 0.5 ? "sent-positive" : s.score < -0.5 ? "sent-negative" : "sent-neutral";
+		const scoreCls = s.score > 0.5 ? "score-pos" : s.score < -0.5 ? "score-neg" : "score-neu";
+		const label = s.score > 0.5 ? "Positive" : s.score < -0.5 ? "Negative" : "Neutral";
+		const scoreNum = s.score.toFixed(1);
+		const div = document.createElement("div");
+		div.className = "sentence-item " + cls;
+		div.innerHTML = `<span class="sentence-text">${escapeHtml(s.text)}</span><span class="sentence-score ${scoreCls}">${scoreNum} · ${label}</span>`;
+		list.appendChild(div);
+	}
+}
+
+function renderWordCloud(posWords, negWords) {
+	const posCloud = document.getElementById("posCloud");
+	const negCloud = document.getElementById("negCloud");
+	posCloud.innerHTML = "";
+	negCloud.innerHTML = "";
+
+	const sortedPos = Object.entries(posWords).sort((a, b) => b[1] - a[1]).slice(0, 20);
+	const sortedNeg = Object.entries(negWords).sort((a, b) => a[1] - b[1]).slice(0, 20);
+
+	const maxPos = sortedPos.length ? sortedPos[0][1] : 1;
+	const maxNeg = sortedNeg.length ? Math.abs(sortedNeg[0][1]) : 1;
+
+	for (const [word, score] of sortedPos) {
+		const size = 0.75 + (score / maxPos) * 0.5;
+		const span = document.createElement("span");
+		span.className = "cloud-word cloud-positive";
+		span.style.fontSize = size + "rem";
+		span.innerHTML = `<i class="fas fa-plus" style="font-size:.6em"></i> ${escapeHtml(word)} <small style="opacity:.6">(+${score.toFixed(1)})</small>`;
+		posCloud.appendChild(span);
+	}
+
+	for (const [word, score] of sortedNeg) {
+		const size = 0.75 + (Math.abs(score) / maxNeg) * 0.5;
+		const span = document.createElement("span");
+		span.className = "cloud-word cloud-negative";
+		span.style.fontSize = size + "rem";
+		span.innerHTML = `<i class="fas fa-minus" style="font-size:.6em"></i> ${escapeHtml(word)} <small style="opacity:.6">(${score.toFixed(1)})</small>`;
+		negCloud.appendChild(span);
+	}
+
+	if (!sortedPos.length) posCloud.innerHTML = '<span class="muted" style="font-size:.85rem;">No positive words found</span>';
+	if (!sortedNeg.length) negCloud.innerHTML = '<span class="muted" style="font-size:.85rem;">No negative words found</span>';
+}
+
+function renderBatchResults(texts) {
+	const panel = document.getElementById("batchPanel");
+	const container = document.getElementById("batchResults");
+
+	const results = texts.map((t, i) => {
+		const r = analyzeText(t);
+		const v = getVerdictInfo(r.score);
+		return { index: i + 1, text: t, ...r, verdict: v };
+	});
+
+	let html = `<table class="batch-table">
+		<thead><tr><th>#</th><th>Text</th><th>Sentiment</th><th>Score</th><th>Confidence</th><th>Dominant Emotion</th></tr></thead>
+		<tbody>`;
+
+	for (const r of results) {
+		const badgeCls = r.score > 0.15 ? "badge-pos" : r.score < -0.15 ? "badge-neg" : "badge-neu";
+		const topEmo = Object.entries(r.emotions).sort((a, b) => b[1] - a[1])[0];
+		const emoData = EMOTION_KEYWORDS[topEmo[0]];
+		const truncated = r.text.length > 80 ? r.text.substring(0, 80) + "…" : r.text;
+		html += `<tr>
+			<td>${r.index}</td>
+			<td title="${escapeHtml(r.text)}">${escapeHtml(truncated)}</td>
+			<td><span class="batch-badge ${badgeCls}">${r.verdict.label}</span></td>
+			<td style="color:${r.verdict.color};font-weight:700">${(r.score > 0 ? "+" : "") + (r.score * 100).toFixed(0)}</td>
+			<td>${r.confidence}%</td>
+			<td>${emoData.icon} ${topEmo[0].charAt(0).toUpperCase() + topEmo[0].slice(1)} (${topEmo[1]}%)</td>
+		</tr>`;
+	}
+
+	html += `</tbody></table>`;
+	container.innerHTML = html;
+	panel.style.display = "block";
+}
+
+function escapeHtml(str) {
+	const div = document.createElement("div");
+	div.textContent = str;
+	return div.innerHTML;
+}
+
+// ── Main Analysis Runner ──
+function runAnalysis() {
+	const textarea = getActiveTextarea();
+	const text = textarea.value.trim();
+
+	if (!text) {
+		toast("Please enter some text to analyze.");
+		return;
+	}
+
+	if (text.split(/\s+/).length < 3) {
+		toast("Please enter at least a few words for meaningful analysis.");
+		return;
+	}
+
+	// Show loading
+	const loading = document.getElementById("loading");
+	const resultsArea = document.getElementById("resultsArea");
+	resultsArea.classList.remove("active");
+	loading.classList.add("active");
+	document.getElementById("analyzeBtn").disabled = true;
+
+	// Simulate brief processing time for UX
+	setTimeout(() => {
+		loading.classList.remove("active");
+		document.getElementById("analyzeBtn").disabled = false;
+
+		if (currentMode === "single") {
+			const result = analyzeText(text);
+			renderGauge(result);
+			renderEmotions(result.emotions);
+			renderSentences(result.sentences);
+			renderWordCloud(result.positiveWords, result.negativeWords);
+			document.getElementById("batchPanel").style.display = "none";
+
+			// Show single-analysis panels
+			document.getElementById("gaugePanel").style.display = "";
+			document.getElementById("emotionPanel").style.display = "";
+			document.getElementById("sentencePanel").style.display = "";
+			document.getElementById("wordCloudPanel").style.display = "";
+		} else {
+			const lines = text.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+			if (lines.length < 2) {
+				toast("Enter at least 2 lines for batch comparison.");
+				return;
+			}
+
+			// Also show overall for the combined text
+			const combined = analyzeText(text);
+			renderGauge(combined);
+			renderEmotions(combined.emotions);
+			renderSentences(combined.sentences);
+			renderWordCloud(combined.positiveWords, combined.negativeWords);
+			renderBatchResults(lines);
+
+			document.getElementById("gaugePanel").style.display = "";
+			document.getElementById("emotionPanel").style.display = "";
+			document.getElementById("sentencePanel").style.display = "";
+			document.getElementById("wordCloudPanel").style.display = "";
+		}
+
+		resultsArea.classList.add("active");
+		document.getElementById("copyBtn").style.display = "";
+		resultsArea.scrollIntoView({ behavior: "smooth", block: "start" });
+	}, 600);
+}
+
+// ── Copy Results ──
+function copyResults() {
+	const textarea = getActiveTextarea();
+	const text = textarea.value.trim();
+	if (!text) return;
+
+	const result = analyzeText(text);
+	const verdict = getVerdictInfo(result.score);
+	const displayScore = Math.round(result.score * 100);
+
+	let output = `=== Sentiment Analysis Results ===\n`;
+	output += `Overall: ${verdict.label} (Score: ${displayScore > 0 ? "+" : ""}${displayScore}, Confidence: ${result.confidence}%)\n\n`;
+
+	output += `--- Emotions ---\n`;
+	const sortedEmo = Object.entries(result.emotions).sort((a, b) => b[1] - a[1]);
+	for (const [emo, pct] of sortedEmo) {
+		output += `${emo.charAt(0).toUpperCase() + emo.slice(1)}: ${pct}%\n`;
+	}
+
+	output += `\n--- Sentence Breakdown ---\n`;
+	for (const s of result.sentences) {
+		const label = s.score > 0.5 ? "Positive" : s.score < -0.5 ? "Negative" : "Neutral";
+		output += `[${label} ${s.score.toFixed(1)}] ${s.text}\n`;
+	}
+
+	output += `\n--- Top Positive Words ---\n`;
+	const sortedPos = Object.entries(result.positiveWords).sort((a, b) => b[1] - a[1]).slice(0, 10);
+	for (const [w, s] of sortedPos) output += `${w}: +${s.toFixed(1)}\n`;
+
+	output += `\n--- Top Negative Words ---\n`;
+	const sortedNeg = Object.entries(result.negativeWords).sort((a, b) => a[1] - b[1]).slice(0, 10);
+	for (const [w, s] of sortedNeg) output += `${w}: ${s.toFixed(1)}\n`;
+
+	navigator.clipboard.writeText(output).then(() => toast("Results copied to clipboard!")).catch(() => toast("Failed to copy."));
+}
+</script>
+</body>
+</html>

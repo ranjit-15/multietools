@@ -93,7 +93,7 @@ function showStats(before,after){
 function minifyHTML(src){
 	return src
 		.replace(/<!--[\s\S]*?-->/g,'')           // remove comments
-		.replace(/>\s+</g,'><')                    // collapse between tags
+		.replace(/>\s+\x3c/g,'>\x3c')              // collapse between tags
 		.replace(/\s{2,}/g,' ')                    // collapse runs of whitespace
 		.replace(/\s*=\s*"([^"]*?)"\s*/g,'="$1" ') // normalise attr spacing
 		.trim();

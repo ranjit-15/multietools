@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Story Generator - Multietools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/global.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+.panel h3{font-size:1rem;font-weight:700;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem;}
+
+/* Form controls */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:.3rem;}
+.field.full{grid-column:1/-1;}
+.field label{font-weight:700;font-size:.85rem;color:var(--muted);}
+select,input[type=text]{padding:.65rem .85rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:.92rem;font-family:inherit;width:100%;transition:border-color .2s;}
+select:focus,input[type=text]:focus{outline:none;border-color:var(--primary);}
+
+/* Length pills */
+.length-pills{display:flex;gap:.5rem;flex-wrap:wrap;}
+.length-pill{padding:.55rem 1rem;border-radius:var(--radius-full);border:2px solid var(--border);background:var(--bg-alt);color:var(--text);font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.length-pill:hover{border-color:var(--primary);color:var(--primary);}
+.length-pill.active{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border-color:transparent;}
+
+/* Buttons */
+.btn-row{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:.5rem;}
+button{padding:.75rem 1.15rem;border-radius:var(--radius-sm);border:none;cursor:pointer;font-weight:700;font-size:.88rem;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;box-shadow:var(--shadow-sm);transition:transform .15s ease,box-shadow .15s ease;display:inline-flex;align-items:center;gap:.45rem;}
+button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+button.secondary{background:var(--bg-alt);color:var(--text);border:1px solid var(--border);box-shadow:none;}
+button.secondary:hover{background:var(--border-light);}
+button:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+/* Story display */
+.story-container{display:none;}
+.story-title{font-size:1.35rem;font-weight:800;margin-bottom:.75rem;color:var(--primary);}
+.story-body{font-size:1rem;line-height:1.85;color:var(--text);white-space:pre-wrap;min-height:120px;}
+.story-body p{margin-bottom:.85rem;text-indent:1.5em;}
+.story-body p:first-child{text-indent:0;}
+.story-meta{display:flex;flex-wrap:wrap;gap:1rem;margin-top:1rem;padding-top:.85rem;border-top:1px solid var(--border-light);font-size:.82rem;color:var(--muted);font-weight:600;}
+.story-meta span{display:inline-flex;align-items:center;gap:.35rem;}
+
+/* Loading spinner */
+.loader-wrap{display:none;text-align:center;padding:2.5rem 1rem;}
+.loader{width:44px;height:44px;border:4px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .85rem;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loader-wrap p{color:var(--muted);font-weight:600;font-size:.9rem;}
+
+/* History */
+.history-toggle{cursor:pointer;user-select:none;display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:.95rem;color:var(--text);padding:.6rem 0;}
+.history-toggle i{transition:transform .25s;font-size:.75rem;}
+.history-toggle.open i{transform:rotate(90deg);}
+.history-list{display:none;list-style:none;margin-top:.5rem;}
+.history-list.open{display:block;}
+.history-item{background:var(--bg-alt);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem .9rem;margin-bottom:.45rem;cursor:pointer;transition:border-color .2s,background .2s;}
+.history-item:hover{border-color:var(--primary);background:var(--primary-glow);}
+.history-item-title{font-weight:700;font-size:.88rem;margin-bottom:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.history-item-meta{font-size:.78rem;color:var(--muted);}
+
+/* Cursor blink for typewriter */
+.cursor{display:inline;animation:blink .6s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+
+/* Toast */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-sm);font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:transform .35s var(--ease-bounce,.34 1.56 .64 1),opacity .3s;z-index:9999;pointer-events:none;max-width:340px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.error{background:var(--error);}
+.toast.success{background:var(--success);}
+
+@media(max-width:480px){
+  body{padding:.75rem;}
+  header{padding:1.25rem;}
+  main{padding:1rem;}
+  h1{font-size:1.4rem;}
+  .btn-row{flex-direction:column;}
+  .btn-row button{width:100%;justify-content:center;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+	<a class="back" href="tools.html#ai-tools"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+	<h1><i class="fas fa-book-open"></i> AI Story Generator</h1>
+	<p class="muted">Generate unique, creative short stories instantly — no API needed. Choose a genre, tone, and setting, then watch your story unfold.</p>
+</header>
+<main>
+	<!-- Config Panel -->
+	<div class="panel">
+		<h3><i class="fas fa-sliders-h"></i> Story Configuration</h3>
+		<div class="form-grid">
+			<div class="field">
+				<label for="genre">Genre</label>
+				<select id="genre">
+					<option value="fantasy">Fantasy</option>
+					<option value="scifi">Sci-Fi</option>
+					<option value="romance">Romance</option>
+					<option value="horror">Horror</option>
+					<option value="mystery">Mystery</option>
+					<option value="adventure">Adventure</option>
+					<option value="comedy">Comedy</option>
+					<option value="fairytale">Fairy Tale</option>
+				</select>
+			</div>
+			<div class="field">
+				<label for="tone">Tone</label>
+				<select id="tone">
+					<option value="dark">Dark</option>
+					<option value="lighthearted">Lighthearted</option>
+					<option value="dramatic">Dramatic</option>
+					<option value="whimsical">Whimsical</option>
+					<option value="suspenseful">Suspenseful</option>
+				</select>
+			</div>
+			<div class="field">
+				<label>Story Length</label>
+				<div class="length-pills">
+					<span class="length-pill" data-len="200" onclick="setLength(this)">Short (~200w)</span>
+					<span class="length-pill active" data-len="400" onclick="setLength(this)">Medium (~400w)</span>
+					<span class="length-pill" data-len="700" onclick="setLength(this)">Long (~700w)</span>
+				</div>
+			</div>
+			<div class="field">
+				<label for="charName">Character Name <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+				<input type="text" id="charName" placeholder="Leave blank for random">
+			</div>
+			<div class="field">
+				<label for="setting">Setting <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+				<input type="text" id="setting" placeholder="e.g. a sunken city, a moonlit forest">
+			</div>
+			<div class="field">
+				<label for="theme">Theme / Prompt <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+				<input type="text" id="theme" placeholder="e.g. a quest for a lost artifact">
+			</div>
+		</div>
+		<div class="btn-row" style="margin-top:1rem;">
+			<button onclick="generateStory()" id="genBtn"><i class="fas fa-wand-magic-sparkles"></i> Generate Story</button>
+			<button class="secondary" onclick="randomizeAll()"><i class="fas fa-dice"></i> Random Everything</button>
+		</div>
+	</div>
+
+	<!-- Loading -->
+	<div class="loader-wrap" id="loader">
+		<div class="loader"></div>
+		<p>Crafting your story…</p>
+	</div>
+
+	<!-- Story Output -->
+	<div class="panel story-container" id="storyPanel">
+		<div class="story-title" id="storyTitle"></div>
+		<div class="story-body" id="storyBody"></div>
+		<div class="story-meta" id="storyMeta">
+			<span><i class="fas fa-font"></i> <span id="wordCount">0</span> words</span>
+			<span><i class="fas fa-clock"></i> <span id="readTime">0</span> min read</span>
+			<span><i class="fas fa-tag"></i> <span id="metaGenre"></span></span>
+		</div>
+		<div class="btn-row" style="margin-top:1rem;">
+			<button onclick="generateStory()"><i class="fas fa-sync-alt"></i> Generate Another</button>
+			<button class="secondary" onclick="copyStory()"><i class="fas fa-copy"></i> Copy</button>
+			<button class="secondary" onclick="downloadStory()"><i class="fas fa-download"></i> Download TXT</button>
+		</div>
+	</div>
+
+	<!-- History -->
+	<div class="panel" id="historyPanel" style="display:none;">
+		<div class="history-toggle" id="historyToggle" onclick="toggleHistory()">
+			<i class="fas fa-chevron-right"></i> Story History <span style="font-weight:400;color:var(--muted);font-size:.82rem;margin-left:.35rem;" id="historyCount"></span>
+		</div>
+		<ul class="history-list" id="historyList"></ul>
+	</div>
+</main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==============================================
+   AI STORY GENERATOR — Template Engine
+   ============================================== */
+
+// ---- DATA POOLS ----
+
+const NAMES = [
+	"Aelindra","Borin","Cassiel","Dren","Elara","Fenwick","Gael","Hestia","Ivor","Juniper",
+	"Kael","Liora","Maren","Nyx","Orla","Pax","Quill","Rowan","Sable","Theron",
+	"Uma","Vesper","Wren","Xara","Yael","Zephyr","Aldric","Briar","Corwin","Dahlia",
+	"Eirik","Freya","Gareth","Hazel","Idris","Joss","Kira","Lucian","Mira","Nico",
+	"Orin","Petra","Quinn","Rhea","Sage","Talia","Ulric","Vera","Wynne","Zara",
+	"Callum","Darya","Emeric","Fable","Greer"
+];
+
+const SETTINGS = [
+	"a crumbling tower at the edge of the world","a marketplace that only appears at midnight",
+	"a vast desert of silver sand","an underwater kingdom lit by bioluminescent coral",
+	"a floating city above the clouds","the ruins of an ancient library","a frozen tundra where nothing seems quite dead",
+	"a dense forest where the trees whisper secrets","a labyrinthine cave system deep underground",
+	"a small fishing village plagued by storms","a clockwork city powered by steam and starlight",
+	"a lonely mountain pass between two warring nations","the deck of a ship sailing uncharted waters",
+	"an abandoned space station orbiting a dying star","a quiet village at the foot of a volcano",
+	"a grand palace whose rooms rearrange themselves","a swamp glowing with strange foxfire",
+	"a train that never stops, crossing endless plains","a garden that blooms only in moonlight",
+	"a city carved into the side of a canyon","a lighthouse perched on a cliff above a whirlpool",
+	"a carnival that appears without warning","a meadow where time moves differently",
+	"a vast network of tunnels beneath a modern city","a temple hidden behind a waterfall",
+	"a space colony on the edge of known territory","a rooftop garden high above a neon-lit metropolis",
+	"an island that vanishes with the tide","a battlefield long since reclaimed by wildflowers",
+	"a bookshop that exists between dimensions","a glacier field under twin suns",
+	"a harbor town shrouded in perpetual fog"
+];
+
+const PLOT_TWISTS = [
+	"the ally they trusted was working against them all along",
+	"the object of the quest was never what it seemed",
+	"a long-dead mentor appeared, alive and cryptic",
+	"the villain was a reflection of the hero's own flaws",
+	"the map they followed was an elaborate forgery",
+	"the power they sought exacted a terrible personal cost",
+	"the world they knew was merely one layer of many",
+	"an old promise came due at the worst possible moment",
+	"the enemy turned out to be fighting for the same goal",
+	"a natural disaster forced all sides to cooperate",
+	"the artifact shattered, releasing something ancient",
+	"memories began to surface that contradicted everything",
+	"a stranger arrived carrying the exact same mission",
+	"the door they opened led not forward but back in time",
+	"the creature they feared was actually a guardian",
+	"a traitor redeemed themselves at a critical juncture",
+	"the prophecy was misinterpreted from the very start",
+	"help came from the most unlikely and unwelcome source",
+	"the cure and the poison turned out to be the same thing",
+	"they discovered they had been here before, in another life",
+	"the instructions were written by their future selves",
+	"the boundary between dream and reality dissolved",
+	"an innocent bystander held the key to everything",
+	"the real treasure was knowledge, not gold",
+	"their greatest weakness became their only weapon",
+	"the signal they followed was a trap — but also a test",
+	"the stars shifted, and the rules of the world changed",
+	"a childhood friend appeared on the opposing side",
+	"the truth was hidden in plain sight all along",
+	"it was revealed that two timelines had been running in parallel",
+	"the supposed curse was actually a blessing in disguise",
+	"a sealed letter revealed a devastating family secret",
+	"the villain laid down their weapon and wept",
+	"the path home vanished, leaving only the unknown",
+	"what they thought was magic was advanced technology",
+	"they realized the quest had changed them so much they couldn't return to who they were",
+	"a mirror showed them not their reflection, but their true nature",
+	"the ground beneath them opened, revealing a hidden world",
+	"the ticking clock they feared was counting up, not down",
+	"an eclipse triggered a transformation no one foresaw"
+];
+
+const ENDINGS = [
+	"stood at the threshold of a new beginning, forever changed by the journey",
+	"watched the horizon, knowing that some stories never truly end",
+	"smiled through weary eyes, finally understanding what had been worth fighting for",
+	"left behind the remnants of the old world and stepped into the unknown",
+	"sat beside the fire, telling the tale to those who would carry it forward",
+	"returned home to find it both familiar and strange, as all true homecomings are",
+	"realized that the greatest adventure was not the quest, but the person they had become",
+	"closed the book but kept the lessons etched into memory",
+	"planted a seed in the scorched earth, a small act of defiance and hope",
+	"whispered a promise to the wind, one that would echo through generations",
+	"walked a road that forked in every direction, and chose the one not yet named",
+	"looked back one final time, then let go of everything that no longer served them",
+	"found peace not in victory, but in acceptance of what could not be changed",
+	"held the fragment of the broken world and vowed to rebuild it differently",
+	"learned that endings were merely pauses between chapters yet to be written",
+	"carved their name into the ancient stone, so others would know someone had tried",
+	"vanished into legend, their deeds remembered in songs and whispered stories",
+	"released the lantern into the sky, a beacon for the lost and the weary",
+	"embraced the silence that followed, grateful for its hard-won calm",
+	"understood at last that courage was not the absence of fear, but the willingness to continue despite it",
+	"forged a new alliance from the ashes of old enmity",
+	"discovered that the journey's true destination had been within all along",
+	"turned the final page and found it blank — an invitation to write their own ending",
+	"set sail without a map, trusting the current to carry them where they needed to go",
+	"gathered the scattered pieces and began again, wiser and kinder than before",
+	"laughed — truly laughed — for the first time in what felt like forever",
+	"built a bridge where there had been a wall",
+	"looked up at the unfamiliar stars and felt, at last, at home",
+	"chose mercy over justice, and found that it changed everything",
+	"passed the torch to a younger hand and watched the flame grow brighter"
+];
+
+// ---- GENRE-SPECIFIC TEMPLATE DATA ----
+
+const GENRE_DATA = {
+fantasy: {
+	hooks: [
+		"The ancient seal had been broken, and {name} could feel the tremor of old magic stirring beneath {setting}.",
+		"No one in living memory had dared enter {setting}, but {name} was not driven by courage — it was desperation.",
+		"{name} traced the rune carved into the stone archway at the entrance to {setting}. It pulsed faintly, as though recognizing a kindred spirit.",
+		"The letter arrived at dawn, sealed with wax the color of dried blood. It bore only two words: 'Come quickly.' {name} packed a satchel and set out for {setting}.",
+		"They said the dragons were gone. {name} knew better. In {setting}, the old creatures merely slept, and something was waking them.",
+		"When {name} pulled the sword from the frozen ground of {setting}, every bird within a mile went silent."
+	],
+	rising: [
+		"The deeper {name} ventured, the more the landscape shifted — paths rearranged, trees moved when unobserved, and the sky changed hue without warning.",
+		"An old hermit emerged from the mist, offering cryptic guidance. 'The thing you seek does not wish to be found,' they rasped. 'But it will find you, if you prove worthy.'",
+		"{name} discovered a chamber filled with mirrors, each one reflecting a different version of themselves — younger, older, braver, broken. One mirror showed nothing at all.",
+		"Allies gathered reluctantly: a scholar who spoke in riddles, a warrior missing an arm, and a child who claimed to remember the future. Together, they pressed forward.",
+		"The enchantment guarding the inner sanctum required a sacrifice — not of blood, but of a cherished memory. {name} hesitated, knowing the cost.",
+		"Strange creatures watched from the shadows — not hostile, but waiting, as though judging whether this intruder was worthy of passage."
+	],
+	conflicts: [
+		"A dark sorcerer blocked the path, weaving shadows into chains. 'You carry something that belongs to me,' they hissed. {name} gripped the artifact tighter.",
+		"The ground split open, and from the chasm rose a guardian of stone and fire, ancient beyond measure. It did not speak — it did not need to.",
+		"Betrayal came swiftly. The companion {name} trusted most turned, eyes glazed with enchantment. 'I didn't have a choice,' they whispered before raising their blade.",
+		"The curse struck without warning — {name}'s hands began to turn to glass, creeping up the arms. Time was no longer an ally.",
+		"Armies clashed at the gates of the citadel while {name} raced through hidden passages, carrying the only hope of ending the siege."
+	],
+	resolutions: [
+		"{name} spoke the final word of the incantation, and the sky erupted in silver light. The curse lifted like morning fog, revealing a world reborn.",
+		"The artifact crumbled to dust in {name}'s hands — its purpose fulfilled. The magic seeped into the ground, mending what had been broken for centuries.",
+		"When the dust settled, {name} stood alone in the ruined hall, breathing hard. The dark sorcerer was gone — not destroyed, but unmade, returned to the nothing from which they came.",
+		"The enchanted forest bloomed for the first time in an age, brilliant flowers pushing through the frost. {name} understood: the land itself had been waiting for someone brave enough to believe.",
+		"With the spell broken, the lost kingdom shimmered back into existence — towers and bridges materializing from thin air. {name} had done the impossible."
+	]
+},
+scifi: {
+	hooks: [
+		"The distress signal had been repeating for forty-seven years when {name} finally decoded it aboard {setting}.",
+		"{name} stared at the readout, pulse spiking. The anomaly near {setting} wasn't a glitch — it was a message, written in a language that predated humanity.",
+		"Cryosleep was supposed to last six months. When {name} woke in {setting}, the ship's clock read two hundred and thirteen years.",
+		"The colony at {setting} had gone silent three weeks ago. {name} was the only operative close enough — and expendable enough — to investigate.",
+		"They found the artifact buried under the ice of {setting}: a perfect sphere of unknown metal, warm to the touch, humming at a frequency that made teeth ache.",
+		"When the jump drive malfunctioned, {name} found themselves in a region of space that shouldn't exist — just beyond {setting}, where the stars were wrong."
+	],
+	rising: [
+		"{name} ran diagnostics twice. The readings were impossible: the structure was older than the solar system, yet built with materials science couldn't name.",
+		"The AI companion, once reliable, began to speak in fragments. 'They are already here,' it said calmly, before shutting down its emotional subroutines.",
+		"Resource rationing began immediately. Oxygen for twelve days, water for nine. {name} plotted courses, but every path led back to the anomaly.",
+		"A second ship appeared on sensors — identical in every way to their own, down to the hull scoring. It did not respond to hails.",
+		"The crew found logs from a previous expedition: audio recordings that grew increasingly frantic, ending in a whisper: 'Do not open the lower deck.'",
+		"Signs of intelligent life were everywhere — tool marks, patterned residue, structural geometry — but not a single living thing."
+	],
+	conflicts: [
+		"The hull breached in Section 7. As atmosphere screamed into the void, {name} sealed the bulkhead, trapping two crewmates on the other side.",
+		"The entity communicated through the ship's systems, rewriting code, locking doors, venting rooms. It wasn't malicious — it was curious, and its curiosity was lethal.",
+		"Mutiny fractured the crew. Half wanted to destroy the artifact; half wanted to study it. {name} stood between the factions, armed with nothing but reason.",
+		"Time began to loop. {name} lived the same hour repeatedly, each iteration slightly different, slightly worse. The only constant was the sphere, pulsing in the cargo hold.",
+		"The planet's defense system activated — orbital platforms powered up with a hum that resonated through the ship's frame. A countdown appeared on every screen."
+	],
+	resolutions: [
+		"{name} transmitted the data burst just before the ship broke apart — everything they'd found, every reading, every revelation. Somewhere, someone would receive it.",
+		"The entity withdrew, folding itself into dimensions beyond perception. In its wake, it left a gift: star charts to worlds humanity had never imagined.",
+		"When {name} emerged from the anomaly, only seconds had passed for the rest of the universe. But the knowledge they carried would change everything.",
+		"The colony was rebuilt, this time with the alien alloy woven into its foundations. It would endure — a monument to first contact.",
+		"As the jump drive spun up, {name} looked back at the artifact one last time. It pulsed once, as if in farewell."
+	]
+},
+romance: {
+	hooks: [
+		"{name} hadn't planned on returning to {setting}, but the letter — handwritten, achingly familiar — left no choice.",
+		"They met by accident: a spilled drink, a laughed apology, and a pair of eyes that made {name} forget why they had walked into {setting} in the first place.",
+		"The wedding invitation sat unopened on the table for three days before {name} finally tore it open. The venue was {setting} — their place.",
+		"{name} believed in a lot of things — hard work, second chances, the restorative power of strong coffee — but love at first sight was not among them. Not until {setting}.",
+		"Rain hammered {setting} as {name} ducked under the nearest awning, nearly colliding with a stranger who smelled of old books and cinnamon.",
+		"Every summer, {name} returned to {setting}. Every summer, they told themselves this would be the year they finally moved on."
+	],
+	rising: [
+		"Conversations stretched into hours. They discovered shared obsessions — obscure films, terrible puns, the same dog-eared novel — and a mutual talent for avoiding vulnerability.",
+		"A handwritten note appeared in the most unexpected place, its words simple but devastating: 'I think about you when the lights go out.'",
+		"{name} tried to keep distance, to maintain the careful architecture of indifference. But every accidental touch dismantled another wall.",
+		"They argued — fiercely, honestly — about things that mattered and things that didn't. And in the silence afterward, something shifted irrevocably.",
+		"Friends noticed before they did. 'You talk about this person constantly,' a friend observed. 'You just don't use their name.'",
+		"A shared meal turned into a shared secret, then a shared silence that felt more intimate than any word."
+	],
+	conflicts: [
+		"The past arrived uninvited: an old flame, an unanswered question, a wound that never healed properly. {name} felt the ground tilt.",
+		"Distance was the cruelest test. Screens and messages were poor substitutes for presence. Doubt crept in, quiet and persistent.",
+		"A misunderstanding bloomed into a wall of silence. Neither reached out, both convinced the other didn't want them to.",
+		"{name} received an offer — a dream job, a new city, a fresh start — and it required leaving. The timing was unbearable.",
+		"Trust fractured over a discovered secret — nothing unforgivable, but enough to expose how fragile the new bond still was."
+	],
+	resolutions: [
+		"{name} stood in {setting}, rehearsing words that refused to arrange themselves properly. Then the door opened, and all the rehearsed speeches dissolved into three honest words.",
+		"They met again where it began. No grand gestures, no dramatic declarations — just two people choosing, quietly and firmly, to try.",
+		"The letter arrived on a Tuesday — handwritten, three pages, every sentence a bridge. {name} read it twice, then bought a ticket.",
+		"In the end, it wasn't a single moment but an accumulation: a thousand small kindnesses that built something unbreakable.",
+		"They sat together watching the city lights, shoulders touching, and {name} realized this was it — this quiet certainty was what all the songs had been about."
+	]
+},
+horror: {
+	hooks: [
+		"The recordings from {setting} should never have been found. {name} pressed play anyway, and the whispering began.",
+		"No one could explain why the doors in {setting} locked themselves at sundown. {name} intended to find out — and made the mistake of staying past dusk.",
+		"{name} noticed it first in photographs: a shadow that appeared in every frame, growing closer with each shot, taken at {setting}.",
+		"The scratching in the walls of {setting} had started exactly three weeks ago. Exterminators found nothing. {name} knew it wasn't mice.",
+		"When {name} inherited the property at {setting}, the lawyer's only advice was: 'Don't go into the basement. I'm not joking.'",
+		"The mirror in {setting} showed {name}'s reflection — but the reflection blinked a half-second too late."
+	],
+	rising: [
+		"Sleep became impossible. Every night, the same dream: a corridor stretching into blackness, a voice calling their name in a tone that was almost — but not quite — familiar.",
+		"Objects moved when {name} wasn't looking. Keys in wrong drawers, chairs facing walls, a journal open to pages {name} didn't remember writing.",
+		"The temperature in {setting} dropped fifteen degrees in a single hour. Breath misted in the air. From somewhere below, a low vibration began.",
+		"Research uncovered the history: disappearances, unexplained fires, a pattern stretching back over a century. Every victim had been alone.",
+		"The lights flickered in a rhythm. {name} counted: three short, three long, three short. It was a signal. Something was communicating.",
+		"Footsteps echoed overhead in a building with no upper floor. {name} stood very still, barely breathing."
+	],
+	conflicts: [
+		"The door wouldn't open. Neither would the windows. {name} was sealed inside {setting}, and the presence in the walls was growing bolder.",
+		"It showed itself at last — not a monster but a distortion, a tear in the fabric of the room where light and sound bent wrong. Looking at it hurt.",
+		"Allies succumbed one by one: one stopped speaking, another refused to leave a particular room, a third began drawing the same symbol over and over.",
+		"{name}'s reflection began acting independently — moving, gesturing, mouthing words that read as warnings. Then it pointed behind {name}.",
+		"The thing did not chase. It waited. It appeared in peripheral vision, in mirrors, in reflections on dark screens. It was patient, and it was close."
+	],
+	resolutions: [
+		"Dawn arrived, thin and gray, and with it came silence — the oppressive, electric silence of whatever inhabited {setting} retreating to its resting place. {name} did not look back.",
+		"{name} burned the journal, the photographs, and the key. Some doors, once closed, must never be opened again. The scars would fade. The memories would not.",
+		"The entity departed, but not without leaving its mark: a chill that never left {name}'s bones, and an understanding that the world was thinner than anyone believed.",
+		"They sealed {setting} with concrete and iron. The sounds from within grew quieter over the months. Quieter, but never quite silent.",
+		"{name} survived, but 'survived' felt like too generous a word. Something had been taken — some essential warmth — and in its place was only vigilance."
+	]
+},
+mystery: {
+	hooks: [
+		"The letter arrived without a return address, containing only a photograph of {setting} and a date circled in red: today.",
+		"{name} was hired for simple cases — missing pets, insurance claims. But the file on their desk now described something impossible: a person who vanished from a locked room in {setting}.",
+		"Three people went missing from {setting} in three months. The only connection: they all received the same unsigned postcard the week before.",
+		"The safe-deposit box had been sealed for twenty years. When {name} opened it, expecting documents, they found a single item: a key, and a note reading 'You weren't supposed to find this yet.'",
+		"{name} recognized the handwriting on the anonymous tip immediately. It belonged to someone who had been dead for five years.",
+		"The clock in the lobby of {setting} ran backward. Nobody else seemed to notice."
+	],
+	rising: [
+		"Every lead circled back to the same name — a person who, according to records, had never existed. No birth certificate, no photographs, no proof of life. Yet witnesses described them vividly.",
+		"{name} spread the evidence across the table: receipts, photographs, torn pages from a journal. A pattern emerged, faint as watermark.",
+		"A witness recanted, then disappeared. A second witness corroborated the original story, adding a detail that changed everything: there had been a sixth person present.",
+		"The coded message took three days to break. When {name} finally read the plaintext, the blood drained from their face. It was a list of names. Theirs was last.",
+		"Surveillance footage showed the subject entering the building at 11:42 PM. No footage showed them leaving. Every exit was covered.",
+		"The deeper {name} dug, the more the case resisted. Files went missing from archives. Phone calls disconnected. It was as though the truth itself was being erased."
+	],
+	conflicts: [
+		"A threat arrived — not violent, but precise. Whoever sent it knew {name}'s schedule, their habits, the name of every person they cared about.",
+		"The prime suspect had an alibi so airtight it was suspicious in itself. {name} began to wonder if they'd been solving the wrong puzzle.",
+		"Evidence pointed to someone {name} respected — someone above reproach. Pursuing the lead meant risking everything: career, reputation, safety.",
+		"{name} realized they were being followed, and had been for days. The shadow was patient, professional, and utterly silent.",
+		"The final piece of the puzzle was locked behind a password. {name} had one chance before the system wiped itself clean."
+	],
+	resolutions: [
+		"The truth, when it surfaced, was quieter than expected — not a dramatic unmasking but a slow, sad revelation. {name} delivered the findings and felt no triumph, only a bone-deep weariness.",
+		"{name} laid out the evidence in a single, devastating document. The case would be reopened. The guilty would answer. It wouldn't undo the harm, but it was a start.",
+		"Standing in {setting}, where it all began, {name} understood the final clue — the one that had been hiding in plain sight. They whispered it aloud, and the last lock clicked open.",
+		"The culprit confessed — not out of guilt, but exhaustion. They'd been carrying the secret for so long that exposure was a relief.",
+		"{name} closed the case file and locked it in the drawer. Some answers, once found, only lead to harder questions."
+	]
+},
+adventure: {
+	hooks: [
+		"The map was incomplete — torn along the eastern edge — but what remained pointed unmistakably to {setting}. {name} shouldered a pack and started walking.",
+		"{name} had seventeen hours before the last route out of {setting} closed for the season. What should have been a straightforward hike had become anything but.",
+		"No one had crossed the expanse to {setting} in decades. {name} was either the bravest or the most foolish person in a generation.",
+		"The compass spun wildly the moment {name} set foot in {setting}. Navigation would have to be done by instinct, stars, and sheer stubbornness.",
+		"A bet — reckless, wine-fueled — was how it started. Three days later, {name} stood at the edge of {setting}, regretting nothing and everything.",
+		"The bridge was out, the river was rising, and the only shelter was the crumbling ruin of {setting}. {name} had no choice but to press forward."
+	],
+	rising: [
+		"The terrain shifted from welcoming to hostile within hours. Loose scree gave way to narrow ledges, and the wind carried a taste of iron.",
+		"A fellow traveler joined the path — wary, scarred, carrying a similar map. An uneasy alliance formed over a shared campfire.",
+		"{name} discovered markings on the rock face — recent, deliberate. Someone else had been here, and they had been warning others away.",
+		"Supplies dwindled faster than expected. Rationing began, along with the uncomfortable realization that the return trip was no longer guaranteed.",
+		"A natural wonder appeared without warning: a cavern of crystal, an underground lake reflecting starlight from above. {name} paused, awestruck, before pressing on.",
+		"Every trail branched. Every branch led to another choice. {name} relied on instinct, refusing to second-guess."
+	],
+	conflicts: [
+		"The avalanche came without warning — a wall of white thunder that reshaped the landscape in seconds. {name} dove for cover and waited, ears ringing, heart hammering.",
+		"A territorial creature blocked the only pass: massive, ancient, and agitated. {name} had to choose between confrontation and a three-day detour through unknown terrain.",
+		"The rope snapped at the worst possible moment. {name} dangled over a chasm, gripping a ledge with raw fingers, calculating the distance to the next handhold.",
+		"A storm pinned the group for two days. Tempers frayed. Fear spoke louder than reason. {name} held things together through sheer force of will.",
+		"The river crossing was treacherous — the current stronger than it looked, the footing treacherous beneath murky water."
+	],
+	resolutions: [
+		"{name} crested the final ridge and there it was: the destination, bathed in golden light, more magnificent than any map could convey. The exhaustion melted, replaced by something luminous.",
+		"They made it back — bruised, sunburned, lighter in supplies and heavier in stories. {name} looked at the trail behind them and smiled.",
+		"The treasure was not gold or jewels but a vista: the entire world laid out below, painted in colors that no screen could capture. {name} stood there, breathing, and understood.",
+		"{name} planted the flag — not for conquest, but for memory. This place, this moment, this proof that the impossible was merely difficult.",
+		"Sitting on the summit, {name} wrote a single line in the journal: 'I was here, and I was enough.'"
+	]
+},
+comedy: {
+	hooks: [
+		"It was supposed to be a simple errand. Pick up the package from {setting}, deliver it across town. {name} had done harder things before breakfast. Naturally, everything went horribly wrong.",
+		"{name} didn't mean to start a feud with the mayor. It began, as these things often do, with a goat, a misunderstanding, and an unfortunately timed sneeze.",
+		"The invitation to {setting} read 'casual.' {name} showed up in a full suit of armor. In their defense, the last event had involved a trebuchet.",
+		"There are days that test one's patience, and then there are days that make patience file a restraining order. {name} was having the second kind.",
+		"When {name}'s cat knocked a priceless vase off the shelf at {setting}, it triggered what local historians would later call 'The Incident.'",
+		"{name} was allergic to exactly one thing: the very substance that coated every surface of {setting}."
+	],
+	rising: [
+		"Things escalated with a speed that defied logic. One moment, a polite misunderstanding about a parking spot; the next, a town-wide custard shortage.",
+		"Every attempt {name} made to fix the problem only produced a different, more absurd problem. The universe, it seemed, had developed a personal grudge.",
+		"Reinforcements arrived in the form of a well-meaning cousin who had never successfully completed a task in their entire life. {name} lowered their expectations accordingly.",
+		"The disguise was unconvincing. The alibi was worse. But {name} committed fully, because half-measures are for people who don't accidentally overfeed exotic birds for a living.",
+		"A series of coincidences so improbable that {name} briefly suspected they were in a simulation culminated in a locked room, a hungry raccoon, and a ticking metronome.",
+		"The plan had exactly twelve steps. By step three, {name} had accidentally invented a new problem."
+	],
+	conflicts: [
+		"The rival appeared — smug, well-dressed, suspiciously good at everything. {name} resolved to win, if only out of spite. Spite, {name} had found, was an excellent motivator.",
+		"The deadline loomed. The clock ticked. {name} stared at the absolute chaos before them and said, with conviction, 'This is fine.'",
+		"The goat escaped again. This time it made the evening news. {name} watched the broadcast with the numb acceptance of someone who had long since stopped being surprised.",
+		"A phone call from an authority figure demanded a reasonable explanation. {name} had none, so they improvised one involving a charity event and a weather balloon.",
+		"Everything came to a head at the worst possible venue: a formal event where {name} was already on thin ice."
+	],
+	resolutions: [
+		"Against all odds — and several laws of physics — {name} pulled it off. Nobody was injured, nothing was permanently damaged, and the goat was returned to its rightful owner.",
+		"The whole mess resolved itself in a way that made {name} look like a genius, which was ironic given that they had spent most of the day screaming internally.",
+		"{name} was banned from {setting}. They accepted this with grace, dignity, and a barely suppressed grin.",
+		"At the end of the day, covered in flour, missing a shoe, and inexplicably holding a trophy, {name} decided this was the best Tuesday they'd ever had.",
+		"Everyone gathered for a meal, laughed about the disaster, and agreed never to speak of The Incident again. They all knew they would speak of it constantly."
+	]
+},
+fairytale: {
+	hooks: [
+		"Once, in a time when the wind still carried wishes, there lived a young soul named {name} in {setting}.",
+		"Long ago, before maps were drawn and borders were named, {setting} held a secret that only the kindest heart could unlock. Enter {name}, the unlikeliest of heroes.",
+		"In {setting}, where the rivers ran with liquid silver and the stars hung low enough to touch, {name} made a promise to the moon.",
+		"There was, and there was not, a child called {name} who found a golden key buried beneath {setting}. The key opened nothing — yet.",
+		"Every hundred years, {setting} chose a guardian. The selection was never expected, and this time, the ancient magic chose {name} — a baker's apprentice with flour-dusted hands.",
+		"The oldest tree in {setting} spoke only once a century. When it finally opened its gnarled mouth, it said a single name: {name}."
+	],
+	rising: [
+		"A talking fox appeared at the crossroads, offering three riddles. 'Answer true,' it said, 'and the path will open. Answer false, and you'll wander for a year and a day.'",
+		"{name} received three gifts from three strangers: a feather that never fell, a stone that always pointed home, and a song that could only be sung once.",
+		"The enchanted forest tested every step — brambles that parted for kindness, streams that could only be crossed by telling them a truth, bridges that demanded a song.",
+		"Animals came to {name}'s aid: a clever crow, a steadfast badger, and a firefly whose light revealed things hidden to mortal eyes.",
+		"At the heart of the kingdom stood a tower with no doors. Legend said only the pure of intention could pass through its walls.",
+		"A spell had turned the seasons to stone. {setting} was locked in eternal twilight, and only the golden key could turn time forward again."
+	],
+	conflicts: [
+		"The wicked enchanter appeared in a column of smoke, eyes like dying embers. 'You dare challenge what even kings have feared?' they sneered.",
+		"The golden key shattered into three pieces, scattering to the winds. {name} would need to find each one before the last star of winter faded.",
+		"A curse fell upon {name}: with every truth they spoke, they lost one memory. With every lie, the memory returned but twisted.",
+		"The enchanted mirror showed a terrible future — one where {name} failed and {setting} crumbled to dust. But mirrors, as the fox warned, often lie.",
+		"The final trial was the cruelest: {name} had to choose between saving the kingdom and saving someone they loved dearly."
+	],
+	resolutions: [
+		"The enchantment broke like a soap bubble — delicate, iridescent, and all at once. Color returned to {setting}, and the first birdsong in a hundred years filled the air.",
+		"{name} placed the golden key in the last lock, and the tower dissolved into butterflies — thousands of them, carrying the trapped wishes back to those who had dreamed them.",
+		"The wicked enchanter, touched by {name}'s mercy, wept — and the tears were the last ingredient the spell required. The curse lifted, and even the villain was set free.",
+		"And so {name} became the guardian of {setting}, not with a crown or a throne, but with a gentle promise to tend the land and listen to the wind.",
+		"The story of {name} was told and retold, growing with each telling, until it became the kind of tale that tucks children into sleep and follows them into their dreams."
+	]
+}
+};
+
+// ---- TONE MODIFIERS ----
+const TONE_SENTENCES = {
+dark: [
+	"Shadows pressed closer, as though the darkness itself had intent.",
+	"The air was thick with the weight of things unsaid and deeds undone.",
+	"A sense of dread settled over everything, quiet and absolute.",
+	"There was no comfort to be found — only the cold certainty of what lay ahead.",
+	"Even the silence seemed hostile, charged with menace."
+],
+lighthearted: [
+	"Despite everything, a stubborn joy persisted — the kind that defies common sense.",
+	"A laugh escaped, unbidden and welcome, breaking the tension like sunlight through clouds.",
+	"The world, for all its troubles, still had the decency to offer a gorgeous sunset.",
+	"There was something absurdly hopeful about the whole situation.",
+	"Sometimes the universe conspires not against you, but in your favor."
+],
+dramatic: [
+	"The weight of the moment settled on every shoulder, heavy as an oath.",
+	"Hearts pounded. Breaths caught. The world narrowed to a single, crystalline instant.",
+	"Everything had led to this — every choice, every sacrifice, every sleepless night.",
+	"The stakes had never been higher, and the margin for error had never been thinner.",
+	"A tremor passed through the assembled crowd as the truth emerged."
+],
+whimsical: [
+	"A butterfly landed on the most inappropriate surface and refused to leave, as though making a point.",
+	"The wind carried the scent of impossible things: cinnamon, stardust, and the faintest hint of Tuesday.",
+	"Rules, it turned out, were more like suggestions in this particular corner of the world.",
+	"Something sparkled where nothing should have, which was either a very good sign or a very bad one.",
+	"A peculiar melody drifted through the air — one that no instrument could possibly produce."
+],
+suspenseful: [
+	"Every sense sharpened. Every shadow held a possibility. The quiet was not peaceful — it was calculating.",
+	"The clock was ticking, though no clock was visible. {name} could feel the deadline in their bones.",
+	"Something moved in the periphery — too fast to identify, too deliberate to ignore.",
+	"The hairs on the back of {name}'s neck rose. Not from cold. From presence.",
+	"Each step forward felt like a commitment — irreversible, loaded with consequence."
+]
+};
+
+// ---- CONNECTING TISSUE ----
+const TRANSITIONS = [
+	"Hours passed. The light changed, and with it, the nature of the journey.",
+	"What happened next would alter the course of everything.",
+	"The turning point came unexpectedly, as turning points always do.",
+	"And then, in a moment that none could have predicted:",
+	"Events accelerated beyond anyone's control.",
+	"A stillness fell — the kind that precedes revelation.",
+	"Time seemed to contract, each second dense with meaning.",
+	"The pieces began to fall into place, slowly at first, then all at once."
+];
+
+const DETAIL_SENTENCES = [
+	"The quality of the light shifted — from warm gold to something colder, sharper.",
+	"Distant sounds carried on the wind: the creak of timber, the murmur of water, and something else — something unnameable.",
+	"The ground underfoot changed texture, and {name} noticed patterns in the earth that seemed deliberate.",
+	"A scent drifted through the air — old stone, damp moss, and the faintest trace of smoke.",
+	"Silence fell, and in the silence, the smallest sounds became enormous.",
+	"The horizon blurred where sky met ground, creating the illusion of an endless, formless edge.",
+	"Somewhere, a bell tolled — low, resonant, and impossibly far away.",
+	"Dust motes danced in a shaft of light, indifferent to the enormity of what was unfolding.",
+	"The walls bore marks: scratches, symbols, handprints. Evidence of those who came before.",
+	"A cool breeze carried the promise of change — or perhaps the warning of it."
+];
+
+const DIALOGUE_SNIPPETS = [
+	'"I didn\'t come this far to turn back now," {name} said, and meant it.',
+	'"There is always a choice," {name} murmured, "even when every option is terrible."',
+	'"Tell me the truth," {name} demanded. "All of it."',
+	'"I trusted you." The words fell like stones into still water.',
+	'"We don\'t have much time," {name} said, already moving.',
+	'"This changes everything." A pause. "Or perhaps it changes nothing."',
+	'"You\'re braver than you think," the old voice said from the shadows.',
+	'"What happens now?" {name} asked, though part of them already knew.',
+	'"Some doors don\'t close once opened," came the quiet reply.',
+	'"Promise me something," {name} said. "Promise me this wasn\'t for nothing."'
+];
+
+const THEMES_LIST = [
+	"a quest for a lost artifact","the discovery of a hidden truth","an unlikely friendship","an escape from captivity",
+	"a journey of self-discovery","the search for a missing person","the defense of a homeland","a race against time",
+	"the pursuit of forbidden knowledge","a test of loyalty","the restoration of balance","an encounter with the unknown",
+	"a bargain with unintended consequences","the unraveling of a conspiracy","a pilgrimage to a sacred place"
+];
+
+// ---- UTILITY FUNCTIONS ----
+
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function pickN(arr, n) {
+	const shuffled = [...arr].sort(() => Math.random() - 0.5);
+	return shuffled.slice(0, Math.min(n, shuffled.length));
+}
+function fillVars(text, vars) {
+	return text.replace(/\{(\w+)\}/g, (_, k) => vars[k] || k);
+}
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// ---- STORY BUILDER ----
+
+function buildStory(genre, tone, targetWords, charName, settingText, themeText) {
+	const data = GENRE_DATA[genre];
+	if (!data) return { title: "Error", body: "Genre not found." };
+
+	const name = charName || pick(NAMES);
+	const setting = settingText || pick(SETTINGS);
+	const theme = themeText || pick(THEMES_LIST);
+	const vars = { name, setting, theme };
+
+	// Select template pieces
+	const hook = fillVars(pick(data.hooks), vars);
+	const rising1 = fillVars(pick(data.rising), vars);
+	const rising2 = fillVars(pickN(data.rising, 2).pop(), vars);
+	const conflict = fillVars(pick(data.conflicts), vars);
+	const resolution = fillVars(pick(data.resolutions), vars);
+	const ending = fillVars(pick(ENDINGS), vars);
+	const twist = fillVars(pick(PLOT_TWISTS), vars);
+
+	const toneSentences = TONE_SENTENCES[tone] || TONE_SENTENCES.dramatic;
+	const toneLine1 = fillVars(pick(toneSentences), vars);
+	const toneLine2 = fillVars(pickN(toneSentences, 2).pop(), vars);
+
+	const transition1 = fillVars(pick(TRANSITIONS), vars);
+	const transition2 = fillVars(pickN(TRANSITIONS, 2).pop(), vars);
+
+	const detail1 = fillVars(pick(DETAIL_SENTENCES), vars);
+	const detail2 = fillVars(pickN(DETAIL_SENTENCES, 2).pop(), vars);
+	const detail3 = fillVars(pickN(DETAIL_SENTENCES, 3).pop(), vars);
+
+	const dialogue1 = fillVars(pick(DIALOGUE_SNIPPETS), vars);
+	const dialogue2 = fillVars(pickN(DIALOGUE_SNIPPETS, 2).pop(), vars);
+
+	// Build paragraphs based on target length
+	let paragraphs = [];
+
+	if (targetWords <= 250) {
+		// SHORT
+		paragraphs = [
+			hook + " " + toneLine1,
+			rising1 + " " + detail1 + " " + dialogue1,
+			transition1 + " " + conflict + " But then, " + twist + ".",
+			resolution + " " + name + " " + ending + "."
+		];
+	} else if (targetWords <= 500) {
+		// MEDIUM
+		paragraphs = [
+			hook + " " + toneLine1 + " " + detail1,
+			rising1 + " " + dialogue1 + " " + detail2,
+			transition1 + " " + rising2 + " " + toneLine2,
+			conflict + " " + detail3 + " But then, " + twist + ".",
+			transition2 + " " + dialogue2,
+			resolution + " " + name + " " + ending + "."
+		];
+	} else {
+		// LONG
+		const extraRising = fillVars(pickN(data.rising, 3).pop(), vars);
+		const extraConflict = fillVars(pickN(data.conflicts, 2).pop(), vars);
+		const extraTone = fillVars(pickN(toneSentences, 3).pop(), vars);
+		const extraDetail = fillVars(pickN(DETAIL_SENTENCES, 4).pop(), vars);
+		const extraDialogue = fillVars(pickN(DIALOGUE_SNIPPETS, 3).pop(), vars);
+		const extraTransition = fillVars(pickN(TRANSITIONS, 3).pop(), vars);
+
+		paragraphs = [
+			hook + " " + toneLine1 + " " + detail1,
+			rising1 + " " + dialogue1 + " " + detail2,
+			transition1 + " " + rising2 + " " + toneLine2 + " " + extraDetail,
+			extraRising + " " + extraTone + " " + extraDialogue,
+			extraTransition + " " + conflict + " " + detail3,
+			"But then, " + twist + ". " + dialogue2,
+			extraConflict + " " + toneLine1,
+			transition2 + " " + resolution,
+			name + " " + ending + "."
+		];
+	}
+
+	// Generate title
+	const genreNames = {fantasy:"Fantasy",scifi:"Sci-Fi",romance:"Romance",horror:"Horror",mystery:"Mystery",adventure:"Adventure",comedy:"Comedy",fairytale:"Fairy Tale"};
+	const titleTemplates = [
+		`The ${capitalize(theme.replace(/^a\s+/i,"").replace(/^the\s+/i,"").split(" ").slice(0,3).join(" "))}`,
+		`${name} and the ${capitalize(pick(["Lost","Hidden","Broken","Forgotten","Last","First","Shattered","Silent","Endless","Stolen","Unspoken","Midnight","Crimson","Gilded","Hollow"]) + " " + pick(["Road","Flame","Crown","Shadow","Promise","Mirror","Key","Horizon","Gate","Edge","Whisper","Chronicle","Hour","Storm"]))}`,
+		`Beyond ${setting.split(",")[0].replace(/^a\s+/i,"the ").replace(/^an\s+/i,"the ")}`,
+		`The ${pick(["Reckoning","Awakening","Convergence","Unraveling","Return","Departure","Turning","Crossing","Threshold","Echo"])} of ${name}`,
+		`Where ${pick(["Stars","Shadows","Rivers","Echoes","Dreams","Embers","Winds","Tides","Voices","Roads"])} ${pick(["Converge","Collide","Begin","End","Whisper","Shatter","Gather","Fade","Ignite","Turn"])}`
+	];
+	const title = pick(titleTemplates);
+
+	return {
+		title,
+		body: paragraphs.join("\n\n"),
+		genre: genreNames[genre] || genre,
+		name,
+		setting,
+		theme
+	};
+}
+
+// ---- UI STATE ----
+let currentStory = null;
+let storyHistory = [];
+let typewriterTimer = null;
+let targetLength = 400;
+
+// ---- DOM HELPERS ----
+const $ = id => document.getElementById(id);
+
+function showToast(msg, type) {
+	const t = $('toast');
+	t.textContent = msg;
+	t.className = 'toast' + (type ? ' ' + type : '');
+	t.classList.add('show');
+	setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function setLength(el) {
+	document.querySelectorAll('.length-pill').forEach(p => p.classList.remove('active'));
+	el.classList.add('active');
+	targetLength = parseInt(el.dataset.len);
+}
+
+// ---- MAIN GENERATE ----
+function generateStory() {
+	const genre = $('genre').value;
+	const tone = $('tone').value;
+	const charName = $('charName').value.trim();
+	const setting = $('setting').value.trim();
+	const theme = $('theme').value.trim();
+
+	// Cancel any running typewriter
+	if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
+
+	// Show loader
+	$('loader').style.display = 'block';
+	$('storyPanel').style.display = 'none';
+	$('genBtn').disabled = true;
+
+	// Simulate brief "thinking" delay for UX
+	setTimeout(() => {
+		const story = buildStory(genre, tone, targetLength, charName, setting, theme);
+		currentStory = story;
+
+		// Add to history
+		storyHistory.unshift({
+			title: story.title,
+			genre: story.genre,
+			words: story.body.split(/\s+/).length,
+			timestamp: new Date().toLocaleTimeString(),
+			body: story.body
+		});
+		if (storyHistory.length > 5) storyHistory.pop();
+		renderHistory();
+
+		// Display
+		$('loader').style.display = 'none';
+		$('storyPanel').style.display = 'block';
+		$('storyTitle').textContent = '';
+		$('storyBody').innerHTML = '';
+		$('genBtn').disabled = false;
+
+		// Update meta
+		const wc = story.body.split(/\s+/).length;
+		$('wordCount').textContent = wc;
+		$('readTime').textContent = Math.max(1, Math.round(wc / 200));
+		$('metaGenre').textContent = story.genre;
+
+		// Typewriter effect
+		typewriteTitle(story.title, () => {
+			typewriteBody(story.body);
+		});
+	}, 600 + Math.random() * 500);
+}
+
+// ---- TYPEWRITER ----
+function typewriteTitle(text, callback) {
+	let i = 0;
+	const el = $('storyTitle');
+	el.textContent = '';
+	function tick() {
+		if (i < text.length) {
+			el.textContent = text.substring(0, i + 1);
+			i++;
+			typewriterTimer = setTimeout(tick, 30);
+		} else {
+			if (callback) callback();
+		}
+	}
+	tick();
+}
+
+function typewriteBody(text) {
+	const el = $('storyBody');
+	el.innerHTML = '';
+	// Split into paragraphs
+	const paras = text.split('\n\n');
+	let paraIdx = 0;
+	let charIdx = 0;
+	let currentP = document.createElement('p');
+	el.appendChild(currentP);
+
+	const speed = 8; // ms per character
+
+	function tick() {
+		if (paraIdx >= paras.length) return;
+
+		const currentText = paras[paraIdx];
+		if (charIdx < currentText.length) {
+			// Add characters in batches for performance
+			const batch = Math.min(3, currentText.length - charIdx);
+			currentP.textContent += currentText.substring(charIdx, charIdx + batch);
+			charIdx += batch;
+			// Auto-scroll
+			el.scrollTop = el.scrollHeight;
+			typewriterTimer = setTimeout(tick, speed);
+		} else {
+			paraIdx++;
+			charIdx = 0;
+			if (paraIdx < paras.length) {
+				currentP = document.createElement('p');
+				el.appendChild(currentP);
+				typewriterTimer = setTimeout(tick, speed * 5);
+			}
+		}
+	}
+	tick();
+}
+
+// ---- ACTIONS ----
+function copyStory() {
+	if (!currentStory) { showToast('Generate a story first', 'error'); return; }
+	const text = currentStory.title + '\n\n' + currentStory.body;
+	navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard!', 'success')).catch(() => showToast('Failed to copy', 'error'));
+}
+
+function downloadStory() {
+	if (!currentStory) { showToast('Generate a story first', 'error'); return; }
+	const text = currentStory.title + '\n\n' + currentStory.body;
+	const blob = new Blob([text], { type: 'text/plain' });
+	const a = document.createElement('a');
+	a.href = URL.createObjectURL(blob);
+	a.download = currentStory.title.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '_') + '.txt';
+	a.click();
+	URL.revokeObjectURL(a.href);
+	showToast('Downloaded!', 'success');
+}
+
+// ---- RANDOM EVERYTHING ----
+function randomizeAll() {
+	const genres = $('genre').options;
+	$('genre').selectedIndex = Math.floor(Math.random() * genres.length);
+
+	const tones = $('tone').options;
+	$('tone').selectedIndex = Math.floor(Math.random() * tones.length);
+
+	const pills = document.querySelectorAll('.length-pill');
+	const randomPill = pills[Math.floor(Math.random() * pills.length)];
+	setLength(randomPill);
+
+	$('charName').value = '';
+	$('setting').value = '';
+	$('theme').value = '';
+
+	showToast('Settings randomized!');
+	generateStory();
+}
+
+// ---- HISTORY ----
+function toggleHistory() {
+	const toggle = $('historyToggle');
+	const list = $('historyList');
+	toggle.classList.toggle('open');
+	list.classList.toggle('open');
+}
+
+function renderHistory() {
+	const panel = $('historyPanel');
+	const list = $('historyList');
+	const count = $('historyCount');
+
+	if (storyHistory.length === 0) { panel.style.display = 'none'; return; }
+
+	panel.style.display = 'block';
+	count.textContent = '(' + storyHistory.length + ')';
+
+	list.innerHTML = '';
+	storyHistory.forEach((item, idx) => {
+		const li = document.createElement('li');
+		li.className = 'history-item';
+		li.innerHTML = `<div class="history-item-title">${escapeHtml(item.title)}</div><div class="history-item-meta">${escapeHtml(item.genre)} · ${item.words} words · ${item.timestamp}</div>`;
+		li.onclick = () => loadHistoryItem(idx);
+		list.appendChild(li);
+	});
+}
+
+function loadHistoryItem(idx) {
+	const item = storyHistory[idx];
+	if (!item) return;
+
+	if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
+
+	currentStory = { title: item.title, body: item.body, genre: item.genre };
+
+	$('loader').style.display = 'none';
+	$('storyPanel').style.display = 'block';
+	$('storyTitle').textContent = item.title;
+
+	// Render body without typewriter for history
+	const el = $('storyBody');
+	el.innerHTML = '';
+	item.body.split('\n\n').forEach(p => {
+		const pEl = document.createElement('p');
+		pEl.textContent = p;
+		el.appendChild(pEl);
+	});
+
+	const wc = item.body.split(/\s+/).length;
+	$('wordCount').textContent = wc;
+	$('readTime').textContent = Math.max(1, Math.round(wc / 200));
+	$('metaGenre').textContent = item.genre;
+
+	showToast('Loaded from history');
+}
+
+function escapeHtml(text) {
+	const d = document.createElement('div');
+	d.textContent = text;
+	return d.innerHTML;
+}
+</script>
+<script src="js/global.js"></script>
+</body>
+</html>
