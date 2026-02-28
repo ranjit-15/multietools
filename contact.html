@@ -186,17 +186,6 @@
         .captcha-status.pass { color: #059669; }
         .captcha-status.fail { color: #dc2626; }
 
-        /* Toast */
-        .toast {
-            position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(20px);
-            padding: 0.75rem 1.5rem; border-radius: var(--radius-full);
-            background: var(--surface); border: 1px solid var(--border);
-            box-shadow: var(--shadow-lg); font-weight: 600; font-size: 0.9rem;
-            z-index: 9999; opacity: 0; transition: opacity 0.3s, transform 0.3s;
-            pointer-events: none;
-        }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
         /* Status message */
         .status-msg {
             grid-column: 1 / -1;
@@ -245,7 +234,6 @@
             .captcha-box { flex-wrap: wrap; gap: 0.75rem; padding: 0.85rem 1rem; }
             .info-card { padding: 1rem; gap: 0.75rem; }
             .info-card .icon { width: 38px; height: 38px; font-size: 0.9rem; }
-            .toast { font-size: 0.85rem; padding: 0.65rem 1.25rem; }
         }
         @media (max-width: 480px) {
             .page { padding: 1.5rem 0.75rem 2rem; }
@@ -373,21 +361,12 @@
         &copy; 2026 <a href="index.html">Multietools</a>. All tools are free. No ads, no distractions.
     </footer>
 
-    <div class="toast" id="toast"></div>
-
     <!-- EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="js/global.js"></script>
     <script>
         // Initialise EmailJS (v4 format)
         emailjs.init({ publicKey: '2ys1wdJHhpLbjlwgX' });
-
-        // Toast helper
-        function showToast(msg, duration = 3000) {
-            const t = document.getElementById('toast');
-            t.textContent = msg; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), duration);
-        }
 
         // Status helper
         function showStatus(msg, type) {
