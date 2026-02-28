@@ -1,90 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Text Shorter - Multietools</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 15% 20%,rgba(34,211,238,0.18),transparent 28%),radial-gradient(circle at 85% 10%,rgba(56,189,248,0.15),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:860px;margin:0 auto;background:rgba(11,18,36,0.9);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:0.9rem;}
-		textarea{width:100%;min-height:200px;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);padding:1rem;font-size:1rem;}
-		label{color:var(--muted);font-weight:600;} input[type=number]{width:110px;padding:0.6rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--text);} select{padding:0.6rem 0.8rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--text);} 
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;}
-		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-	</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Shorter - Multietools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/global.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+textarea{width:100%;min-height:180px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.95rem;font-family:inherit;resize:vertical;}
+label.section{font-weight:700;font-size:.92rem;color:var(--muted);display:block;margin-bottom:.4rem;}
+.row{display:flex;flex-wrap:wrap;gap:.7rem;align-items:end;}
+.field{display:flex;flex-direction:column;gap:.3rem;}
+.field label{font-weight:700;font-size:.82rem;color:var(--muted);}
+select,input[type=number],input[type=text]{padding:.6rem .8rem;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:.9rem;font-family:inherit;}
+input[type=number]{width:100px;}input[type=text]{width:80px;}
+.stats-bar{display:flex;flex-wrap:wrap;gap:1rem;margin-top:.75rem;font-size:.85rem;color:var(--muted);font-weight:600;}
+.stats-bar span{background:var(--bg-alt);padding:.45rem .85rem;border-radius:var(--radius-full);border:1px solid var(--border-light);}
+button{padding:.75rem 1.1rem;border-radius:var(--radius-md);border:none;cursor:pointer;font-weight:700;font-size:.88rem;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;box-shadow:var(--shadow-sm);transition:transform .15s ease,box-shadow .15s ease;}
+button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-md);font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:all .35s var(--ease-bounce);z-index:999;}
+.toast.show{transform:translateY(0);opacity:1;}
+</style>
 </head>
 <body>
-  
+<div class="wrap">
+<header>
+<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+<h1><i class="fas fa-compress-alt"></i> Text Shorter</h1>
+<p class="muted">Truncate text to a target length by characters or words with smart boundaries.</p>
+</header>
+<main>
+<div class="panel">
+<label class="section">Input Text</label>
+<textarea id="input" placeholder="Paste your long text hereâ€¦"></textarea>
+</div>
+<div class="panel">
+<div class="row">
+<div class="field"><label for="limit">Max Length</label><input type="number" id="limit" value="140" min="1"></div>
+<div class="field"><label for="unit">Unit</label>
+<select id="unit"><option value="chars">Characters</option><option value="words">Words</option></select></div>
+<div class="field"><label for="mode">Truncation Mode</label>
+<select id="mode"><option value="hard">Hard Cut</option><option value="word">Word Boundary</option><option value="sentence">Sentence Boundary</option></select></div>
+<div class="field"><label for="suffix">Suffix</label><input type="text" id="suffix" value="..."></div>
+<button onclick="shorten()"><i class="fas fa-cut"></i> Shorten</button>
+</div>
+</div>
+<div class="panel">
+<label class="section">Output</label>
+<textarea id="output" placeholder="Shortened text will appear hereâ€¦" readonly></textarea>
+<div class="stats-bar" id="statsBar"></div>
+<div style="margin-top:.75rem;display:flex;gap:.6rem;">
+<button onclick="copyOut()"><i class="fas fa-copy"></i> Copy Output</button>
+</div>
+</div>
+</main>
+</div>
+<div class="toast" id="toast"></div>
 
-  
+<script>
+const inp=document.getElementById('input');
+const out=document.getElementById('output');
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-compress-alt"></i> Text Shorter</h1>
-			<p class="muted">Quickly trim text to a target length by characters or words.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<textarea id="input" placeholder="Paste your long text here..."></textarea>
-				<div class="row">
-					<label for="limit">Limit</label>
-					<input type="number" id="limit" value="140" min="1">
-					<select id="mode">
-						<option value="chars">Characters</option>
-						<option value="words">Words</option>
-					</select>
-					<button onclick="shorten()">Shorten</button>
-					<button onclick="copyOut()"><i class="fas fa-copy"></i> Copy Result</button>
-				</div>
-				<textarea id="output" placeholder="Shortened text..." readonly></textarea>
-			</div>
-		</main>
-	</div>
+function shorten(){
+  const text=inp.value||'';
+  if(!text.trim()){showToast('Enter text first');return;}
+  const lim=Math.max(1,parseInt(document.getElementById('limit').value)||1);
+  const unit=document.getElementById('unit').value;
+  const mode=document.getElementById('mode').value;
+  const suffix=document.getElementById('suffix').value;
+  let result='';
+  if(unit==='words'){
+    const words=text.trim().split(/\s+/);
+    if(words.length<=lim){result=text;}
+    else{result=words.slice(0,lim).join(' ')+suffix;}
+  } else {
+    if(text.length<=lim){result=text;}
+    else if(mode==='hard'){
+      result=text.slice(0,lim)+suffix;
+    } else if(mode==='word'){
+      let cut=text.slice(0,lim);
+      const lastSpace=cut.lastIndexOf(' ');
+      if(lastSpace>0) cut=cut.slice(0,lastSpace);
+      result=cut+suffix;
+    } else { // sentence
+      let cut=text.slice(0,lim);
+      const lastSent=Math.max(cut.lastIndexOf('. '),cut.lastIndexOf('! '),cut.lastIndexOf('? '));
+      if(lastSent>0) cut=cut.slice(0,lastSent+1);
+      else{const lb=cut.lastIndexOf(' ');if(lb>0)cut=cut.slice(0,lb);}
+      result=cut+suffix;
+    }
+  }
+  out.value=result;
+  updateStats(text,result);
+  showToast('Text shortened!');
+}
 
-	<script>
-		const input = document.getElementById('input');
-		const output = document.getElementById('output');
-		const limit = document.getElementById('limit');
-		const mode = document.getElementById('mode');
+function updateStats(orig,short){
+  const origC=orig.length, shortC=short.length;
+  const origW=orig.trim()?orig.trim().split(/\s+/).length:0;
+  const shortW=short.trim()?short.trim().split(/\s+/).length:0;
+  const pct=origC?Math.round((1-shortC/origC)*100):0;
+  document.getElementById('statsBar').innerHTML=
+    '<span>Original: '+origC+' chars / '+origW+' words</span>'+
+    '<span>Shortened: '+shortC+' chars / '+shortW+' words</span>'+
+    '<span>Reduced by '+pct+'%</span>';
+}
 
-		function shorten(){
-			const text = input.value || '';
-			const n = Math.max(1, parseInt(limit.value, 10) || 1);
-			let result = '';
-			if(mode.value === 'words'){
-				const words = text.trim().split(/\s+/);
-				result = words.slice(0, n).join(' ');
-				if(words.length > n) result += '…';
-			} else {
-				result = text.slice(0, n);
-				if(text.length > n) result += '…';
-			}
-			output.value = result;
-		}
+function copyOut(){
+  if(!out.value){showToast('Nothing to copy');return;}
+  navigator.clipboard.writeText(out.value).then(()=>showToast('Copied!'));
+}
 
-		function copyOut(){ navigator.clipboard.writeText(output.value || ''); }
-	</script>
-
-
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
-
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+</script>
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

@@ -1,102 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>PDF to Word (Text) - Multietools</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:900px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		textarea{width:100%;min-height:260px;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);padding:1rem;resize:vertical;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} .badge{padding:0.4rem 0.7rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--muted);} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-	</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF to Text - Multietools</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+.drop-zone{border:2px dashed var(--border);border-radius:var(--radius-md);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:border-color .25s,background .25s;position:relative;}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--primary);background:var(--primary-glow);}
+.drop-zone i{font-size:2.5rem;color:var(--primary);margin-bottom:.75rem;display:block;}
+.drop-zone p{color:var(--muted);font-size:.95rem;}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.btn{padding:.8rem 1.2rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.9rem;transition:transform .15s,box-shadow .25s;display:inline-flex;align-items:center;gap:.4rem;}
+.btn:hover{transform:translateY(-1px);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-outline{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);}
+.stats{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;}
+.stat{padding:.5rem 1rem;border-radius:var(--radius-sm);background:var(--bg-alt);border:1px solid var(--border-light);font-size:.85rem;font-weight:600;}
+.stat span{color:var(--primary);}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;}
+textarea{width:100%;min-height:350px;border-radius:var(--radius-md);border:1px solid var(--border-light);background:var(--bg-alt);color:var(--text);padding:1rem;resize:vertical;font-family:'Courier New',monospace;font-size:.9rem;line-height:1.6;}
+.progress-bar{width:100%;height:6px;background:var(--border);border-radius:50px;overflow:hidden;margin-bottom:1rem;display:none;}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:50px;transition:width .3s;width:0%;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:var(--radius-full,50px);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  </style>
 </head>
 <body>
-  
+<div class="wrap">
+  <header>
+    <a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+    <h1><i class="fas fa-file-lines"></i> PDF to Text</h1>
+    <p class="muted">Extract text from each page of a PDF. Copy or download as TXT.</p>
+  </header>
+  <main>
+    <div class="panel">
+      <div class="drop-zone" id="dropZone">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <p>Drag & drop a PDF here or click to browse</p>
+        <p class="filename" id="fileName" style="margin-top:.5rem;font-weight:700;color:var(--text);"></p>
+        <input type="file" id="fileInput" accept="application/pdf">
+      </div>
+    </div>
 
-  
+    <div class="panel" id="resultPanel" style="display:none;">
+      <div class="stats" id="statsRow">
+        <div class="stat"><i class="fas fa-file"></i> Pages: <span id="pageCount">0</span></div>
+        <div class="stat"><i class="fas fa-font"></i> Words: <span id="wordCount">0</span></div>
+        <div class="stat"><i class="fas fa-text-width"></i> Characters: <span id="charCount">0</span></div>
+      </div>
+      <div class="progress-bar" id="progressBar"><div class="fill" id="progressFill"></div></div>
+      <div class="actions">
+        <button class="btn" id="extractBtn" onclick="extractText()"><i class="fas fa-bolt"></i> Extract Text</button>
+        <button class="btn btn-outline" onclick="copyAll()" id="copyBtn" disabled><i class="fas fa-copy"></i> Copy All</button>
+        <button class="btn btn-outline" onclick="downloadTxt()" id="dlBtn" disabled><i class="fas fa-download"></i> Download TXT</button>
+      </div>
+      <textarea id="output" placeholder="Extracted text will appear here..." readonly></textarea>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="js/global.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-file-word"></i> PDF to Word (Text)</h1>
-			<p class="muted">Extract selectable text from PDFs and download as DOCX. Uses in-browser pdf.js parsing.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<input type="file" id="file" accept="application/pdf">
-					<button onclick="extractText()">Extract Text</button>
-					<button onclick="downloadDocx()">Download DOCX</button>
-					<span class="badge" id="status">Waiting</span>
-				</div>
-				<textarea id="output" placeholder="Extracted text will appear here..."></textarea>
-			</div>
-		</main>
-	</div>
+const dropZone=document.getElementById('dropZone');
+const fileInput=document.getElementById('fileInput');
+const fileNameEl=document.getElementById('fileName');
+const resultPanel=document.getElementById('resultPanel');
+const output=document.getElementById('output');
+const progressBar=document.getElementById('progressBar');
+const progressFill=document.getElementById('progressFill');
+const pageCountEl=document.getElementById('pageCount');
+const wordCountEl=document.getElementById('wordCount');
+const charCountEl=document.getElementById('charCount');
+const copyBtn=document.getElementById('copyBtn');
+const dlBtn=document.getElementById('dlBtn');
+let currentFile=null;
+let extractedText='';
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-	<script>
-		const fileInput = document.getElementById('file');
-		const output = document.getElementById('output');
-		const status = document.getElementById('status');
-		let lastText = '';
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-		function setStatus(msg){ status.textContent = msg; }
+/* Drag & Drop */
+['dragenter','dragover'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.add('dragover');}));
+['dragleave','drop'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.remove('dragover');}));
+dropZone.addEventListener('drop',ev=>{
+  const f=ev.dataTransfer.files[0];
+  if(f&&f.type==='application/pdf'){currentFile=f;handleFile();}
+  else showToast('Please drop a valid PDF file');
+});
+fileInput.addEventListener('change',()=>{currentFile=fileInput.files[0];if(currentFile)handleFile();});
 
-		async function extractText(){
-			const file = fileInput.files?.[0];
-			if(!file){ setStatus('Select a PDF'); return; }
-			setStatus('Reading...');
-			try{
-				const data = new Uint8Array(await file.arrayBuffer());
-				const pdf = await pdfjsLib.getDocument({data}).promise;
-				let text = '';
-				for(let i=1;i<=pdf.numPages;i++){
-					const page = await pdf.getPage(i);
-					const content = await page.getTextContent();
-					const strings = content.items.map(it=>it.str).join(' ');
-					text += `\n\n--- Page ${i} ---\n\n` + strings;
-				}
-				lastText = text.trim();
-				output.value = lastText || 'No text found (scanned PDF?)';
-				setStatus('Done');
-			} catch(e){
-				console.error(e);
-				setStatus('Failed to read');
-			}
-		}
+async function handleFile(){
+  fileNameEl.textContent=currentFile.name;
+  resultPanel.style.display='';
+  output.value='';
+  extractedText='';
+  copyBtn.disabled=true;dlBtn.disabled=true;
+  /* quick page count */
+  try{
+    const buf=await currentFile.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    pageCountEl.textContent=pdf.numPages;
+    wordCountEl.textContent='—';charCountEl.textContent='—';
+  }catch(e){showToast('Error reading PDF');}
+}
 
-		function downloadDocx(){
-			if(!lastText){ setStatus('Nothing to export'); return; }
-			// Minimal DOCX via data URI (Word will open plain text inside)
-			const header = '\uFEFF';
-			const blob = new Blob([header + lastText], {type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
-			const url = URL.createObjectURL(blob);
-			const a = document.createElement('a');
-			a.href = url; a.download = 'extracted.docx'; a.click(); URL.revokeObjectURL(url);
-			setStatus('DOCX downloaded');
-		}
-	</script>
+async function extractText(){
+  if(!currentFile){showToast('Upload a PDF first');return;}
+  const extractBtn=document.getElementById('extractBtn');
+  extractBtn.disabled=true;
+  progressBar.style.display='block';progressFill.style.width='0%';
+  output.value='Extracting...';
 
+  try{
+    const buf=await currentFile.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    const total=pdf.numPages;
+    let allText='';
+    for(let i=1;i<=total;i++){
+      const page=await pdf.getPage(i);
+      const tc=await page.getTextContent();
+      const lines=tc.items.map(item=>item.str).join(' ');
+      allText+=`--- Page ${i} ---\n${lines}\n\n`;
+      progressFill.style.width=Math.round(i/total*100)+'%';
+    }
+    extractedText=allText.trim();
+    output.value=extractedText;
+    const words=extractedText.split(/\s+/).filter(w=>w.length>0).length;
+    const chars=extractedText.length;
+    pageCountEl.textContent=total;
+    wordCountEl.textContent=words.toLocaleString();
+    charCountEl.textContent=chars.toLocaleString();
+    copyBtn.disabled=false;dlBtn.disabled=false;
+    showToast('Text extracted successfully!');
+  }catch(e){
+    output.value='Error: '+e.message;
+    showToast('Extraction failed');
+  }finally{
+    extractBtn.disabled=false;
+    setTimeout(()=>{progressBar.style.display='none';},800);
+  }
+}
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+function copyAll(){
+  if(!extractedText){showToast('No text to copy');return;}
+  navigator.clipboard.writeText(extractedText).then(()=>showToast('Copied to clipboard!')).catch(()=>showToast('Copy failed'));
+}
 
+function downloadTxt(){
+  if(!extractedText){showToast('No text to download');return;}
+  const name=currentFile?currentFile.name.replace(/\.pdf$/i,''):'document';
+  const blob=new Blob([extractedText],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=name+'.txt';a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Downloaded '+name+'.txt');
+}
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-

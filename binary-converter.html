@@ -3,159 +3,175 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Number Base Converter - Multietools</title>
+	<title>Binary / Number Base Converter - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root {
-			--bg: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-			--card: rgba(15, 23, 42, 0.9);
-			--accent: #22d3ee;
-			--text: #e2e8f0;
-			--muted: #94a3b8;
-			--border: #1f2937;
-			--radius: 16px;
-			--shadow: 0 18px 50px rgba(0,0,0,0.35);
-		}
-		* { box-sizing: border-box; margin: 0; padding: 0; }
-		body {
-			font-family: 'Inter', system-ui, -apple-system, sans-serif;
-			min-height: 100vh;
-			background: var(--bg);
-			color: var(--text);
-			padding: 1.5rem;
-		}
-		.shell {
-			max-width: 900px;
-			margin: 0 auto;
-			background: var(--card);
-			border: 1px solid var(--border);
-			border-radius: var(--radius);
-			box-shadow: var(--shadow);
-			overflow: hidden;
-		}
-		header { padding: 1.75rem; border-bottom: 1px solid var(--border); background: rgba(34,211,238,0.08); }
-		h1 { font-size: 1.8rem; margin-bottom: 0.35rem; }
-		.muted { color: var(--muted); }
-		.back { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text); text-decoration: none; font-weight: 700; margin-bottom: 1rem; }
-		main { padding: 1.75rem; display: grid; gap: 1.25rem; }
-		.ad-container { text-align:center; margin: 0.5rem 0 1.5rem; }
-		.panel { background: #0b1627; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; box-shadow: var(--shadow); display: grid; gap: 0.85rem; }
-		label { font-weight: 700; color: var(--text); }
-		input, select {
-			width: 100%;
-			padding: 0.85rem 0.9rem;
-			border-radius: 12px;
-			border: 1px solid var(--border);
-			background: #0f192b;
-			color: var(--text);
-			font-size: 1rem;
-			font-family: inherit;
-		}
-		button {
-			padding: 0.95rem 1.1rem;
-			border-radius: 12px;
-			border: none;
-			cursor: pointer;
-			background: linear-gradient(135deg, var(--accent), #6ee7ff);
-			color: #0b1021;
-			font-weight: 800;
-			box-shadow: var(--shadow);
-			transition: transform 0.15s ease;
-		}
-		button:hover { transform: translateY(-1px); }
-		.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-		.output { background: #0f192b; border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem; }
-		.label { color: var(--muted); font-weight: 700; margin-bottom: 0.25rem; display: block; }
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		textarea{width:100%;min-height:180px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.9rem;font-family:'JetBrains Mono','Cascadia Code',monospace;resize:vertical;}
+		.mode-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.5rem;margin-bottom:1rem;}
+		.mode-btn{padding:.6rem .85rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;}
+		.mode-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:var(--shadow-sm);}
+		.mode-btn:hover:not(.active){background:var(--border-light);}
+		input[type=text]{width:100%;padding:.85rem 1rem;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:1rem;font-family:'JetBrains Mono','Cascadia Code',monospace;}
+		.output-box{background:var(--bg-alt);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;font-family:'JetBrains Mono','Cascadia Code',monospace;font-size:1rem;min-height:48px;word-break:break-all;user-select:all;}
+		.row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:.75rem;}
+		button{padding:.75rem 1.1rem;border-radius:var(--radius-sm);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-weight:700;font-size:.9rem;box-shadow:var(--shadow-sm);transition:transform .15s ease,box-shadow .15s ease;}
+		button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+		button.secondary{background:var(--bg-alt);color:var(--text);border:1px solid var(--border);}
+		button.secondary:hover{background:var(--border-light);}
+		.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-sm);font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:transform .35s var(--ease-bounce,.34 1.56 .64 1),opacity .3s;z-index:9999;pointer-events:none;}
+		.toast.show{transform:translateY(0);opacity:1;}
 	</style>
 </head>
 <body>
-  
-
-  
-
-	<!-- Adsterra Ad -->
-	<div class="shell">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-code-branch"></i> Number Base Converter</h1>
-			<p class="muted">Convert between Binary, Decimal, Hex, and Octal instantly.</p>
-		</header>
-
-		<main>
-			<div class="panel">
-				<div class="grid">
-					<div>
-						<label for="input">Enter Value</label>
-						<input id="input" placeholder="e.g. 1010 or 255">
-					</div>
-					<div>
-						<label for="from">From Base</label>
-						<select id="from">
-							<option value="2">Binary (2)</option>
-							<option value="8">Octal (8)</option>
-							<option value="10" selected>Decimal (10)</option>
-							<option value="16">Hex (16)</option>
-						</select>
-					</div>
-				</div>
-				<button onclick="convert()"><i class="fas fa-sync-alt"></i> Convert</button>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-microchip"></i> Binary / Number Base Converter</h1>
+		<p class="muted">Convert between text, binary, hex, octal, and decimal instantly.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<label style="font-weight:600;display:block;margin-bottom:.5rem;">Conversion Mode</label>
+			<div class="mode-grid" id="modeGrid">
+				<button class="mode-btn active" data-mode="txt2bin">Text → Binary</button>
+				<button class="mode-btn" data-mode="bin2txt">Binary → Text</button>
+				<button class="mode-btn" data-mode="txt2hex">Text → Hex</button>
+				<button class="mode-btn" data-mode="hex2txt">Hex → Text</button>
+				<button class="mode-btn" data-mode="txt2oct">Text → Octal</button>
+				<button class="mode-btn" data-mode="oct2txt">Octal → Text</button>
+				<button class="mode-btn" data-mode="dec2bin">Decimal → Binary</button>
+				<button class="mode-btn" data-mode="bin2dec">Binary → Decimal</button>
+				<button class="mode-btn" data-mode="dec2hex">Decimal → Hex</button>
+				<button class="mode-btn" data-mode="hex2dec">Hex → Decimal</button>
+				<button class="mode-btn" data-mode="dec2oct">Decimal → Octal</button>
+				<button class="mode-btn" data-mode="oct2dec">Octal → Decimal</button>
 			</div>
+		</div>
 
-			<div class="grid">
-				<div class="output">
-					<span class="label">Binary</span>
-					<div id="out-bin">�</div>
-				</div>
-				<div class="output">
-					<span class="label">Octal</span>
-					<div id="out-oct">�</div>
-				</div>
-				<div class="output">
-					<span class="label">Decimal</span>
-					<div id="out-dec">�</div>
-				</div>
-				<div class="output">
-					<span class="label">Hex</span>
-					<div id="out-hex">�</div>
-				</div>
+		<div class="panel">
+			<label style="font-weight:600;display:block;margin-bottom:.35rem;" id="inputLabel">Input (Text)</label>
+			<input type="text" id="input" placeholder="Type here…" autocomplete="off">
+			<div class="row">
+				<button onclick="doSwap()"><i class="fas fa-exchange-alt"></i> Swap</button>
+				<button class="secondary" onclick="copyOutput()"><i class="fas fa-copy"></i> Copy Output</button>
 			</div>
-		</main>
-	</div>
+		</div>
 
-	<script>
-		function convert() {
-			const value = document.getElementById('input').value.trim();
-			const fromBase = parseInt(document.getElementById('from').value, 10);
-			if (!value) return render('�','�','�','�');
-			try {
-				const dec = parseInt(value, fromBase);
-				if (Number.isNaN(dec)) throw new Error('Invalid');
-				render(dec.toString(2), dec.toString(8), dec.toString(10), dec.toString(16).toUpperCase());
-			} catch (e) {
-				render('Invalid input','Invalid input','Invalid input','Invalid input');
-			}
-		}
-		function render(bin, oct, dec, hex) {
-			document.getElementById('out-bin').textContent = bin;
-			document.getElementById('out-oct').textContent = oct;
-			document.getElementById('out-dec').textContent = dec;
-			document.getElementById('out-hex').textContent = hex;
-		}
-	</script>
+		<div class="panel">
+			<label style="font-weight:600;display:block;margin-bottom:.35rem;" id="outputLabel">Output (Binary)</label>
+			<div class="output-box" id="output">Result will appear here…</div>
+		</div>
+	</main>
+</div>
 
+<div class="toast" id="toast"></div>
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+<script>
+function showToast(msg,ms=2200){
+	const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+	clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),ms);
+}
 
+let currentMode='txt2bin';
+const inputEl=document.getElementById('input');
+const outputEl=document.getElementById('output');
+
+const modeLabels={
+	txt2bin:['Input (Text)','Output (Binary)'],bin2txt:['Input (Binary)','Output (Text)'],
+	txt2hex:['Input (Text)','Output (Hex)'],hex2txt:['Input (Hex)','Output (Text)'],
+	txt2oct:['Input (Text)','Output (Octal)'],oct2txt:['Input (Octal)','Output (Text)'],
+	dec2bin:['Input (Decimal)','Output (Binary)'],bin2dec:['Input (Binary)','Output (Decimal)'],
+	dec2hex:['Input (Decimal)','Output (Hex)'],hex2dec:['Input (Hex)','Output (Decimal)'],
+	dec2oct:['Input (Decimal)','Output (Octal)'],oct2dec:['Input (Octal)','Output (Decimal)']
+};
+
+const swapMap={
+	txt2bin:'bin2txt',bin2txt:'txt2bin',txt2hex:'hex2txt',hex2txt:'txt2hex',
+	txt2oct:'oct2txt',oct2txt:'txt2oct',dec2bin:'bin2dec',bin2dec:'dec2bin',
+	dec2hex:'hex2dec',hex2dec:'dec2hex',dec2oct:'oct2dec',oct2dec:'dec2oct'
+};
+
+/* Mode buttons */
+document.querySelectorAll('.mode-btn').forEach(btn=>{
+	btn.addEventListener('click',()=>{
+		document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+		btn.classList.add('active');
+		currentMode=btn.dataset.mode;
+		updateLabels();
+		convert();
+	});
+});
+
+function updateLabels(){
+	const l=modeLabels[currentMode]||['Input','Output'];
+	document.getElementById('inputLabel').textContent=l[0];
+	document.getElementById('outputLabel').textContent=l[1];
+}
+
+function setMode(mode){
+	currentMode=mode;
+	document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+	updateLabels();
+}
+
+/* Auto-convert */
+inputEl.addEventListener('input',convert);
+
+function convert(){
+	const v=inputEl.value;
+	if(!v){outputEl.textContent='Result will appear here…';return;}
+	try{
+		outputEl.textContent=doConvert(currentMode,v);
+	}catch(e){
+		outputEl.textContent='Invalid input';
+	}
+}
+
+function doConvert(mode,v){
+	switch(mode){
+		case 'txt2bin': return [...v].map(c=>c.charCodeAt(0).toString(2).padStart(8,'0')).join(' ');
+		case 'bin2txt': return v.trim().split(/\s+/).map(b=>String.fromCharCode(parseInt(b,2))).join('');
+		case 'txt2hex': return [...v].map(c=>c.charCodeAt(0).toString(16).padStart(2,'0')).join(' ');
+		case 'hex2txt': return v.trim().split(/\s+/).map(h=>String.fromCharCode(parseInt(h,16))).join('');
+		case 'txt2oct': return [...v].map(c=>c.charCodeAt(0).toString(8).padStart(3,'0')).join(' ');
+		case 'oct2txt': return v.trim().split(/\s+/).map(o=>String.fromCharCode(parseInt(o,8))).join('');
+		case 'dec2bin': return parseInt(v,10).toString(2);
+		case 'bin2dec': return parseInt(v.replace(/\s/g,''),2).toString(10);
+		case 'dec2hex': return parseInt(v,10).toString(16).toUpperCase();
+		case 'hex2dec': return parseInt(v.replace(/\s/g,''),16).toString(10);
+		case 'dec2oct': return parseInt(v,10).toString(8);
+		case 'oct2dec': return parseInt(v.replace(/\s/g,''),8).toString(10);
+		default: return '';
+	}
+}
+
+function doSwap(){
+	const newMode=swapMap[currentMode];
+	if(!newMode) return;
+	const out=outputEl.textContent;
+	if(out&&out!=='Result will appear here…'&&out!=='Invalid input'){
+		inputEl.value=out;
+	}
+	setMode(newMode);
+	convert();
+	showToast('Swapped!');
+}
+
+function copyOutput(){
+	const t=outputEl.textContent;
+	if(!t||t==='Result will appear here…'){showToast('Nothing to copy');return;}
+	navigator.clipboard.writeText(t).then(()=>showToast('Copied to clipboard!'));
+}
+</script>
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

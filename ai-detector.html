@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AI Content Detector - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
+	<style>
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		textarea{width:100%;min-height:220px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.95rem;font-family:inherit;resize:vertical;transition:border-color .2s;}
+		textarea:focus{outline:none;border-color:var(--primary);}
+		.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:.75rem;}
+		.btn{padding:.8rem 1.4rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.95rem;transition:transform .15s,box-shadow .25s;}
+		.btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.3);}
+		.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+		.btn-outline{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);}
+		.btn-outline:hover{background:var(--primary-glow);}
+		.word-count{color:var(--muted);font-size:.85rem;margin-left:auto;}
+		/* Result */
+		.result-panel{display:none;text-align:center;padding:2rem;}
+		.result-panel.active{display:block;}
+		.gauge-wrap{width:200px;height:200px;margin:0 auto 1.5rem;position:relative;}
+		.gauge-bg{fill:none;stroke:var(--border);stroke-width:12;}
+		.gauge-fill{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .8s ease,stroke .5s;}
+		.gauge-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+		.gauge-text .pct{font-size:2.5rem;font-weight:900;line-height:1;}
+		.gauge-text .label{font-size:.85rem;color:var(--muted);margin-top:.25rem;}
+		.verdict{font-size:1.4rem;font-weight:800;margin-bottom:.5rem;}
+		.verdict-desc{color:var(--muted);max-width:500px;margin:0 auto .75rem;}
+		/* Breakdown */
+		.breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem;margin-top:1.25rem;text-align:left;}
+		.metric-card{background:var(--bg-alt);border-radius:var(--radius-sm);padding:.85rem;}
+		.metric-card .m-label{font-size:.78rem;color:var(--muted);text-transform:uppercase;font-weight:600;letter-spacing:.04em;}
+		.metric-card .m-value{font-size:1.1rem;font-weight:700;margin-top:.15rem;}
+		.metric-card .m-bar{height:6px;border-radius:3px;background:var(--border);margin-top:.4rem;overflow:hidden;}
+		.metric-card .m-bar-fill{height:100%;border-radius:3px;transition:width .6s;}
+		/* Highlights */
+		.highlight-section{margin-top:1.25rem;text-align:left;}
+		.highlight-section h3{font-size:1rem;margin-bottom:.5rem;}
+		.highlighted-text{line-height:1.8;font-size:.92rem;background:var(--bg-alt);padding:1rem;border-radius:var(--radius-sm);max-height:300px;overflow-y:auto;}
+		.highlighted-text .ai-likely{background:rgba(239,68,68,.15);border-bottom:2px solid var(--error);padding:0 2px;border-radius:2px;}
+		.highlighted-text .human-likely{background:rgba(16,185,129,.1);border-bottom:2px solid var(--success);padding:0 2px;border-radius:2px;}
+		/* Info */
+		.info-box{background:var(--bg-alt);border-left:3px solid var(--primary);border-radius:var(--radius-sm);padding:.85rem 1rem;font-size:.85rem;color:var(--muted);line-height:1.6;margin-top:.75rem;}
+		.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+		.loading{display:none;align-items:center;justify-content:center;gap:.75rem;padding:2rem;font-weight:600;color:var(--muted);}
+		.loading.active{display:flex;}
+		.spinner{width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;}
+		@keyframes spin{to{transform:rotate(360deg);}}
+		@media(max-width:640px){.controls{flex-direction:column;align-items:stretch;}.word-count{margin-left:0;text-align:center;}}
+	</style>
+</head>
+<body>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-robot"></i> AI Content Detector</h1>
+		<p class="muted">Analyze text to estimate whether it was written by AI or a human.</p>
+	</header>
+	<main>
+		<!-- Input -->
+		<div class="panel">
+			<textarea id="inputText" placeholder="Paste or type text here to analyze (minimum 50 words recommended for accurate results)..."></textarea>
+			<div class="controls">
+				<button class="btn" id="analyzeBtn" onclick="analyzeText()"><i class="fas fa-search"></i> Analyze Text</button>
+				<button class="btn btn-outline" onclick="clearAll()"><i class="fas fa-trash"></i> Clear</button>
+				<button class="btn btn-outline" onclick="loadSample()"><i class="fas fa-flask"></i> Try Sample</button>
+				<span class="word-count" id="wordCount">0 words</span>
+			</div>
+			<div class="info-box">
+				<i class="fas fa-info-circle"></i> This detector uses heuristic text analysis (vocabulary diversity, sentence patterns, burstiness, perplexity indicators) to estimate AI probability. It works best with 100+ words. Results are estimates, not definitive proof.
+			</div>
+		</div>
+
+		<!-- Loading -->
+		<div class="loading" id="loading">
+			<div class="spinner"></div>
+			Analyzing text patterns...
+		</div>
+
+		<!-- Results -->
+		<div class="result-panel panel" id="resultPanel">
+			<!-- Gauge -->
+			<div class="gauge-wrap">
+				<svg viewBox="0 0 120 120" width="200" height="200">
+					<circle class="gauge-bg" cx="60" cy="60" r="52"></circle>
+					<circle class="gauge-fill" id="gaugeFill" cx="60" cy="60" r="52"
+						stroke-dasharray="326.73" stroke-dashoffset="326.73"
+						transform="rotate(-90 60 60)"></circle>
+				</svg>
+				<div class="gauge-text">
+					<span class="pct" id="gaugePct">0%</span>
+					<span class="label">AI Probability</span>
+				</div>
+			</div>
+			<div class="verdict" id="verdict">—</div>
+			<div class="verdict-desc" id="verdictDesc"></div>
+
+			<!-- Metrics -->
+			<div class="breakdown" id="breakdown"></div>
+
+			<!-- Highlighted text -->
+			<div class="highlight-section" id="highlightSection">
+				<h3><i class="fas fa-highlighter"></i> Sentence-level Analysis</h3>
+				<p style="font-size:.82rem;color:var(--muted);margin-bottom:.5rem;">
+					<span style="background:rgba(239,68,68,.15);padding:2px 6px;border-radius:3px;">Red</span> = likely AI &nbsp;
+					<span style="background:rgba(16,185,129,.1);padding:2px 6px;border-radius:3px;">Green</span> = likely human
+				</p>
+				<div class="highlighted-text" id="highlightedText"></div>
+			</div>
+		</div>
+	</main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/global.js"></script>
+<script>
+const inputText = document.getElementById('inputText');
+const wordCountEl = document.getElementById('wordCount');
+
+inputText.addEventListener('input', () => {
+	const words = getWords(inputText.value);
+	wordCountEl.textContent = words.length + ' word' + (words.length !== 1 ? 's' : '');
+});
+
+function getWords(text) {
+	return text.trim().split(/\s+/).filter(w => w.length > 0);
+}
+
+function getSentences(text) {
+	return text.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 0);
+}
+
+function clearAll() {
+	inputText.value = '';
+	wordCountEl.textContent = '0 words';
+	document.getElementById('resultPanel').classList.remove('active');
+	document.getElementById('loading').classList.remove('active');
+}
+
+function loadSample() {
+	inputText.value = `Artificial intelligence has emerged as one of the most transformative technologies of the 21st century. Its applications span across various industries, from healthcare to finance, revolutionizing the way we live and work. Machine learning algorithms have become increasingly sophisticated, enabling computers to process vast amounts of data and identify patterns that would be impossible for humans to detect. The integration of AI into everyday life has raised important questions about privacy, ethics, and the future of employment. As we continue to develop and refine these technologies, it is crucial that we consider the broader implications and work towards ensuring that the benefits of AI are distributed equitably across society. The potential for AI to address some of humanity's greatest challenges, such as climate change and disease, is immense, but so are the risks if these technologies are not properly governed and regulated.`;
+	inputText.dispatchEvent(new Event('input'));
+	showToast('Sample text loaded');
+}
+
+async function analyzeText() {
+	const text = inputText.value.trim();
+	const words = getWords(text);
+	
+	if (words.length < 20) {
+		showToast('Please enter at least 20 words for analysis');
+		return;
+	}
+
+	const btn = document.getElementById('analyzeBtn');
+	btn.disabled = true;
+	document.getElementById('resultPanel').classList.remove('active');
+	document.getElementById('loading').classList.add('active');
+
+	// Simulate processing time for UX
+	await new Promise(r => setTimeout(r, 800 + Math.random() * 700));
+
+	const result = performAnalysis(text, words);
+	displayResults(result);
+
+	document.getElementById('loading').classList.remove('active');
+	document.getElementById('resultPanel').classList.add('active');
+	btn.disabled = false;
+	showToast('Analysis complete');
+}
+
+function performAnalysis(text, words) {
+	const sentences = getSentences(text);
+	const metrics = {};
+
+	// 1. Vocabulary Diversity (Type-Token Ratio)
+	const lowerWords = words.map(w => w.toLowerCase().replace(/[^a-z']/g, '')).filter(w => w.length > 0);
+	const uniqueWords = new Set(lowerWords);
+	const ttr = uniqueWords.size / lowerWords.length;
+	// AI tends to have moderate TTR (0.4-0.6), humans more variable
+	metrics.vocabularyDiversity = {
+		value: ttr,
+		score: ttr < 0.35 ? 60 : ttr < 0.45 ? 50 : ttr < 0.55 ? 40 : ttr < 0.65 ? 25 : 15,
+		display: (ttr * 100).toFixed(1) + '%',
+		label: 'Vocabulary Diversity'
+	};
+
+	// 2. Sentence Length Uniformity (low variance = more AI-like)
+	const sentLengths = sentences.map(s => getWords(s).length);
+	const avgLen = sentLengths.reduce((a, b) => a + b, 0) / sentLengths.length;
+	const variance = sentLengths.reduce((a, b) => a + Math.pow(b - avgLen, 2), 0) / sentLengths.length;
+	const stdDev = Math.sqrt(variance);
+	const cv = avgLen > 0 ? stdDev / avgLen : 0; // coefficient of variation
+	// Low CV = uniform = AI-like
+	metrics.sentenceUniformity = {
+		value: cv,
+		score: cv < 0.2 ? 70 : cv < 0.35 ? 55 : cv < 0.5 ? 35 : cv < 0.7 ? 20 : 10,
+		display: cv.toFixed(2),
+		label: 'Sentence Uniformity'
+	};
+
+	// 3. Average Word Length (AI tends toward 4.5-5.5)
+	const avgWordLen = lowerWords.reduce((a, w) => a + w.length, 0) / lowerWords.length;
+	const wordLenScore = Math.abs(avgWordLen - 5.0) < 0.5 ? 55 : Math.abs(avgWordLen - 5.0) < 1.0 ? 40 : 25;
+	metrics.avgWordLength = {
+		value: avgWordLen,
+		score: wordLenScore,
+		display: avgWordLen.toFixed(1) + ' chars',
+		label: 'Avg Word Length'
+	};
+
+	// 4. Transition Word Density (AI uses more transitional phrases)
+	const transitions = ['however', 'furthermore', 'moreover', 'additionally', 'consequently', 'therefore', 'nevertheless', 'meanwhile', 'subsequently', 'accordingly', 'specifically', 'particularly', 'essentially', 'fundamentally', 'significantly', 'importantly', 'notably', 'interestingly', 'crucially', 'ultimately'];
+	const transCount = lowerWords.filter(w => transitions.includes(w)).length;
+	const transDensity = transCount / words.length;
+	metrics.transitionDensity = {
+		value: transDensity,
+		score: transDensity > 0.03 ? 70 : transDensity > 0.02 ? 55 : transDensity > 0.01 ? 35 : 15,
+		display: (transDensity * 100).toFixed(1) + '%',
+		label: 'Transition Density'
+	};
+
+	// 5. Punctuation Variety
+	const punctuation = text.match(/[.,!?;:—\-()[\]"']/g) || [];
+	const uniquePunct = new Set(punctuation);
+	const punctPerWord = punctuation.length / words.length;
+	// AI tends to use moderate, consistent punctuation
+	metrics.punctuationVariety = {
+		value: uniquePunct.size,
+		score: uniquePunct.size <= 4 ? 50 : uniquePunct.size <= 6 ? 35 : 20,
+		display: uniquePunct.size + ' types',
+		label: 'Punctuation Variety'
+	};
+
+	// 6. Repetitive Phrase Detection
+	const bigrams = [];
+	for (let i = 0; i < lowerWords.length - 1; i++) {
+		bigrams.push(lowerWords[i] + ' ' + lowerWords[i + 1]);
+	}
+	const bigramCounts = {};
+	bigrams.forEach(b => { bigramCounts[b] = (bigramCounts[b] || 0) + 1; });
+	const repeatedBigrams = Object.values(bigramCounts).filter(c => c > 1).length;
+	const repeatRatio = bigrams.length > 0 ? repeatedBigrams / bigrams.length : 0;
+	metrics.repetitiveness = {
+		value: repeatRatio,
+		score: repeatRatio > 0.15 ? 60 : repeatRatio > 0.08 ? 40 : 20,
+		display: (repeatRatio * 100).toFixed(1) + '%',
+		label: 'Phrase Repetition'
+	};
+
+	// 7. Burstiness (variation in paragraph/sentence complexity)
+	// Human writing tends to have more "bursty" patterns
+	const complexities = sentences.map(s => {
+		const w = getWords(s);
+		const longWords = w.filter(word => word.length > 6).length;
+		return w.length > 0 ? longWords / w.length : 0;
+	});
+	const burstVariance = complexities.length > 1 ?
+		complexities.reduce((a, b) => a + Math.pow(b - complexities.reduce((x, y) => x + y, 0) / complexities.length, 2), 0) / complexities.length : 0;
+	metrics.burstiness = {
+		value: burstVariance,
+		score: burstVariance < 0.01 ? 65 : burstVariance < 0.03 ? 45 : burstVariance < 0.05 ? 30 : 15,
+		display: burstVariance.toFixed(3),
+		label: 'Burstiness'
+	};
+
+	// 8. Filler/Hedging words (AI rarely uses these)
+	const fillers = ['um', 'uh', 'like', 'basically', 'literally', 'honestly', 'actually', 'totally', 'seriously', 'obviously', 'clearly', 'well', 'so', 'kinda', 'sorta', 'gonna', 'wanna', 'gotta', 'btw', 'tbh', 'imo', 'imho', 'lol', 'haha'];
+	const fillerCount = lowerWords.filter(w => fillers.includes(w)).length;
+	const fillerRatio = fillerCount / words.length;
+	metrics.informalLanguage = {
+		value: fillerRatio,
+		score: fillerRatio > 0.02 ? 10 : fillerRatio > 0.005 ? 25 : fillerRatio > 0 ? 40 : 55,
+		display: fillerCount + ' found',
+		label: 'Informal Language'
+	};
+
+	// Calculate overall AI probability (weighted average)
+	const weights = {
+		vocabularyDiversity: 1.0,
+		sentenceUniformity: 1.5,
+		avgWordLength: 0.5,
+		transitionDensity: 1.2,
+		punctuationVariety: 0.6,
+		repetitiveness: 0.8,
+		burstiness: 1.3,
+		informalLanguage: 1.1
+	};
+
+	let totalWeight = 0, weightedSum = 0;
+	for (const [key, m] of Object.entries(metrics)) {
+		const w = weights[key] || 1;
+		weightedSum += m.score * w;
+		totalWeight += w;
+	}
+
+	let aiProbability = Math.round(weightedSum / totalWeight);
+	
+	// Confidence adjustment based on text length
+	if (words.length < 50) aiProbability = Math.round(aiProbability * 0.7 + 50 * 0.3); // Pull toward 50% for short texts
+	
+	aiProbability = Math.max(5, Math.min(95, aiProbability)); // Clamp 5-95
+
+	// Sentence-level analysis
+	const sentenceAnalysis = sentences.map(s => {
+		const w = getWords(s);
+		const lower = w.map(x => x.toLowerCase().replace(/[^a-z']/g, ''));
+		const hasTransition = lower.some(x => transitions.includes(x));
+		const wLen = lower.reduce((a, x) => a + x.length, 0) / (lower.length || 1);
+		const isUniform = Math.abs(w.length - avgLen) < avgLen * 0.15;
+		let sentScore = 0;
+		if (hasTransition) sentScore += 25;
+		if (wLen > 4.3 && wLen < 5.7) sentScore += 20;
+		if (isUniform) sentScore += 25;
+		if (w.length > 15 && w.length < 35) sentScore += 15;
+		return { text: s, score: sentScore, isAI: sentScore >= 40 };
+	});
+
+	return { aiProbability, metrics, sentenceAnalysis, wordCount: words.length, sentenceCount: sentences.length };
+}
+
+function displayResults(result) {
+	const { aiProbability, metrics, sentenceAnalysis } = result;
+
+	// Gauge
+	const circumference = 326.73;
+	const offset = circumference - (aiProbability / 100) * circumference;
+	const gaugeFill = document.getElementById('gaugeFill');
+	gaugeFill.style.strokeDashoffset = offset;
+	
+	let gaugeColor;
+	if (aiProbability < 30) gaugeColor = '#10b981';
+	else if (aiProbability < 50) gaugeColor = '#f59e0b';
+	else if (aiProbability < 70) gaugeColor = '#f97316';
+	else gaugeColor = '#ef4444';
+	gaugeFill.style.stroke = gaugeColor;
+
+	document.getElementById('gaugePct').textContent = aiProbability + '%';
+	document.getElementById('gaugePct').style.color = gaugeColor;
+
+	// Verdict
+	const verdictEl = document.getElementById('verdict');
+	const verdictDescEl = document.getElementById('verdictDesc');
+	if (aiProbability < 25) {
+		verdictEl.textContent = 'Likely Human-Written';
+		verdictEl.style.color = '#10b981';
+		verdictDescEl.textContent = 'This text shows strong indicators of human authorship, including natural variation in sentence structure and vocabulary.';
+	} else if (aiProbability < 45) {
+		verdictEl.textContent = 'Mostly Human-Written';
+		verdictEl.style.color = '#22c55e';
+		verdictDescEl.textContent = 'This text appears to be primarily human-written, though some patterns are consistent with AI assistance.';
+	} else if (aiProbability < 55) {
+		verdictEl.textContent = 'Mixed / Uncertain';
+		verdictEl.style.color = '#f59e0b';
+		verdictDescEl.textContent = 'The analysis is inconclusive. This text may be human-written with AI editing, or AI-generated with human editing.';
+	} else if (aiProbability < 75) {
+		verdictEl.textContent = 'Likely AI-Generated';
+		verdictEl.style.color = '#f97316';
+		verdictDescEl.textContent = 'This text shows several patterns commonly associated with AI-generated content, such as uniform structure and formal language.';
+	} else {
+		verdictEl.textContent = 'Highly Likely AI-Generated';
+		verdictEl.style.color = '#ef4444';
+		verdictDescEl.textContent = 'This text exhibits strong AI writing patterns including consistent sentence length, heavy use of transitions, and formal vocabulary.';
+	}
+
+	// Breakdown metrics
+	const breakdownEl = document.getElementById('breakdown');
+	breakdownEl.innerHTML = '';
+	for (const [key, m] of Object.entries(metrics)) {
+		const barColor = m.score < 30 ? '#10b981' : m.score < 50 ? '#f59e0b' : '#ef4444';
+		breakdownEl.innerHTML += `
+			<div class="metric-card">
+				<div class="m-label">${m.label}</div>
+				<div class="m-value">${m.display}</div>
+				<div class="m-bar"><div class="m-bar-fill" style="width:${m.score}%;background:${barColor};"></div></div>
+			</div>`;
+	}
+
+	// Highlighted text
+	const htEl = document.getElementById('highlightedText');
+	htEl.innerHTML = sentenceAnalysis.map(s =>
+		`<span class="${s.isAI ? 'ai-likely' : 'human-likely'}" title="AI Score: ${s.score}">${s.text}</span> `
+	).join('');
+}
+
+function showToast(m) {
+	const t = document.getElementById('toast');
+	t.textContent = m;
+	t.classList.add('show');
+	setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

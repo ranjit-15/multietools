@@ -1,88 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>PDF Compressor - Multietools</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:900px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.badge{padding:0.45rem 0.75rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--muted);} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-	</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Compressor - Multietools</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+.panel h3{font-size:1rem;margin-bottom:.75rem;color:var(--primary);}
+.drop-zone{border:2px dashed var(--border);border-radius:var(--radius-md);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:border-color .25s,background .25s;position:relative;}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--primary);background:var(--primary-glow);}
+.drop-zone i.icon{font-size:2.5rem;color:var(--primary);margin-bottom:.75rem;display:block;}
+.drop-zone p{color:var(--muted);font-size:.95rem;}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.btn{padding:.8rem 1.2rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.9rem;transition:transform .15s,box-shadow .25s;display:inline-flex;align-items:center;gap:.4rem;}
+.btn:hover{transform:translateY(-1px);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-outline{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);}
+.form-row{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin-bottom:1rem;}
+.form-row label{font-weight:600;font-size:.85rem;color:var(--muted);display:flex;align-items:center;gap:.4rem;}
+.form-row select{padding:.6rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border-light);background:var(--bg-alt);color:var(--text);font-size:.9rem;}
+.size-compare{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:center;margin:1rem 0;}
+.size-box{padding:1.25rem;border-radius:var(--radius-md);text-align:center;border:1px solid var(--border-light);}
+.size-box.original{background:var(--bg-alt);}
+.size-box.compressed{background:var(--primary-glow);}
+.size-box .label{font-size:.8rem;color:var(--muted);font-weight:600;margin-bottom:.25rem;}
+.size-box .value{font-size:1.5rem;font-weight:800;color:var(--text);}
+.size-box .saved{font-size:.85rem;color:var(--success);font-weight:700;margin-top:.25rem;}
+.arrow{font-size:1.5rem;color:var(--primary);}
+.progress-bar{width:100%;height:6px;background:var(--border);border-radius:50px;overflow:hidden;margin-bottom:1rem;display:none;}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:50px;transition:width .3s;width:0%;}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;}
+.note{padding:.75rem 1rem;border-radius:var(--radius-sm);background:var(--bg-alt);border-left:3px solid var(--warning);font-size:.85rem;color:var(--muted);margin-top:.75rem;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:var(--radius-full,50px);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  </style>
 </head>
 <body>
-  
+<div class="wrap">
+  <header>
+    <a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+    <h1><i class="fas fa-compress-arrows-alt"></i> PDF Compressor</h1>
+    <p class="muted">Reduce PDF file size by re-rendering pages at a lower DPI. Fully client-side.</p>
+  </header>
+  <main>
+    <div class="panel">
+      <div class="drop-zone" id="dropZone">
+        <i class="fas fa-cloud-upload-alt icon"></i>
+        <p>Drag & drop a PDF here or click to browse</p>
+        <p id="fileName" style="margin-top:.5rem;font-weight:700;color:var(--text);"></p>
+        <input type="file" id="fileInput" accept="application/pdf">
+      </div>
+    </div>
 
-  
+    <div class="panel" id="optionsPanel" style="display:none;">
+      <h3><i class="fas fa-sliders-h"></i> Compression Settings</h3>
+      <div class="form-row">
+        <label><i class="fas fa-tachometer-alt"></i> Quality (DPI):</label>
+        <select id="dpiSelect">
+          <option value="72">Low (72 DPI — Max compression)</option>
+          <option value="96" selected>Medium (96 DPI — Balanced)</option>
+          <option value="120">High (120 DPI — Better quality)</option>
+          <option value="150">Minimal (150 DPI — Slight compression)</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label><i class="fas fa-image"></i> Image Quality:</label>
+        <select id="qualitySelect">
+          <option value="0.5">Low (50%)</option>
+          <option value="0.7" selected>Medium (70%)</option>
+          <option value="0.85">High (85%)</option>
+          <option value="0.95">Very High (95%)</option>
+        </select>
+      </div>
+      <div class="progress-bar" id="progressBar"><div class="fill" id="progressFill"></div></div>
+      <div class="actions">
+        <button class="btn" id="compressBtn" onclick="compressPdf()"><i class="fas fa-compress"></i> Compress</button>
+        <button class="btn btn-outline" id="downloadBtn" onclick="downloadCompressed()" disabled><i class="fas fa-download"></i> Download</button>
+      </div>
+      <div class="size-compare" id="sizeCompare" style="display:none;">
+        <div class="size-box original">
+          <div class="label">Original Size</div>
+          <div class="value" id="origSize">—</div>
+        </div>
+        <div class="arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="size-box compressed">
+          <div class="label">Compressed Size</div>
+          <div class="value" id="compSize">—</div>
+          <div class="saved" id="savedPct"></div>
+        </div>
+      </div>
+      <div class="note"><i class="fas fa-info-circle"></i> This works by re-rendering each page as a JPEG image at the chosen DPI, then assembling into a new PDF. Text will no longer be selectable. For best results on text-heavy PDFs, try "Minimal" quality.</div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="js/global.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-file-pdf"></i> PDF Compressor</h1>
-			<p class="muted">Re-save PDF to trim metadata. For heavy compression, server tools are recommended.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<input type="file" id="file" accept="application/pdf">
-					<button onclick="compress()">Compress</button>
-					<button onclick="download()">Download</button>
-					<span class="badge" id="stats">No file</span>
-				</div>
-			</div>
-		</main>
-	</div>
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function formatSize(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(2)+' MB';}
 
-	<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-	<script>
-		let compressedBytes = null;
-		let originalSize = 0;
-		const file = document.getElementById('file');
-		const stats = document.getElementById('stats');
+const dropZone=document.getElementById('dropZone');
+const fileInput=document.getElementById('fileInput');
+const fileNameEl=document.getElementById('fileName');
+const optionsPanel=document.getElementById('optionsPanel');
+let currentFile=null,compressedBytes=null;
 
-		async function compress(){
-			const f = file.files?.[0];
-			if(!f){ stats.textContent = 'Select a PDF'; return; }
-			originalSize = f.size;
-			const arrayBuffer = await f.arrayBuffer();
-			const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
-			const newPdf = await PDFLib.PDFDocument.create();
-			const pages = await newPdf.copyPages(pdf, pdf.getPageIndices());
-			pages.forEach(p=>newPdf.addPage(p));
-			// Save with default options; this strips some metadata and can reduce size slightly.
-			compressedBytes = await newPdf.save({ useObjectStreams: true });
-			stats.textContent = `Original ${(originalSize/1024).toFixed(1)} KB ? ${(compressedBytes.length/1024).toFixed(1)} KB (approx)`;
-		}
+['dragenter','dragover'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.add('dragover');}));
+['dragleave','drop'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.remove('dragover');}));
+dropZone.addEventListener('drop',ev=>{
+  const f=ev.dataTransfer.files[0];
+  if(f&&f.type==='application/pdf'){currentFile=f;handleFile();}
+  else showToast('Please drop a valid PDF');
+});
+fileInput.addEventListener('change',()=>{currentFile=fileInput.files[0];if(currentFile)handleFile();});
 
-		function download(){
-			if(!compressedBytes){ stats.textContent = 'Nothing to download'; return; }
-			const blob = new Blob([compressedBytes], {type:'application/pdf'});
-			const url = URL.createObjectURL(blob);
-			const a = document.createElement('a');
-			a.href = url; a.download = 'compressed.pdf'; a.click();
-			URL.revokeObjectURL(url);
-		}
-	</script>
+function handleFile(){
+  fileNameEl.textContent=currentFile.name;
+  optionsPanel.style.display='';
+  compressedBytes=null;
+  document.getElementById('downloadBtn').disabled=true;
+  document.getElementById('sizeCompare').style.display='none';
+}
 
+async function compressPdf(){
+  if(!currentFile){showToast('Upload a PDF first');return;}
+  const compressBtn=document.getElementById('compressBtn');
+  const downloadBtn=document.getElementById('downloadBtn');
+  const progressBar=document.getElementById('progressBar');
+  const progressFill=document.getElementById('progressFill');
+  compressBtn.disabled=true;
+  progressBar.style.display='block';progressFill.style.width='0%';
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+  try{
+    const dpi=parseInt(document.getElementById('dpiSelect').value);
+    const quality=parseFloat(document.getElementById('qualitySelect').value);
+    const scale=dpi/72; // pdf.js default is 72 DPI at scale 1
 
+    const buf=await currentFile.arrayBuffer();
+    const pdfSrc=await pdfjsLib.getDocument({data:buf}).promise;
+    const numPages=pdfSrc.numPages;
+
+    const newPdf=await PDFLib.PDFDocument.create();
+    const canvas=document.createElement('canvas');
+    const ctx=canvas.getContext('2d');
+
+    for(let i=1;i<=numPages;i++){
+      const page=await pdfSrc.getPage(i);
+      const vp=page.getViewport({scale:scale});
+      canvas.width=vp.width;canvas.height=vp.height;
+      ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);
+      await page.render({canvasContext:ctx,viewport:vp}).promise;
+
+      const jpegDataUrl=canvas.toDataURL('image/jpeg',quality);
+      const jpegBytes=Uint8Array.from(atob(jpegDataUrl.split(',')[1]),c=>c.charCodeAt(0));
+      const img=await newPdf.embedJpg(jpegBytes);
+
+      /* Maintain original page size */
+      const origVp=page.getViewport({scale:1});
+      const newPage=newPdf.addPage([origVp.width,origVp.height]);
+      newPage.drawImage(img,{x:0,y:0,width:origVp.width,height:origVp.height});
+
+      progressFill.style.width=Math.round(i/numPages*100)+'%';
+    }
+
+    compressedBytes=await newPdf.save();
+
+    /* Show size comparison */
+    const origS=currentFile.size,compS=compressedBytes.length;
+    document.getElementById('origSize').textContent=formatSize(origS);
+    document.getElementById('compSize').textContent=formatSize(compS);
+    const pct=((1-compS/origS)*100).toFixed(1);
+    document.getElementById('savedPct').textContent=pct>0?`${pct}% smaller`:`No reduction`;
+    document.getElementById('sizeCompare').style.display='grid';
+    downloadBtn.disabled=false;
+    showToast('Compression complete!');
+  }catch(e){
+    console.error(e);showToast('Compression failed: '+e.message);
+  }finally{
+    compressBtn.disabled=false;
+    setTimeout(()=>progressBar.style.display='none',800);
+  }
+}
+
+function downloadCompressed(){
+  if(!compressedBytes){showToast('Compress a PDF first');return;}
+  const name=currentFile.name.replace(/\.pdf$/i,'')+'_compressed.pdf';
+  const blob=new Blob([compressedBytes],{type:'application/pdf'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
+  URL.revokeObjectURL(a.href);showToast('Downloaded '+name);
+}
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-

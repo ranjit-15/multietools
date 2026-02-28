@@ -5,95 +5,133 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Base Encoder / Decoder - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:880px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:0.9rem;}
-		textarea{width:100%;min-height:200px;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);padding:1rem;font-size:1rem;font-family:'JetBrains Mono','Cascadia Code',monospace;}
-		select{padding:0.7rem 0.9rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--text);} 
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		textarea{width:100%;min-height:200px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.9rem;font-family:'JetBrains Mono','Cascadia Code',monospace;resize:vertical;}
+		.row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;}
+		select{padding:.65rem .9rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:.9rem;cursor:pointer;}
+		button{padding:.75rem 1.1rem;border-radius:var(--radius-sm);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-weight:700;font-size:.9rem;box-shadow:var(--shadow-sm);transition:transform .15s ease;}
+		button:hover{transform:translateY(-1px);}
+		button.secondary{background:var(--bg-alt);color:var(--text);border:1px solid var(--border);}
+		label.section{font-weight:700;display:block;margin-bottom:.4rem;}
+		.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-sm);font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:transform .35s var(--ease-bounce,.34 1.56 .64 1),opacity .3s;z-index:9999;pointer-events:none;}
+		.toast.show{transform:translateY(0);opacity:1;}
 	</style>
 </head>
 <body>
-  
-
-  
-
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-shuffle"></i> Base Encoder / Decoder</h1>
-			<p class="muted">Encode or decode Base64, Base64 URL-safe, and hex.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<textarea id="input" placeholder="Enter text or encoded data..."></textarea>
-				<div class="row">
-					<select id="mode">
-						<option value="b64e">Base64 Encode</option>
-						<option value="b64d">Base64 Decode</option>
-						<option value="b64urlE">Base64 URL-safe Encode</option>
-						<option value="b64urlD">Base64 URL-safe Decode</option>
-						<option value="hexE">Hex Encode</option>
-						<option value="hexD">Hex Decode</option>
-					</select>
-					<button onclick="convert()">Convert</button>
-					<button onclick="copyOut()"><i class="fas fa-copy"></i> Copy</button>
-				</div>
-				<textarea id="output" placeholder="Result..." readonly></textarea>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-lock"></i> Base Encoder / Decoder</h1>
+		<p class="muted">Encode &amp; decode Base64, URL, and HTML entities — auto-processes as you type.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<label class="section">Mode</label>
+			<select id="mode" onchange="process()">
+				<option value="b64e">Base64 Encode</option>
+				<option value="b64d">Base64 Decode</option>
+				<option value="urle">URL Encode</option>
+				<option value="urld">URL Decode</option>
+				<option value="htmle">HTML Encode</option>
+				<option value="htmld">HTML Decode</option>
+			</select>
+		</div>
+		<div class="panel">
+			<label class="section">Input</label>
+			<textarea id="input" placeholder="Type or paste text…" oninput="process()"></textarea>
+		</div>
+		<div class="row" style="justify-content:center;">
+			<button onclick="swapIO()" title="Swap output → input"><i class="fas fa-arrows-rotate"></i> Swap</button>
+		</div>
+		<div class="panel">
+			<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;">
+				<label class="section" style="margin:0;">Output</label>
+				<button class="secondary" onclick="copyOut()"><i class="fas fa-copy"></i> Copy</button>
 			</div>
-		</main>
-	</div>
+			<textarea id="output" placeholder="Result…" readonly></textarea>
+		</div>
+	</main>
+</div>
 
-	<script>
-		const input = document.getElementById('input');
-		const output = document.getElementById('output');
-		const mode = document.getElementById('mode');
+<div class="toast" id="toast"></div>
 
-		function toHex(str){ return Array.from(new TextEncoder().encode(str)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
-		function fromHex(hex){
-			if(hex.length % 2 !== 0) throw new Error('Invalid hex length');
-			const bytes = hex.match(/.{1,2}/g).map(b=>parseInt(b,16));
-			return new TextDecoder().decode(new Uint8Array(bytes));
+<script>
+const inputEl=document.getElementById('input');
+const outputEl=document.getElementById('output');
+const modeEl=document.getElementById('mode');
+
+function showToast(msg,ms=2200){
+	const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+	clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),ms);
+}
+
+/* UTF-8 safe Base64 */
+function b64Encode(str){
+	const bytes=new TextEncoder().encode(str);
+	let binary='';
+	bytes.forEach(b=>binary+=String.fromCharCode(b));
+	return btoa(binary);
+}
+function b64Decode(str){
+	const binary=atob(str);
+	const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));
+	return new TextDecoder().decode(bytes);
+}
+
+/* HTML entities */
+function htmlEncode(str){
+	return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function htmlDecode(str){
+	const ta=document.createElement('textarea');
+	ta.innerHTML=str;
+	return ta.value;
+}
+
+function process(){
+	const val=inputEl.value;
+	const mode=modeEl.value;
+	try{
+		let result='';
+		switch(mode){
+			case 'b64e': result=b64Encode(val); break;
+			case 'b64d': result=b64Decode(val); break;
+			case 'urle': result=encodeURIComponent(val); break;
+			case 'urld': result=decodeURIComponent(val); break;
+			case 'htmle': result=htmlEncode(val); break;
+			case 'htmld': result=htmlDecode(val); break;
 		}
+		outputEl.value=result;
+	}catch(e){
+		outputEl.value='Error: '+e.message;
+	}
+}
 
-		function convert(){
-			const val = input.value || '';
-			try{
-				let result = '';
-				switch(mode.value){
-					case 'b64e': result = btoa(unescape(encodeURIComponent(val))); break;
-					case 'b64d': result = decodeURIComponent(escape(atob(val))); break;
-					case 'b64urlE': result = btoa(unescape(encodeURIComponent(val))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); break;
-					case 'b64urlD': {
-						const padded = val.replace(/-/g,'+').replace(/_/g,'/') + '==='.slice((val.length+3)%4);
-						result = decodeURIComponent(escape(atob(padded))); break; }
-					case 'hexE': result = toHex(val); break;
-					case 'hexD': result = fromHex(val.trim()); break;
-				}
-				output.value = result;
-			} catch(e){ output.value = 'Error: ' + e.message; }
-		}
-		function copyOut(){ navigator.clipboard.writeText(output.value || ''); }
-	</script>
+function swapIO(){
+	const tmp=outputEl.value;
+	inputEl.value=tmp;
+	// Flip mode direction
+	const m=modeEl.value;
+	const pairs={b64e:'b64d',b64d:'b64e',urle:'urld',urld:'urle',htmle:'htmld',htmld:'htmle'};
+	if(pairs[m]) modeEl.value=pairs[m];
+	process();
+	showToast('Swapped!');
+}
 
-
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
-
+function copyOut(){
+	if(!outputEl.value){showToast('Nothing to copy');return;}
+	navigator.clipboard.writeText(outputEl.value).then(()=>showToast('Copied to clipboard!'));
+}
+</script>
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

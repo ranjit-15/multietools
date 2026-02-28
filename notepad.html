@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Online Notepad - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
+	<style>
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+
+		/* Toolbar */
+		.toolbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;}
+		.toolbar .btn{padding:.55rem .85rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-weight:700;font-size:.85rem;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem;}
+		.toolbar .btn:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
+		.toolbar .sep{width:1px;height:24px;background:var(--border);margin:0 .25rem;}
+		.toolbar select{padding:.5rem .7rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.85rem;font-family:inherit;}
+		.toolbar label{font-weight:700;font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.3rem;}
+
+		/* Upload */
+		.upload-label{padding:.55rem .85rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-weight:700;font-size:.85rem;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem;}
+		.upload-label:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
+		.upload-label input{display:none;}
+
+		/* Editor */
+		#editor{width:100%;min-height:500px;padding:1.25rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-alt);color:var(--text);font-size:1rem;line-height:1.8;resize:vertical;font-family:monospace;outline:none;box-shadow:var(--shadow-xs);transition:border-color .2s,box-shadow .2s;}
+		#editor:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(124,58,237,.12);}
+
+		/* Status Bar */
+		.status-bar{display:flex;flex-wrap:wrap;gap:1rem;padding:.65rem 1rem;background:var(--bg-alt);border:1px solid var(--border-light);border-radius:var(--radius-md);font-size:.82rem;font-weight:600;color:var(--muted);}
+		.status-bar span{display:inline-flex;align-items:center;gap:.3rem;}
+		.status-bar .saved-time{margin-left:auto;font-style:italic;}
+
+		/* Toast */
+		.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--primary);color:#fff;padding:.75rem 1.5rem;border-radius:var(--radius-lg);font-weight:700;font-size:.9rem;opacity:0;transition:all .3s;z-index:999;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+		@media(max-width:600px){.toolbar{gap:.35rem;} .toolbar .btn,.upload-label{padding:.45rem .65rem;font-size:.8rem;}}
+	</style>
+</head>
+<body>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-sticky-note"></i> Online Notepad</h1>
+		<p class="muted">Write, edit, and save notes in your browser. Auto-saved to local storage.</p>
+	</header>
+	<main>
+		<!-- Toolbar -->
+		<div class="panel toolbar">
+			<button class="btn" onclick="newNote()" title="New Note"><i class="fas fa-file"></i> New</button>
+			<button class="btn" onclick="manualSave()" title="Save Now"><i class="fas fa-save"></i> Save</button>
+			<div class="sep"></div>
+			<button class="btn" onclick="copyAll()" title="Copy All"><i class="fas fa-copy"></i> Copy</button>
+			<button class="btn" onclick="downloadTxt()" title="Download .txt"><i class="fas fa-download"></i> .txt</button>
+			<label class="upload-label" title="Upload TXT"><i class="fas fa-upload"></i> Upload
+				<input type="file" id="uploadFile" accept=".txt,.text,text/plain" onchange="uploadTxt(event)">
+			</label>
+			<div class="sep"></div>
+			<label>Size:
+				<select id="fontSize" onchange="applyFontSize()">
+					<option value="12px">12px</option>
+					<option value="14px">14px</option>
+					<option value="16px" selected>16px</option>
+					<option value="18px">18px</option>
+					<option value="20px">20px</option>
+				</select>
+			</label>
+			<label>Font:
+				<select id="fontFamily" onchange="applyFontFamily()">
+					<option value="'Consolas','Courier New',monospace" selected>Monospace</option>
+					<option value="'Inter',system-ui,sans-serif">Sans-serif</option>
+					<option value="Georgia,'Times New Roman',serif">Serif</option>
+				</select>
+			</label>
+		</div>
+
+		<!-- Editor -->
+		<textarea id="editor" placeholder="Start typing your notes here…" spellcheck="true"></textarea>
+
+		<!-- Status Bar -->
+		<div class="status-bar">
+			<span><i class="fas fa-font"></i> <span id="charCount">0</span> chars</span>
+			<span><i class="fas fa-paragraph"></i> <span id="wordCount">0</span> words</span>
+			<span><i class="fas fa-text-height"></i> <span id="lineCount">1</span> lines</span>
+			<span id="saveStatus"><i class="fas fa-check-circle"></i> Ready</span>
+			<span class="saved-time" id="lastSaved"></span>
+		</div>
+	</main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+	const editor = document.getElementById('editor');
+	const charCount = document.getElementById('charCount');
+	const wordCount = document.getElementById('wordCount');
+	const lineCount = document.getElementById('lineCount');
+	const saveStatus = document.getElementById('saveStatus');
+	const lastSaved = document.getElementById('lastSaved');
+	const KEY = 'mt-notepad-content';
+	const KEY_TS = 'mt-notepad-ts';
+	let saveTimer = null;
+
+	// Load saved content
+	const saved = localStorage.getItem(KEY);
+	if (saved) editor.value = saved;
+	const savedTs = localStorage.getItem(KEY_TS);
+	if (savedTs) lastSaved.textContent = 'Last saved: ' + savedTs;
+	updateCounts();
+
+	// Debounced auto-save (2 seconds)
+	editor.addEventListener('input', () => {
+		updateCounts();
+		saveStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+		clearTimeout(saveTimer);
+		saveTimer = setTimeout(() => {
+			doSave();
+		}, 2000);
+	});
+
+	function doSave() {
+		localStorage.setItem(KEY, editor.value);
+		const ts = new Date().toLocaleTimeString();
+		localStorage.setItem(KEY_TS, ts);
+		saveStatus.innerHTML = '<i class="fas fa-check-circle" style="color:var(--success);"></i> Saved';
+		lastSaved.textContent = 'Last saved: ' + ts;
+	}
+
+	function manualSave() {
+		clearTimeout(saveTimer);
+		doSave();
+		showToast('Note saved!');
+	}
+
+	function updateCounts() {
+		const val = editor.value || '';
+		charCount.textContent = val.length;
+		wordCount.textContent = val.trim() ? val.trim().split(/\s+/).length : 0;
+		lineCount.textContent = val.split(/\r?\n/).length;
+	}
+
+	function copyAll() {
+		if (!editor.value) { showToast('Nothing to copy'); return; }
+		navigator.clipboard.writeText(editor.value).then(() => showToast('Copied to clipboard!'));
+	}
+
+	function newNote() {
+		if (editor.value && !confirm('Discard current note and start fresh?')) return;
+		editor.value = '';
+		localStorage.removeItem(KEY);
+		localStorage.removeItem(KEY_TS);
+		lastSaved.textContent = '';
+		updateCounts();
+		saveStatus.innerHTML = '<i class="fas fa-check-circle"></i> Ready';
+		showToast('New note created');
+	}
+
+	function downloadTxt() {
+		const blob = new Blob([editor.value], { type: 'text/plain' });
+		const a = document.createElement('a');
+		a.href = URL.createObjectURL(blob);
+		a.download = 'notepad-' + new Date().toISOString().slice(0, 10) + '.txt';
+		a.click();
+		URL.revokeObjectURL(a.href);
+		showToast('Downloaded!');
+	}
+
+	function uploadTxt(e) {
+		const file = e.target.files[0];
+		if (!file) return;
+		const reader = new FileReader();
+		reader.onload = function(ev) {
+			editor.value = ev.target.result;
+			updateCounts();
+			doSave();
+			showToast('File loaded: ' + file.name);
+		};
+		reader.readAsText(file);
+		e.target.value = ''; // reset for re-upload
+	}
+
+	function applyFontSize() {
+		editor.style.fontSize = document.getElementById('fontSize').value;
+	}
+
+	function applyFontFamily() {
+		editor.style.fontFamily = document.getElementById('fontFamily').value;
+	}
+
+	function showToast(msg) {
+		const t = document.getElementById('toast');
+		t.textContent = msg;
+		t.classList.add('show');
+		setTimeout(() => t.classList.remove('show'), 2500);
+	}
+</script>
+<script src="js/global.js"></script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Page Deleter - Multietools</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+.panel h3{font-size:1rem;margin-bottom:.75rem;color:var(--primary);}
+.drop-zone{border:2px dashed var(--border);border-radius:var(--radius-md);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:border-color .25s,background .25s;position:relative;}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--primary);background:var(--primary-glow);}
+.drop-zone i.icon{font-size:2.5rem;color:var(--primary);margin-bottom:.75rem;display:block;}
+.drop-zone p{color:var(--muted);font-size:.95rem;}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.btn{padding:.8rem 1.2rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.9rem;transition:transform .15s,box-shadow .25s;display:inline-flex;align-items:center;gap:.4rem;}
+.btn:hover{transform:translateY(-1px);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-outline{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);}
+.btn-sm{padding:.5rem .8rem;font-size:.8rem;}
+.btn-danger{background:linear-gradient(135deg,var(--error),#f87171);color:#fff;}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;}
+.info-bar{padding:.6rem 1rem;border-radius:var(--radius-sm);background:var(--bg-alt);border:1px solid var(--border-light);font-size:.85rem;font-weight:600;margin-bottom:1rem;}
+.info-bar span{color:var(--primary);}
+.page-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1rem;margin-bottom:1rem;}
+.page-thumb{position:relative;background:var(--surface);border:2px solid var(--border-light);border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;}
+.page-thumb:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.page-thumb.selected{border-color:var(--error);background:rgba(239,68,68,.05);}
+.page-thumb canvas{width:100%;display:block;}
+.page-thumb .page-num{padding:.4rem;text-align:center;font-size:.8rem;font-weight:700;}
+.page-thumb .check{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:var(--error);color:#fff;display:none;place-items:center;font-size:.65rem;}
+.page-thumb.selected .check{display:grid;}
+.progress-bar{width:100%;height:6px;background:var(--border);border-radius:50px;overflow:hidden;margin-bottom:1rem;display:none;}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:50px;transition:width .3s;width:0%;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:var(--radius-full,50px);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+    <h1><i class="fas fa-file-circle-minus"></i> PDF Page Deleter</h1>
+    <p class="muted">Select and remove unwanted pages from a PDF. Download the cleaned file instantly.</p>
+  </header>
+  <main>
+    <!-- Upload -->
+    <div class="panel">
+      <div class="drop-zone" id="dropZone">
+        <i class="fas fa-cloud-upload-alt icon"></i>
+        <p>Drag & drop a PDF here or click to browse</p>
+        <p id="fileName" style="margin-top:.5rem;font-weight:700;color:var(--text);"></p>
+        <input type="file" id="fileInput" accept="application/pdf">
+      </div>
+    </div>
+
+    <!-- Pages Panel -->
+    <div class="panel" id="pagesPanel" style="display:none;">
+      <div class="info-bar" id="infoBar"></div>
+      <div class="actions">
+        <button class="btn btn-sm btn-outline" onclick="selectAll()"><i class="fas fa-check-double"></i> Select All</button>
+        <button class="btn btn-sm btn-outline" onclick="deselectAll()"><i class="fas fa-times"></i> Deselect All</button>
+        <button class="btn btn-danger" id="deleteBtn" onclick="deletePages()" disabled><i class="fas fa-trash"></i> Delete Selected (<span id="selCount">0</span>)</button>
+        <button class="btn btn-outline" id="downloadBtn" onclick="downloadResult()" style="display:none;"><i class="fas fa-download"></i> Download</button>
+      </div>
+      <div class="progress-bar" id="progressBar"><div class="fill" id="progressFill"></div></div>
+      <div class="page-grid" id="pageGrid"></div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="js/global.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function formatSize(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(2)+' MB';}
+
+const dropZone=document.getElementById('dropZone');
+const fileInput=document.getElementById('fileInput');
+const fileNameEl=document.getElementById('fileName');
+const pagesPanel=document.getElementById('pagesPanel');
+const infoBar=document.getElementById('infoBar');
+const pageGrid=document.getElementById('pageGrid');
+const progressBar=document.getElementById('progressBar');
+const progressFill=document.getElementById('progressFill');
+const deleteBtn=document.getElementById('deleteBtn');
+const selCountEl=document.getElementById('selCount');
+const downloadBtnEl=document.getElementById('downloadBtn');
+
+let currentFile=null, totalPages=0;
+let selectedPages=new Set();
+let resultBytes=null;
+
+['dragenter','dragover'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.add('dragover');}));
+['dragleave','drop'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.remove('dragover');}));
+dropZone.addEventListener('drop',ev=>{
+  const f=ev.dataTransfer.files[0];
+  if(f&&f.type==='application/pdf'){currentFile=f;loadPdf();}
+  else showToast('Please drop a valid PDF');
+});
+fileInput.addEventListener('change',()=>{currentFile=fileInput.files[0];if(currentFile)loadPdf();});
+
+async function loadPdf(){
+  fileNameEl.textContent=currentFile.name;
+  pagesPanel.style.display='';
+  pageGrid.innerHTML='';selectedPages.clear();resultBytes=null;
+  downloadBtnEl.style.display='none';updateSelCount();
+  progressBar.style.display='block';progressFill.style.width='0%';
+
+  try{
+    const buf=await currentFile.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    totalPages=pdf.numPages;
+    infoBar.innerHTML=`<i class="fas fa-file-pdf"></i> <span>${currentFile.name}</span> — ${totalPages} pages — ${formatSize(currentFile.size)}`;
+
+    for(let i=1;i<=totalPages;i++){
+      const page=await pdf.getPage(i);
+      const vp=page.getViewport({scale:0.5});
+      const thumb=document.createElement('div');thumb.className='page-thumb';thumb.dataset.page=i;
+      const canvas=document.createElement('canvas');canvas.width=vp.width;canvas.height=vp.height;
+      const ctx=canvas.getContext('2d');
+      await page.render({canvasContext:ctx,viewport:vp}).promise;
+      thumb.appendChild(canvas);
+      const num=document.createElement('div');num.className='page-num';num.textContent=`Page ${i}`;
+      thumb.appendChild(num);
+      const check=document.createElement('div');check.className='check';check.innerHTML='<i class="fas fa-times"></i>';
+      thumb.appendChild(check);
+      thumb.addEventListener('click',()=>togglePage(i,thumb));
+      pageGrid.appendChild(thumb);
+      progressFill.style.width=Math.round(i/totalPages*100)+'%';
+    }
+    showToast('Click pages to select them for deletion');
+  }catch(e){showToast('Error loading PDF');}
+  finally{setTimeout(()=>progressBar.style.display='none',500);}
+}
+
+function togglePage(num,el){
+  if(selectedPages.has(num)){selectedPages.delete(num);el.classList.remove('selected');}
+  else{selectedPages.add(num);el.classList.add('selected');}
+  updateSelCount();
+}
+
+function updateSelCount(){
+  selCountEl.textContent=selectedPages.size;
+  deleteBtn.disabled=selectedPages.size===0;
+}
+
+function selectAll(){
+  document.querySelectorAll('.page-thumb').forEach(el=>{
+    const p=parseInt(el.dataset.page);selectedPages.add(p);el.classList.add('selected');
+  });updateSelCount();
+}
+function deselectAll(){
+  document.querySelectorAll('.page-thumb').forEach(el=>el.classList.remove('selected'));
+  selectedPages.clear();updateSelCount();
+}
+
+async function deletePages(){
+  if(selectedPages.size===0){showToast('Select pages to delete');return;}
+  if(selectedPages.size>=totalPages){showToast('Cannot delete all pages');return;}
+  deleteBtn.disabled=true;
+
+  try{
+    const buf=await currentFile.arrayBuffer();
+    const srcDoc=await PDFLib.PDFDocument.load(buf);
+    const newDoc=await PDFLib.PDFDocument.create();
+    const keepIndices=[];
+    for(let i=0;i<totalPages;i++){if(!selectedPages.has(i+1))keepIndices.push(i);}
+    const pages=await newDoc.copyPages(srcDoc,keepIndices);
+    pages.forEach(p=>newDoc.addPage(p));
+    resultBytes=await newDoc.save();
+    downloadBtnEl.style.display='inline-flex';
+    showToast(`Deleted ${selectedPages.size} page(s). ${keepIndices.length} remaining. Click Download.`);
+  }catch(e){console.error(e);showToast('Error deleting pages: '+e.message);}
+  finally{deleteBtn.disabled=false;}
+}
+
+function downloadResult(){
+  if(!resultBytes){showToast('Delete pages first');return;}
+  const name=currentFile.name.replace(/\.pdf$/i,'')+'_edited.pdf';
+  const blob=new Blob([resultBytes],{type:'application/pdf'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
+  URL.revokeObjectURL(a.href);showToast('Downloaded '+name);
+}
+</script>
+</body>
+</html>

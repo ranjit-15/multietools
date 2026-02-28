@@ -5,85 +5,173 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>IP Lookup - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root { --bg: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); --card:#0f172a; --accent:#22c55e; --text:#e2e8f0; --muted:#94a3b8; --border:#1f2937; --radius:16px; --shadow:0 18px 50px rgba(0,0,0,0.35);} 
 		*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,-apple-system,sans-serif;min-height:100vh;background:var(--bg);color:var(--text);padding:1.5rem;}
-		.shell{max-width:900px;margin:0 auto;background:rgba(15,23,42,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,197,94,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.75rem;display:grid;gap:1.25rem;} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-		.panel{background:#0b1224;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:0.9rem;}
-		input{width:100%;padding:0.85rem 0.9rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} 
-		button{padding:0.9rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#4ade80);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;}
-		button:hover{transform:translateY(-1px);} 
-		.grid{display:grid;gap:0.75rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
-		.stat{background:#0f192b;border:1px solid var(--border);border-radius:12px;padding:0.9rem;}
-		.label{color:var(--muted);font-weight:700;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		.input-row{display:flex;gap:.6rem;flex-wrap:wrap;}
+		input[type="text"]{flex:1;min-width:200px;padding:.8rem 1rem;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:.95rem;font-family:inherit;}
+		input[type="text"]:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(124,58,237,.12);}
+		.btn{padding:.8rem 1.2rem;border-radius:var(--radius-md);border:none;cursor:pointer;font-weight:800;font-size:.9rem;transition:transform .15s;display:inline-flex;align-items:center;gap:.4rem;}
+		.btn:hover{transform:translateY(-1px);}
+		.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;box-shadow:var(--shadow-sm);}
+		.btn-outline{background:var(--surface);color:var(--text);border:1.5px solid var(--border);}
+		.btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+		.ip-hero{text-align:center;padding:1.5rem 1rem;}
+		.ip-hero .ip-label{font-size:.85rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem;}
+		.ip-hero .ip-value{font-size:2.2rem;font-weight:900;color:var(--primary);word-break:break-all;}
+		.grid{display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
+		.stat{background:var(--bg-alt);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:.9rem;}
+		.stat .label{color:var(--muted);font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.2rem;}
+		.stat .value{font-size:1rem;font-weight:600;}
+		.map-container{border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--border-light);height:300px;}
+		.map-container iframe{width:100%;height:100%;border:none;}
+		.map-placeholder{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:.9rem;background:var(--bg-alt);}
+		.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--primary);color:#fff;padding:.75rem 1.5rem;border-radius:var(--radius-lg);font-weight:700;font-size:.9rem;opacity:0;transition:all .3s;z-index:999;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+		.loading{display:none;text-align:center;padding:2rem;color:var(--muted);font-weight:600;}
+		.loading i{margin-right:.4rem;}
+		@media(max-width:500px){.ip-hero .ip-value{font-size:1.5rem;} .grid{grid-template-columns:1fr;}}
 	</style>
 </head>
 <body>
-  
-
-  
-
-	<!-- Adsterra Ad -->
-	<div class="shell">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-network-wired"></i> IP Lookup</h1>
-			<p class="muted">Find location, ISP, and timezone for any IP.</p>
-		</header>
-
-		<main>
-			<div class="panel">
-				<label for="ip">IP Address (leave blank for your IP)</label>
-				<input id="ip" placeholder="e.g. 8.8.8.8">
-				<button onclick="lookup()"><i class="fas fa-search"></i> Lookup</button>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-network-wired"></i> IP Lookup</h1>
+		<p class="muted">Find location, ISP, timezone, and map for any IP address.</p>
+	</header>
+	<main>
+		<!-- Search -->
+		<div class="panel">
+			<label style="font-weight:700;font-size:.85rem;color:var(--muted);margin-bottom:.4rem;display:block;">IP Address (leave blank for your IP)</label>
+			<div class="input-row">
+				<input type="text" id="ipInput" placeholder="e.g. 8.8.8.8">
+				<button class="btn btn-primary" onclick="lookup()"><i class="fas fa-search"></i> Lookup</button>
+				<button class="btn btn-outline" id="copyIpBtn" onclick="copyIP()" style="display:none;"><i class="fas fa-copy"></i> Copy IP</button>
 			</div>
-			<div class="grid" id="results">
-				<div class="stat"><div class="label">IP</div><div id="r-ip">—</div></div>
-				<div class="stat"><div class="label">City</div><div id="r-city">—</div></div>
-				<div class="stat"><div class="label">Region</div><div id="r-region">—</div></div>
-				<div class="stat"><div class="label">Country</div><div id="r-country">—</div></div>
-				<div class="stat"><div class="label">ISP</div><div id="r-isp">—</div></div>
-				<div class="stat"><div class="label">Timezone</div><div id="r-tz">—</div></div>
-			</div>
-		</main>
-	</div>
+		</div>
 
-	<script>
-		async function lookup() {
-			const ip = document.getElementById('ip').value.trim();
-			const url = ip ? `https://ipapi.co/${ip}/json/` : 'https://ipapi.co/json/';
-			try {
-				const res = await fetch(url);
-				const data = await res.json();
-				document.getElementById('r-ip').textContent = data.ip || '—';
-				document.getElementById('r-city').textContent = data.city || '—';
-				document.getElementById('r-region').textContent = data.region || '—';
-				document.getElementById('r-country').textContent = data.country_name || data.country || '—';
-				document.getElementById('r-isp').textContent = data.org || data.asn || '—';
-				document.getElementById('r-tz').textContent = data.timezone || '—';
-			} catch (e) {
-				alert('Lookup failed.');
+		<!-- Loading -->
+		<div class="loading" id="loading"><i class="fas fa-spinner fa-spin"></i> Looking up IP detailsâ€¦</div>
+
+		<!-- IP Hero -->
+		<div class="panel ip-hero" id="ipHero" style="display:none;">
+			<div class="ip-label">Your IP Address</div>
+			<div class="ip-value" id="ipDisplay">â€”</div>
+		</div>
+
+		<!-- Details Grid -->
+		<div class="grid" id="results" style="display:none;">
+			<div class="stat"><div class="label">City</div><div class="value" id="r-city">â€”</div></div>
+			<div class="stat"><div class="label">Region</div><div class="value" id="r-region">â€”</div></div>
+			<div class="stat"><div class="label">Country</div><div class="value" id="r-country">â€”</div></div>
+			<div class="stat"><div class="label">Timezone</div><div class="value" id="r-tz">â€”</div></div>
+			<div class="stat"><div class="label">ISP / Org</div><div class="value" id="r-isp">â€”</div></div>
+			<div class="stat"><div class="label">Latitude</div><div class="value" id="r-lat">â€”</div></div>
+			<div class="stat"><div class="label">Longitude</div><div class="value" id="r-lng">â€”</div></div>
+			<div class="stat"><div class="label">Postal Code</div><div class="value" id="r-postal">â€”</div></div>
+		</div>
+
+		<!-- Map -->
+		<div class="panel" id="mapPanel" style="display:none;">
+			<h3 style="font-size:1rem;font-weight:800;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem;"><i class="fas fa-map-marker-alt"></i> Location on Map</h3>
+			<div class="map-container" id="mapContainer">
+				<div class="map-placeholder">Map will appear after lookup</div>
+			</div>
+		</div>
+	</main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+	let currentIP = '';
+
+	async function lookup() {
+		const ipInput = document.getElementById('ipInput').value.trim();
+		const loading = document.getElementById('loading');
+		const ipHero = document.getElementById('ipHero');
+		const results = document.getElementById('results');
+		const mapPanel = document.getElementById('mapPanel');
+
+		loading.style.display = 'block';
+		ipHero.style.display = 'none';
+		results.style.display = 'none';
+		mapPanel.style.display = 'none';
+
+		try {
+			// Step 1: Get IP if not provided
+			let ip = ipInput;
+			if (!ip) {
+				const ipRes = await fetch('https://api.ipify.org?format=json');
+				const ipData = await ipRes.json();
+				ip = ipData.ip;
 			}
+
+			// Step 2: Lookup details
+			const res = await fetch(`https://ipapi.co/${ip}/json/`);
+			const d = await res.json();
+
+			if (d.error) {
+				showToast('Error: ' + (d.reason || 'Invalid IP'));
+				loading.style.display = 'none';
+				return;
+			}
+
+			currentIP = d.ip || ip;
+
+			// Populate
+			document.getElementById('ipDisplay').textContent = currentIP;
+			document.getElementById('r-city').textContent = d.city || 'â€”';
+			document.getElementById('r-region').textContent = d.region || 'â€”';
+			document.getElementById('r-country').textContent = d.country_name || d.country || 'â€”';
+			document.getElementById('r-tz').textContent = d.timezone || 'â€”';
+			document.getElementById('r-isp').textContent = d.org || d.asn || 'â€”';
+			document.getElementById('r-lat').textContent = d.latitude ?? 'â€”';
+			document.getElementById('r-lng').textContent = d.longitude ?? 'â€”';
+			document.getElementById('r-postal').textContent = d.postal || 'â€”';
+
+			// Show sections
+			loading.style.display = 'none';
+			ipHero.style.display = 'block';
+			results.style.display = 'grid';
+			document.getElementById('copyIpBtn').style.display = 'inline-flex';
+
+			// Map
+			if (d.latitude && d.longitude) {
+				mapPanel.style.display = 'block';
+				document.getElementById('mapContainer').innerHTML =
+					`<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${d.longitude-0.05},${d.latitude-0.03},${d.longitude+0.05},${d.latitude+0.03}&layer=mapnik&marker=${d.latitude},${d.longitude}" allowfullscreen loading="lazy"></iframe>`;
+			}
+
+		} catch (e) {
+			loading.style.display = 'none';
+			showToast('Lookup failed. Please check your connection.');
 		}
-		lookup();
-	</script>
+	}
 
+	function copyIP() {
+		if (!currentIP) return;
+		navigator.clipboard.writeText(currentIP).then(() => showToast('IP copied to clipboard!'));
+	}
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+	function showToast(msg) {
+		const t = document.getElementById('toast');
+		t.textContent = msg;
+		t.classList.add('show');
+		setTimeout(() => t.classList.remove('show'), 2500);
+	}
 
+	// Auto-detect on load
+	lookup();
+</script>
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

@@ -1,120 +1,216 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Palette Generator - Multietools</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:960px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:0.9rem;align-items:center;}
-		input[type=color]{width:72px;height:72px;border:none;border-radius:12px;cursor:pointer;}
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.9rem;}
-		.swatch{border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);}
-		.color{height:110px;}
-		.info{padding:0.75rem 0.9rem;background:#0f192b;display:flex;justify-content:space-between;align-items:center;font-family:'JetBrains Mono','Cascadia Code',monospace;}
-		.muted-sm{color:var(--muted);font-size:0.9rem;}
-		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-	</style>
-</head>
-<body>
-  
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palette Generator - Multietools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/global.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+.controls{display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-end;}
+.control-group{display:grid;gap:.35rem;}
+.control-group label{font-weight:700;font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.control-group input[type=color]{width:60px;height:48px;border:none;border-radius:8px;cursor:pointer;background:transparent;padding:0;}
+.control-group input[type=color]::-webkit-color-swatch-wrapper{padding:1px;}
+.control-group input[type=color]::-webkit-color-swatch{border:2px solid var(--border);border-radius:6px;}
+.control-group input[type=text]{padding:.6rem .75rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.9rem;width:110px;}
+.control-group select{padding:.6rem .75rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);color:var(--text);font-size:.9rem;min-width:180px;}
+.btn{padding:.8rem 1.2rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.9rem;transition:transform .15s;}
+.btn:hover{transform:translateY(-1px);} .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-sm{padding:.55rem .85rem;font-size:.8rem;}
+.btn-outline{background:var(--surface);border:1px solid var(--border);color:var(--text);}
+.btn-outline:hover{border-color:var(--primary);}
+.palette-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;}
+.palette-card{border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s;position:relative;}
+.palette-card:hover{transform:translateY(-3px);border-color:var(--primary);}
+.palette-color{height:120px;transition:background .3s;}
+.palette-info{padding:.75rem;background:var(--surface);display:flex;justify-content:space-between;align-items:center;}
+.palette-hex{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:.85rem;}
+.lock-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:var(--muted);transition:color .15s,border-color .15s;}
+.lock-btn.locked{color:var(--primary);border-color:var(--primary);}
+.lock-btn:hover{color:var(--primary);}
+h3{font-size:1rem;margin-bottom:.75rem;}
+.export-area{width:100%;min-height:100px;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.85rem;resize:vertical;}
+.export-controls{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style></head><body>
+<div class="wrap"><header>
+<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+<h1><i class="fas fa-palette"></i> Palette Generator</h1>
+<p class="muted">Generate harmonious color palettes with various algorithms.</p>
+</header><main>
 
-  
+<div class="panel">
+<div class="controls">
+  <div class="control-group">
+    <label>Base Color</label>
+    <input type="color" id="baseColor" value="#7c3aed">
+  </div>
+  <div class="control-group">
+    <label>HEX</label>
+    <input type="text" id="baseHex" value="#7c3aed" maxlength="7" spellcheck="false">
+  </div>
+  <div class="control-group">
+    <label>Algorithm</label>
+    <select id="algorithm">
+      <option value="complementary">Complementary</option>
+      <option value="analogous">Analogous</option>
+      <option value="triadic">Triadic</option>
+      <option value="tetradic">Tetradic</option>
+      <option value="split">Split-Complementary</option>
+      <option value="monochromatic">Monochromatic</option>
+    </select>
+  </div>
+  <button class="btn" onclick="generate()"><i class="fas fa-sync-alt"></i> Generate</button>
+  <button class="btn btn-outline" onclick="randomPalette()"><i class="fas fa-dice"></i> Random</button>
+</div>
+</div>
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-palette"></i> Palette Generator</h1>
-			<p class="muted">Generate harmonious palettes from a base color or random picks.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<div>
-						<div class="muted">Base Color</div>
-						<input type="color" id="base" value="#22d3ee">
-					</div>
-					<button onclick="buildPalette()">Generate Palette</button>
-					<button onclick="randomPalette()"><i class="fas fa-dice"></i> Random Palette</button>
-				</div>
-				<div class="swatches" id="swatches"></div>
-			</div>
-		</main>
-	</div>
+<div class="panel">
+<div class="palette-grid" id="paletteGrid"></div>
+</div>
 
-	<script>
-		const base = document.getElementById('base');
-		const swatches = document.getElementById('swatches');
+<div class="panel">
+<h3><i class="fas fa-file-export"></i> Export Palette</h3>
+<div class="export-controls">
+  <button class="btn btn-sm" onclick="exportAs('css')">CSS Variables</button>
+  <button class="btn btn-sm" onclick="exportAs('json')">JSON</button>
+  <button class="btn btn-sm" onclick="exportAs('text')">Plain Text</button>
+  <button class="btn btn-sm btn-outline" onclick="copyExport()"><i class="fas fa-copy"></i> Copy</button>
+</div>
+<textarea class="export-area" id="exportArea" readonly></textarea>
+</div>
 
-		function hexToRgb(hex){
-			const res = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex);
-			return res ? res.slice(1).map(h=>parseInt(h,16)) : [34,211,238];
-		}
-		function rgbToHex([r,g,b]){ return '#' + [r,g,b].map(n=>n.toString(16).padStart(2,'0')).join(''); }
-		function clamp(v){ return Math.max(0, Math.min(255, v)); }
+</main></div>
+<div class="toast" id="toast"></div>
+<script src="js/global.js"></script>
+<script>
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-		function lighten(rgb, factor){ return rgb.map(c=>clamp(Math.round(c + (255 - c)*factor))); }
-		function darken(rgb, factor){ return rgb.map(c=>clamp(Math.round(c*(1-factor)))); }
-		function rotate(rgb, deg){
-			// simple hue-ish shift via matrix approximation
-			const r=rgb[0]/255, g=rgb[1]/255, b=rgb[2]/255;
-			const angle = deg*Math.PI/180;
-			const cos = Math.cos(angle), sin=Math.sin(angle);
-			const nr = (0.213+cos*0.787 - sin*0.213)*r + (0.715 - cos*0.715 - sin*0.715)*g + (0.072 - cos*0.072 + sin*0.928)*b;
-			const ng = (0.213 - cos*0.213 + sin*0.143)*r + (0.715 + cos*0.285 + sin*0.140)*g + (0.072 - cos*0.072 - sin*0.283)*b;
-			const nb = (0.213 - cos*0.213 - sin*0.787)*r + (0.715 - cos*0.715 + sin*0.715)*g + (0.072 + cos*0.928 + sin*0.072)*b;
-			return [nr,ng,nb].map(x=>clamp(Math.round(x*255)));
-		}
+const baseColor=document.getElementById('baseColor');
+const baseHex=document.getElementById('baseHex');
+const algorithm=document.getElementById('algorithm');
+const paletteGrid=document.getElementById('paletteGrid');
+const exportArea=document.getElementById('exportArea');
 
-		function buildPalette(){
-			const baseRgb = hexToRgb(base.value);
-			const palette = [
-				baseRgb,
-				lighten(baseRgb, 0.15),
-				darken(baseRgb, 0.2),
-				rotate(baseRgb, 40),
-				rotate(baseRgb, -40)
-			];
-			render(palette);
-		}
+let palette=[];
+let locks={};
 
-		function randomPalette(){
-			const random = '#'+crypto.getRandomValues(new Uint32Array(1))[0].toString(16).slice(-6).padStart(6,'0');
-			base.value = random;
-			buildPalette();
-		}
+function hexToHsl(hex){
+  hex=hex.replace('#','');
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  const r=parseInt(hex.substring(0,2),16)/255;
+  const g=parseInt(hex.substring(2,4),16)/255;
+  const b=parseInt(hex.substring(4,6),16)/255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b);
+  let h,s,l=(max+min)/2;
+  if(max===min){h=s=0;}else{
+    const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);
+    switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break;}
+    h*=60;
+  }
+  return[h,s*100,l*100];
+}
 
-		function render(list){
-			swatches.innerHTML = list.map(c=>{
-				const hex = rgbToHex(c);
-				return `<div class="swatch"><div class="color" style="background:${hex}"></div><div class="info"><span>${hex}</span><button onclick=\"navigator.clipboard.writeText('${hex}')\">Copy</button></div></div>`;
-			}).join('');
-		}
+function hslToHex(h,s,l){
+  h=((h%360)+360)%360;s/=100;l/=100;
+  const a=s*Math.min(l,1-l);
+  const f=n=>{const k=(n+h/30)%12;return l-a*Math.max(Math.min(k-3,9-k,1),-1);};
+  return '#'+[f(0),f(8),f(4)].map(x=>Math.round(Math.max(0,Math.min(1,x))*255).toString(16).padStart(2,'0')).join('');
+}
 
-		base.addEventListener('input', buildPalette);
-		buildPalette();
-	</script>
+function generatePalette(hex,algo){
+  const[h,s,l]=hexToHsl(hex);
+  switch(algo){
+    case 'complementary':
+      return[{h,s,l},{h:(h+180)%360,s,l},{h,s:Math.max(0,s-15),l:Math.min(100,l+15)},{h:(h+180)%360,s:Math.max(0,s-15),l:Math.min(100,l+15)},{h:(h+180)%360,s,l:Math.max(0,l-15)}];
+    case 'analogous':
+      return[{h:(h-30+360)%360,s,l},{h:(h-15+360)%360,s,l},{h,s,l},{h:(h+15)%360,s,l},{h:(h+30)%360,s,l}];
+    case 'triadic':
+      return[{h,s,l},{h:(h+120)%360,s,l},{h:(h+240)%360,s,l},{h:(h+120)%360,s:Math.max(0,s-20),l:Math.min(100,l+10)},{h:(h+240)%360,s:Math.max(0,s-20),l:Math.min(100,l+10)}];
+    case 'tetradic':
+      return[{h,s,l},{h:(h+90)%360,s,l},{h:(h+180)%360,s,l},{h:(h+270)%360,s,l},{h,s:Math.max(0,s-20),l:Math.min(100,l+20)}];
+    case 'split':
+      return[{h,s,l},{h:(h+150)%360,s,l},{h:(h+210)%360,s,l},{h:(h+150)%360,s,l:Math.min(100,l+15)},{h:(h+210)%360,s,l:Math.max(0,l-15)}];
+    case 'monochromatic':
+      return[{h,s,l:Math.max(0,l-30)},{h,s,l:Math.max(0,l-15)},{h,s,l},{h,s,l:Math.min(100,l+15)},{h,s,l:Math.min(100,l+30)}];
+    default:return[{h,s,l}];
+  }
+}
 
+function generate(){
+  const hslColors=generatePalette(baseColor.value,algorithm.value);
+  palette=hslColors.map((c,i)=>{
+    if(locks[i])return palette[i];
+    return hslToHex(c.h,c.s,c.l);
+  });
+  renderPalette();
+  exportAs('css');
+}
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+function renderPalette(){
+  paletteGrid.innerHTML=palette.map((hex,i)=>{
+    const isLocked=!!locks[i];
+    const lum=relativeLum(hex);
+    const textColor=lum>0.179?'#000':'#fff';
+    return `<div class="palette-card" onclick="copyColor('${hex}')">
+      <div class="palette-color" style="background:${hex};color:${textColor};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;">${hex}</div>
+      <div class="palette-info">
+        <span class="palette-hex">${hex}</span>
+        <button class="lock-btn ${isLocked?'locked':''}" onclick="event.stopPropagation();toggleLock(${i})" title="${isLocked?'Unlock':'Lock'}">
+          <i class="fas fa-${isLocked?'lock':'lock-open'}"></i>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
 
-</body>
-</html>
+function relativeLum(hex){
+  hex=hex.replace('#','');
+  const r=parseInt(hex.substring(0,2),16)/255;
+  const g=parseInt(hex.substring(2,4),16)/255;
+  const b=parseInt(hex.substring(4,6),16)/255;
+  const[rs,gs,bs]=[r,g,b].map(c=>c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4));
+  return 0.2126*rs+0.7152*gs+0.0722*bs;
+}
 
+function toggleLock(i){locks[i]=!locks[i];renderPalette();}
+function copyColor(hex){navigator.clipboard.writeText(hex);showToast(hex+' copied!');}
 
+function randomPalette(){
+  const hex='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');
+  baseColor.value=hex;baseHex.value=hex;
+  const algos=['complementary','analogous','triadic','tetradic','split','monochromatic'];
+  algorithm.value=algos[Math.floor(Math.random()*algos.length)];
+  locks={};generate();showToast('Random palette generated!');
+}
 
+function exportAs(format){
+  let output='';
+  switch(format){
+    case 'css':
+      output=':root {\n'+palette.map((hex,i)=>`  --color-${i+1}: ${hex};`).join('\n')+'\n}';break;
+    case 'json':
+      output=JSON.stringify({palette:palette},null,2);break;
+    case 'text':
+      output=palette.join('\n');break;
+  }
+  exportArea.value=output;
+}
+function copyExport(){navigator.clipboard.writeText(exportArea.value);showToast('Exported palette copied!');}
 
+baseColor.addEventListener('input',()=>{baseHex.value=baseColor.value;generate();});
+baseHex.addEventListener('input',()=>{
+  let v=baseHex.value.trim();if(v[0]!=='#')v='#'+v;
+  if(/^#[\da-f]{6}$/i.test(v)){baseColor.value=v;generate();}
+});
+algorithm.addEventListener('change',()=>{locks={};generate();});
 
-
-
-
+generate();
+</script></body></html>

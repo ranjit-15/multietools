@@ -1,431 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speech to Text - Tools Hub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            min-height: 100vh;
-            padding: 2rem;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: white;
-            text-decoration: none;
-            padding: 0.75rem 1.5rem;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            transition: all 0.3s;
-            margin-bottom: 1rem;
-        }
-
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .content {
-            padding: 2rem;
-        }
-
-        .ad-container {
-            text-align: center;
-            margin: 1rem 0;
-            padding: 1rem;
-            background: #f8fafc;
-            border-radius: 12px;
-        }
-
-        .microphone-container {
-            text-align: center;
-            padding: 3rem 2rem;
-            background: #f8fafc;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-        }
-
-        .mic-button {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: none;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            font-size: 3rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
-            position: relative;
-        }
-
-        .mic-button:hover {
-            transform: scale(1.05);
-        }
-
-        .mic-button.recording {
-            animation: pulse 1.5s infinite;
-            background: #ef4444;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-            }
-            50% {
-                box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
-            }
-        }
-
-        .status {
-            margin-top: 1rem;
-            font-size: 1.1rem;
-            color: #64748b;
-            font-weight: 600;
-        }
-
-        .status.recording {
-            color: #ef4444;
-        }
-
-        .language-select {
-            margin-bottom: 2rem;
-        }
-
-        .language-select select {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .output-container {
-            background: #f8fafc;
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 2px solid #e2e8f0;
-            margin-bottom: 1rem;
-        }
-
-        .output-container h3 {
-            color: #f093fb;
-            margin-bottom: 1rem;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 200px;
-            padding: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            resize: vertical;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 1rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #059669;
-        }
-
-        .btn-secondary {
-            background: #ef4444;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #dc2626;
-        }
-
-        .btn-info {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-info:hover {
-            background: #2563eb;
-        }
-
-        .instructions {
-            background: #fff7ed;
-            padding: 1.5rem;
-            border-radius: 12px;
-            border-left: 4px solid #f59e0b;
-        }
-
-        .instructions h4 {
-            color: #f59e0b;
-            margin-bottom: 1rem;
-        }
-
-        .instructions ul {
-            margin-left: 1.5rem;
-            color: #78350f;
-        }
-
-        @media (max-width: 768px) {
-            .mic-button {
-                width: 120px;
-                height: 120px;
-                font-size: 2.5rem;
-            }
-
-            .btn-group {
-                flex-direction: column;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speech to Text - Multietools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/global.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+textarea{width:100%;min-height:180px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.95rem;font-family:inherit;resize:vertical;}
+.mic-area{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1.5rem 0;}
+.mic-btn{width:110px;height:110px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-size:2.4rem;cursor:pointer;box-shadow:var(--shadow-md);transition:transform .2s,box-shadow .2s;position:relative;}
+.mic-btn:hover{transform:scale(1.05);}
+.mic-btn.recording{background:linear-gradient(135deg,#ef4444,#f87171);animation:pulse 1.4s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.6);}50%{box-shadow:0 0 0 18px rgba(239,68,68,0);}}
+.status{font-size:1rem;font-weight:600;color:var(--muted);}
+.status.active{color:#ef4444;}
+.interim{color:var(--primary-light);font-style:italic;}
+.row{display:flex;flex-wrap:wrap;gap:.65rem;align-items:center;}
+.field{display:flex;flex-direction:column;gap:.3rem;}
+.field label{font-weight:700;font-size:.82rem;color:var(--muted);}
+select{padding:.6rem .85rem;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:.9rem;font-family:inherit;}
+button{padding:.75rem 1.1rem;border-radius:var(--radius-md);border:none;cursor:pointer;font-weight:700;font-size:.88rem;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;box-shadow:var(--shadow-sm);transition:transform .15s ease,box-shadow .15s ease;}
+button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.compat-notice{background:var(--warning);color:#fff;padding:1rem 1.25rem;border-radius:var(--radius-md);font-weight:600;text-align:center;display:none;}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-md);font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:all .35s var(--ease-bounce);z-index:999;}
+.toast.show{transform:translateY(0);opacity:1;}
+</style>
 </head>
 <body>
-  
+<div class="wrap">
+<header>
+<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+<h1><i class="fas fa-microphone"></i> Speech to Text</h1>
+<p class="muted">Convert spoken words into text using your browser's Web Speech API.</p>
+</header>
+<main>
+<div class="compat-notice" id="compat"><i class="fas fa-exclamation-triangle"></i> Your browser does not support the Web Speech API. Please use Chrome, Edge, or Safari.</div>
+<div class="panel" id="mainPanel">
+<div class="row">
+<div class="field"><label for="lang">Language</label>
+<select id="lang">
+<option value="en-US">English (US)</option>
+<option value="es-ES">Spanish</option>
+<option value="fr-FR">French</option>
+<option value="de-DE">German</option>
+<option value="hi-IN">Hindi</option>
+<option value="pt-BR">Portuguese (BR)</option>
+<option value="ja-JP">Japanese</option>
+<option value="zh-CN">Chinese (Mandarin)</option>
+</select></div>
+</div>
+<div class="mic-area">
+<button class="mic-btn" id="micBtn" onclick="toggleRec()"><i class="fas fa-microphone"></i></button>
+<div class="status" id="status">Click to start recording</div>
+</div>
+<div id="interimBox" class="interim" style="min-height:1.2rem;padding:0 .25rem;font-size:.9rem;"></div>
+<textarea id="output" placeholder="Transcribed text will appear here…"></textarea>
+<div class="row" style="margin-top:.5rem;">
+<button onclick="copyOut()"><i class="fas fa-copy"></i> Copy</button>
+<button onclick="clearOut()"><i class="fas fa-eraser"></i> Clear</button>
+</div>
+</div>
+</main>
+</div>
+<div class="toast" id="toast"></div>
 
-  
+<script>
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+const micBtn=document.getElementById('micBtn');
+const statusEl=document.getElementById('status');
+const interimBox=document.getElementById('interimBox');
+const outEl=document.getElementById('output');
+let recognition,isRecording=false;
 
-    <div class="container">
-        <div class="header">
-            <a href="index.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                Back to Home
-            </a>
-            <h1><i class="fas fa-microphone"></i> Speech to Text</h1>
-            <p>Convert your speech to text in real-time</p>
-        </div>
+if(!SpeechRecognition){
+  document.getElementById('compat').style.display='block';
+  document.getElementById('mainPanel').style.opacity='.4';
+  document.getElementById('mainPanel').style.pointerEvents='none';
+} else {
+  recognition=new SpeechRecognition();
+  recognition.continuous=true;
+  recognition.interimResults=true;
 
-        <div class="content">
-            <!-- Adsterra Ad -->
-            <div class="language-select">
-                <label for="language" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Select Language:</label>
-                <select id="language">
-                    <option value="en-US">English (US)</option>
-                    <option value="en-GB">English (UK)</option>
-                    <option value="es-ES">Spanish</option>
-                    <option value="fr-FR">French</option>
-                    <option value="de-DE">German</option>
-                    <option value="it-IT">Italian</option>
-                    <option value="pt-BR">Portuguese (Brazil)</option>
-                    <option value="ru-RU">Russian</option>
-                    <option value="zh-CN">Chinese (Simplified)</option>
-                    <option value="ja-JP">Japanese</option>
-                    <option value="ko-KR">Korean</option>
-                    <option value="ar-SA">Arabic</option>
-                    <option value="hi-IN">Hindi</option>
-                </select>
-            </div>
+  recognition.onresult=function(e){
+    let interim='',final='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const transcript=e.results[i][0].transcript;
+      if(e.results[i].isFinal) final+=transcript;
+      else interim+=transcript;
+    }
+    if(final) outEl.value+=final;
+    interimBox.textContent=interim;
+  };
 
-            <div class="microphone-container">
-                <button class="mic-button" id="mic-button" onclick="toggleRecording()">
-                    <i class="fas fa-microphone" id="mic-icon"></i>
-                </button>
-                <div class="status" id="status">Click the microphone to start</div>
-            </div>
+  recognition.onerror=function(e){
+    if(e.error==='no-speech') return;
+    showToast('Error: '+e.error);stopRec();
+  };
 
-            <div class="output-container">
-                <h3><i class="fas fa-align-left"></i> Transcribed Text:</h3>
-                <textarea id="output" placeholder="Your speech will appear here..."></textarea>
-            </div>
+  recognition.onend=function(){
+    if(isRecording){
+      // restart for continuous experience
+      try{recognition.start();}catch(ex){}
+    }
+  };
+}
 
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="copyText()">
-                    <i class="fas fa-copy"></i> Copy Text
-                </button>
-                <button class="btn btn-info" onclick="downloadText()">
-                    <i class="fas fa-download"></i> Download
-                </button>
-                <button class="btn btn-secondary" onclick="clearText()">
-                    <i class="fas fa-trash"></i> Clear
-                </button>
-            </div>
+function toggleRec(){isRecording?stopRec():startRec();}
 
-            <div class="instructions" style="margin-top: 2rem;">
-                <h4><i class="fas fa-info-circle"></i> Tips for Better Recognition:</h4>
-                <ul>
-                    <li>Speak clearly and at a moderate pace</li>
-                    <li>Use a good quality microphone</li>
-                    <li>Minimize background noise</li>
-                    <li>Allow microphone permissions when prompted</li>
-                    <li>Punctuation can be added manually after transcription</li>
-                </ul>
-            </div>
-        </div>
-    </div>
+function startRec(){
+  if(!recognition)return;
+  recognition.lang=document.getElementById('lang').value;
+  try{recognition.start();}catch(ex){}
+  isRecording=true;
+  micBtn.classList.add('recording');
+  statusEl.textContent='Listening…';statusEl.classList.add('active');
+  showToast('Recording started');
+}
 
-    <script>
-        let recognition;
-        let isRecording = false;
+function stopRec(){
+  if(!recognition)return;
+  isRecording=false;
+  try{recognition.stop();}catch(ex){}
+  micBtn.classList.remove('recording');
+  statusEl.textContent='Click to start recording';statusEl.classList.remove('active');
+  interimBox.textContent='';
+  showToast('Recording stopped');
+}
 
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true;
+function copyOut(){
+  if(!outEl.value){showToast('Nothing to copy');return;}
+  navigator.clipboard.writeText(outEl.value).then(()=>showToast('Copied!'));
+}
+function clearOut(){outEl.value='';interimBox.textContent='';showToast('Cleared');}
 
-            recognition.onstart = function() {
-                isRecording = true;
-                document.getElementById('mic-button').classList.add('recording');
-                document.getElementById('status').textContent = 'Listening...';
-                document.getElementById('status').classList.add('recording');
-            };
-
-            recognition.onresult = function(event) {
-                let interimTranscript = '';
-                let finalTranscript = '';
-
-                for (let i = event.resultIndex; i < event.results.length; i++) {
-                    const transcript = event.results[i][0].transcript;
-                    if (event.results[i].isFinal) {
-                        finalTranscript += transcript + ' ';
-                    } else {
-                        interimTranscript += transcript;
-                    }
-                }
-
-                const output = document.getElementById('output');
-                if (finalTranscript) {
-                    output.value += finalTranscript;
-                }
-            };
-
-            recognition.onerror = function(event) {
-                console.error('Speech recognition error:', event.error);
-                if (event.error === 'no-speech') {
-                    document.getElementById('status').textContent = 'No speech detected. Try again.';
-                } else {
-                    document.getElementById('status').textContent = 'Error: ' + event.error;
-                }
-            };
-
-            recognition.onend = function() {
-                if (isRecording) {
-                    recognition.start();
-                } else {
-                    document.getElementById('mic-button').classList.remove('recording');
-                    document.getElementById('status').textContent = 'Click the microphone to start';
-                    document.getElementById('status').classList.remove('recording');
-                }
-            };
-        } else {
-            document.getElementById('status').textContent = 'Speech recognition not supported in this browser';
-            document.getElementById('mic-button').disabled = true;
-        }
-
-        function toggleRecording() {
-            if (!recognition) return;
-
-            if (isRecording) {
-                isRecording = false;
-                recognition.stop();
-            } else {
-                const language = document.getElementById('language').value;
-                recognition.lang = language;
-                recognition.start();
-            }
-        }
-
-        function copyText() {
-            const output = document.getElementById('output');
-            if (!output.value) {
-                alert('No text to copy!');
-                return;
-            }
-            output.select();
-            navigator.clipboard.writeText(output.value).then(() => {
-                alert('Text copied to clipboard!');
-            });
-        }
-
-        function downloadText() {
-            const text = document.getElementById('output').value;
-            if (!text) {
-                alert('No text to download!');
-                return;
-            }
-
-            const blob = new Blob([text], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'transcription.txt';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function clearText() {
-            if (confirm('Clear all text?')) {
-                document.getElementById('output').value = '';
-            }
-        }
-    </script>
-
-
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
-
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+</script>
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

@@ -5,87 +5,168 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Percentage Calculator - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root { --bg: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); --card:#0f172a; --accent:#22c55e; --text:#e2e8f0; --muted:#94a3b8; --border:#1f2937; --radius:16px; --shadow:0 18px 50px rgba(0,0,0,0.35);} 
 		*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,-apple-system,sans-serif;min-height:100vh;background:var(--bg);color:var(--text);padding:1.5rem;}
-		.shell{max-width:960px;margin:0 auto;background:rgba(15,23,42,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,197,94,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.75rem;display:grid;gap:1.25rem;} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-		.panel{background:#0b1224;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:0.9rem;}
-		label{font-weight:700;color:var(--text);} input{width:100%;padding:0.85rem 0.9rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} 
-		button{padding:0.9rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#4ade80);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;}
-		button:hover{transform:translateY(-1px);} 
-		.result{background:#0f192b;border:1px solid var(--border);border-radius:12px;padding:1rem;font-weight:800;}
-		.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+
+		.panel h2{font-size:1.1rem;margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;}
+		.panel h2 i{color:var(--primary);font-size:.95rem;}
+
+		.calc-row{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-size:1rem;font-weight:500;}
+		.calc-row input{width:110px;padding:.6rem .75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:1rem;font-family:inherit;text-align:center;}
+		.calc-row input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
+
+		.result-line{display:flex;align-items:center;gap:.6rem;margin-top:.75rem;padding:.65rem 1rem;border-radius:var(--radius-sm);background:var(--bg-alt);border:1px solid var(--border-light);font-weight:700;font-size:1.05rem;min-height:42px;}
+		.result-line .val{flex:1;color:var(--primary);font-size:1.15rem;}
+		.copy-btn{padding:.4rem .7rem;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;cursor:pointer;font-size:.8rem;font-weight:700;transition:transform .15s;}
+		.copy-btn:hover{transform:translateY(-1px);}
+
+		@media(max-width:500px){.calc-row input{width:80px;}}
+
+		.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 	</style>
 </head>
 <body>
-  
-
-  
-
-	<!-- Adsterra Ad -->
-	<div class="shell">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-percentage"></i> Percentage Calculator</h1>
-			<p class="muted">Find percentages, percentage change, and reverse values quickly.</p>
-		</header>
-
-		<main>
-			<div class="grid">
-				<div class="panel">
-					<h3>Find X% of Y</h3>
-					<label>Percentage (%)</label>
-					<input id="p1" type="number" value="15">
-					<label>Number</label>
-					<input id="n1" type="number" value="200">
-					<button onclick="calc1()">Calculate</button>
-					<div class="result" id="r1">�</div>
-				</div>
-				<div class="panel">
-					<h3>What percent is A of B?</h3>
-					<label>A</label>
-					<input id="a2" type="number" value="30">
-					<label>B</label>
-					<input id="b2" type="number" value="200">
-					<button onclick="calc2()">Calculate</button>
-					<div class="result" id="r2">�</div>
-				</div>
-				<div class="panel">
-					<h3>Percentage Change</h3>
-					<label>From</label>
-					<input id="from3" type="number" value="80">
-					<label>To</label>
-					<input id="to3" type="number" value="100">
-					<button onclick="calc3()">Calculate</button>
-					<div class="result" id="r3">�</div>
-				</div>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-percent"></i> Percentage Calculator</h1>
+		<p class="muted">Four handy percentage calculations — results update as you type.</p>
+	</header>
+	<main>
+		<!-- Mode 1: X% of Y -->
+		<div class="panel">
+			<h2><i class="fas fa-calculator"></i> What is X% of Y?</h2>
+			<div class="calc-row">
+				What is <input type="number" id="m1x" placeholder="X" step="any"> % of <input type="number" id="m1y" placeholder="Y" step="any"> ?
 			</div>
-		</main>
-	</div>
+			<div class="result-line">
+				<span>= </span><span class="val" id="m1r">—</span>
+				<button class="copy-btn" onclick="copyResult('m1r')"><i class="fas fa-copy"></i> Copy</button>
+			</div>
+		</div>
 
-	<script>
-		function calc1(){ const p = +document.getElementById('p1').value; const n = +document.getElementById('n1').value; document.getElementById('r1').textContent = (n * p / 100).toFixed(2); }
-		function calc2(){ const a = +document.getElementById('a2').value; const b = +document.getElementById('b2').value; if(b===0) return document.getElementById('r2').textContent='�'; document.getElementById('r2').textContent = ((a/b)*100).toFixed(2) + '%'; }
-		function calc3(){ const f = +document.getElementById('from3').value; const t = +document.getElementById('to3').value; if(f===0) return document.getElementById('r3').textContent='�'; const diff = ((t-f)/f)*100; document.getElementById('r3').textContent = diff.toFixed(2) + '%'; }
-		calc1(); calc2(); calc3();
-	</script>
+		<!-- Mode 2: X is what % of Y -->
+		<div class="panel">
+			<h2><i class="fas fa-question-circle"></i> X is what % of Y?</h2>
+			<div class="calc-row">
+				<input type="number" id="m2x" placeholder="X" step="any"> is what % of <input type="number" id="m2y" placeholder="Y" step="any"> ?
+			</div>
+			<div class="result-line">
+				<span>= </span><span class="val" id="m2r">—</span>
+				<button class="copy-btn" onclick="copyResult('m2r')"><i class="fas fa-copy"></i> Copy</button>
+			</div>
+		</div>
 
+		<!-- Mode 3: % change from X to Y -->
+		<div class="panel">
+			<h2><i class="fas fa-chart-line"></i> Percentage change from X to Y</h2>
+			<div class="calc-row">
+				From <input type="number" id="m3x" placeholder="X" step="any"> to <input type="number" id="m3y" placeholder="Y" step="any">
+			</div>
+			<div class="result-line">
+				<span>= </span><span class="val" id="m3r">—</span>
+				<button class="copy-btn" onclick="copyResult('m3r')"><i class="fas fa-copy"></i> Copy</button>
+			</div>
+		</div>
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+		<!-- Mode 4: Increase/Decrease X by Y% -->
+		<div class="panel">
+			<h2><i class="fas fa-arrows-alt-v"></i> Increase / Decrease X by Y%</h2>
+			<div class="calc-row">
+				<input type="number" id="m4x" placeholder="X" step="any">
+				<select id="m4dir" style="padding:.6rem .5rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-family:inherit;font-weight:600;">
+					<option value="increase">+ Increase</option>
+					<option value="decrease">− Decrease</option>
+				</select>
+				by <input type="number" id="m4y" placeholder="Y" step="any"> %
+			</div>
+			<div class="result-line">
+				<span>= </span><span class="val" id="m4r">—</span>
+				<button class="copy-btn" onclick="copyResult('m4r')"><i class="fas fa-copy"></i> Copy</button>
+			</div>
+		</div>
+	</main>
+</div>
 
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+function copyResult(id) {
+	const val = document.getElementById(id).textContent;
+	if (!val || val === '—') { showToast('Nothing to copy!'); return; }
+	navigator.clipboard.writeText(val);
+	showToast('Copied: ' + val);
+}
+
+// --- Mode 1: X% of Y ---
+document.getElementById('m1x').addEventListener('input', calcM1);
+document.getElementById('m1y').addEventListener('input', calcM1);
+function calcM1() {
+	const x = parseFloat(document.getElementById('m1x').value);
+	const y = parseFloat(document.getElementById('m1y').value);
+	document.getElementById('m1r').textContent = (!isNaN(x) && !isNaN(y)) ? round((x / 100) * y) : '—';
+}
+
+// --- Mode 2: X is what % of Y ---
+document.getElementById('m2x').addEventListener('input', calcM2);
+document.getElementById('m2y').addEventListener('input', calcM2);
+function calcM2() {
+	const x = parseFloat(document.getElementById('m2x').value);
+	const y = parseFloat(document.getElementById('m2y').value);
+	if (!isNaN(x) && !isNaN(y) && y !== 0) {
+		document.getElementById('m2r').textContent = round((x / y) * 100) + '%';
+	} else {
+		document.getElementById('m2r').textContent = '—';
+	}
+}
+
+// --- Mode 3: % change from X to Y ---
+document.getElementById('m3x').addEventListener('input', calcM3);
+document.getElementById('m3y').addEventListener('input', calcM3);
+function calcM3() {
+	const x = parseFloat(document.getElementById('m3x').value);
+	const y = parseFloat(document.getElementById('m3y').value);
+	if (!isNaN(x) && !isNaN(y) && x !== 0) {
+		const change = ((y - x) / Math.abs(x)) * 100;
+		const prefix = change >= 0 ? '+' : '';
+		document.getElementById('m3r').textContent = prefix + round(change) + '%';
+	} else {
+		document.getElementById('m3r').textContent = '—';
+	}
+}
+
+// --- Mode 4: Increase/Decrease X by Y% ---
+document.getElementById('m4x').addEventListener('input', calcM4);
+document.getElementById('m4y').addEventListener('input', calcM4);
+document.getElementById('m4dir').addEventListener('change', calcM4);
+function calcM4() {
+	const x = parseFloat(document.getElementById('m4x').value);
+	const y = parseFloat(document.getElementById('m4y').value);
+	const dir = document.getElementById('m4dir').value;
+	if (!isNaN(x) && !isNaN(y)) {
+		const factor = dir === 'increase' ? (1 + y / 100) : (1 - y / 100);
+		document.getElementById('m4r').textContent = round(x * factor);
+	} else {
+		document.getElementById('m4r').textContent = '—';
+	}
+}
+
+function round(n) {
+	return parseFloat(n.toFixed(6)).toString();
+}
+</script>
+
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

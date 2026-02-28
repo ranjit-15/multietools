@@ -5,80 +5,135 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>UUID Generator - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 10% 20%,rgba(34,211,238,0.18),transparent 30%),radial-gradient(circle at 80% 5%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:720px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:0.9rem;}
-		input[type=number]{width:110px;padding:0.65rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--text);} label{color:var(--muted);font-weight:600;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} 
-		textarea{width:100%;min-height:180px;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);padding:1rem;font-size:1rem;font-family:'JetBrains Mono','Cascadia Code',monospace;}
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		textarea{width:100%;min-height:180px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.9rem;font-family:'JetBrains Mono','Cascadia Code',monospace;resize:vertical;}
+		.row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:.75rem;}
+		select,input[type=number]{padding:.65rem .9rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:.9rem;}
+		input[type=number]{width:90px;}
+		button{padding:.75rem 1.1rem;border-radius:var(--radius-sm);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-weight:700;font-size:.9rem;box-shadow:var(--shadow-sm);transition:transform .15s ease,box-shadow .15s ease;}
+		button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+		button.secondary{background:var(--bg-alt);color:var(--text);border:1px solid var(--border);}
+		button.secondary:hover{background:var(--border-light);}
+		button.danger{background:var(--error);color:#fff;border:none;}
+		.uuid-list{list-style:none;display:grid;gap:.35rem;max-height:400px;overflow-y:auto;}
+		.uuid-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg-alt);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem .85rem;font-family:'JetBrains Mono',monospace;font-size:.88rem;word-break:break-all;}
+		.uuid-item button{padding:.3rem .6rem;font-size:.78rem;}
+		.badge{padding:.4rem .75rem;border-radius:var(--radius-full,999px);border:1px solid var(--border);background:var(--bg-alt);color:var(--muted);font-size:.85rem;}
+		h3{font-size:1rem;font-weight:700;}
+		.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-sm);font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:transform .35s var(--ease-bounce,.34 1.56 .64 1),opacity .3s;z-index:9999;pointer-events:none;}
+		.toast.show{transform:translateY(0);opacity:1;}
 	</style>
 </head>
 <body>
-  
-
-  
-
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-fingerprint"></i> UUID Generator</h1>
-			<p class="muted">Generate RFC4122 v4 UUIDs instantly.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<label for="count">How many</label>
-					<input type="number" id="count" value="5" min="1" max="100">
-					<button onclick="generate()">Generate</button>
-					<button onclick="copyOut()"><i class="fas fa-copy"></i> Copy</button>
-				</div>
-				<textarea id="output" placeholder="UUIDs will appear here..." readonly></textarea>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-barcode"></i> UUID Generator</h1>
+		<p class="muted">Generate RFC 4122 v4 UUIDs with secure randomness.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<div class="row" style="margin-top:0;">
+				<label style="font-weight:600;">Count:</label>
+				<input type="number" id="count" value="1" min="1" max="100">
+				<label style="font-weight:600;">Format:</label>
+				<select id="format">
+					<option value="standard">Standard (with hyphens)</option>
+					<option value="nohyphen">No hyphens</option>
+					<option value="upper">Uppercase</option>
+					<option value="lower">Lowercase</option>
+				</select>
 			</div>
-		</main>
-	</div>
+			<div class="row">
+				<button onclick="generateUUIDs()"><i class="fas fa-plus-circle"></i> Generate</button>
+				<button class="secondary" onclick="copyAll()"><i class="fas fa-copy"></i> Copy All</button>
+				<button class="danger" onclick="clearList()"><i class="fas fa-trash"></i> Clear</button>
+				<span class="badge" id="counter">Total: 0</span>
+			</div>
+		</div>
 
-	<script>
-		const output = document.getElementById('output');
-		const count = document.getElementById('count');
-		const cryptoObj = window.crypto || window.msCrypto;
+		<div class="panel">
+			<h3 style="margin-bottom:.5rem;">Generated UUIDs</h3>
+			<ul class="uuid-list" id="uuidList">
+				<li class="uuid-item" style="color:var(--muted);justify-content:center;">Click Generate to create UUIDs</li>
+			</ul>
+		</div>
+	</main>
+</div>
 
-		function uuidv4(){
-			const bytes = new Uint8Array(16);
-			cryptoObj.getRandomValues(bytes);
-			bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
-			bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant
-			const hex = [...bytes].map(b => b.toString(16).padStart(2,'0'));
-			return `${hex[0]}${hex[1]}${hex[2]}${hex[3]}-${hex[4]}${hex[5]}-${hex[6]}${hex[7]}-${hex[8]}${hex[9]}-${hex[10]}${hex[11]}${hex[12]}${hex[13]}${hex[14]}${hex[15]}`;
-		}
+<div class="toast" id="toast"></div>
 
-		function generate(){
-			const n = Math.min(100, Math.max(1, parseInt(count.value,10) || 1));
-			const list = Array.from({length:n}, uuidv4);
-			output.value = list.join('\n');
-		}
+<script>
+function showToast(msg,ms=2200){
+	const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+	clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),ms);
+}
 
-		function copyOut(){ navigator.clipboard.writeText(output.value || ''); }
-	</script>
+let allUUIDs=[];
 
+function uuidv4(){
+	const bytes=new Uint8Array(16);
+	crypto.getRandomValues(bytes);
+	bytes[6]=(bytes[6]&0x0f)|0x40;
+	bytes[8]=(bytes[8]&0x3f)|0x80;
+	const hex=[...bytes].map(b=>b.toString(16).padStart(2,'0'));
+	return `${hex[0]}${hex[1]}${hex[2]}${hex[3]}-${hex[4]}${hex[5]}-${hex[6]}${hex[7]}-${hex[8]}${hex[9]}-${hex[10]}${hex[11]}${hex[12]}${hex[13]}${hex[14]}${hex[15]}`;
+}
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+function formatUUID(uuid){
+	const fmt=document.getElementById('format').value;
+	switch(fmt){
+		case 'nohyphen': return uuid.replace(/-/g,'');
+		case 'upper': return uuid.toUpperCase();
+		case 'lower': return uuid.toLowerCase();
+		default: return uuid;
+	}
+}
 
+function generateUUIDs(){
+	const n=Math.min(100,Math.max(1,parseInt(document.getElementById('count').value)||1));
+	for(let i=0;i<n;i++){
+		allUUIDs.push(formatUUID(uuidv4()));
+	}
+	render();
+	showToast(`Generated ${n} UUID${n>1?'s':''}!`);
+}
+
+function render(){
+	const list=document.getElementById('uuidList');
+	if(!allUUIDs.length){
+		list.innerHTML='<li class="uuid-item" style="color:var(--muted);justify-content:center;">Click Generate to create UUIDs</li>';
+		document.getElementById('counter').textContent='Total: 0';
+		return;
+	}
+	list.innerHTML=allUUIDs.map((u,i)=>`<li class="uuid-item"><span>${u}</span><button class="secondary" onclick="copyOne(${i})"><i class="fas fa-copy"></i></button></li>`).join('');
+	document.getElementById('counter').textContent=`Total: ${allUUIDs.length}`;
+}
+
+function copyOne(i){
+	navigator.clipboard.writeText(allUUIDs[i]).then(()=>showToast('UUID copied!'));
+}
+
+function copyAll(){
+	if(!allUUIDs.length){showToast('Nothing to copy');return;}
+	navigator.clipboard.writeText(allUUIDs.join('\n')).then(()=>showToast(`Copied ${allUUIDs.length} UUIDs!`));
+}
+
+function clearList(){
+	allUUIDs=[];
+	render();
+	showToast('List cleared');
+}
+</script>
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

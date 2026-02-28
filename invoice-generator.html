@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Invoice Generator - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
+	<style>
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		.panel h3{font-size:1.05rem;font-weight:800;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+		.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem;}
+		.form-row.triple{grid-template-columns:1fr 1fr 1fr;}
+		.form-group{display:flex;flex-direction:column;gap:.25rem;}
+		.form-group.full{grid-column:1/-1;}
+		.form-group label{font-weight:700;font-size:.82rem;color:var(--muted);}
+		input,select,textarea{padding:.7rem .9rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-alt);color:var(--text);font-size:.9rem;font-family:inherit;transition:border-color .2s,box-shadow .2s;}
+		input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(124,58,237,.1);}
+		table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.9rem;}
+		th{text-align:left;padding:.6rem;background:var(--bg-alt);font-weight:700;font-size:.82rem;border-bottom:2px solid var(--border);}
+		td{padding:.5rem .6rem;border-bottom:1px solid var(--border-light);}
+		td input{width:100%;padding:.5rem;border:1px solid transparent;border-radius:var(--radius-sm);background:transparent;font-size:.9rem;font-family:inherit;color:var(--text);}
+		td input:focus{border-color:var(--primary);background:var(--surface);}
+		.remove-row{color:var(--error);cursor:pointer;background:none;border:none;font-size:1rem;transition:transform .15s;}
+		.remove-row:hover{transform:scale(1.2);}
+		.btn{padding:.75rem 1.1rem;border-radius:var(--radius-md);border:none;cursor:pointer;font-weight:800;font-size:.9rem;transition:transform .15s;display:inline-flex;align-items:center;gap:.4rem;}
+		.btn:hover{transform:translateY(-1px);}
+		.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;box-shadow:var(--shadow-sm);}
+		.btn-outline{background:var(--surface);color:var(--text);border:1.5px solid var(--border);}
+		.btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+		.btn-success{background:linear-gradient(135deg,var(--success),#34d399);color:#fff;}
+		.btn-danger{background:var(--surface);color:var(--error);border:1.5px solid var(--error);}
+		.actions{display:flex;flex-wrap:wrap;gap:.5rem;}
+		.totals{text-align:right;margin-top:.5rem;font-size:.95rem;}
+		.totals .line{display:flex;justify-content:flex-end;gap:2rem;padding:.3rem 0;}
+		.totals .grand{font-size:1.15rem;font-weight:900;color:var(--primary);border-top:2px solid var(--border);padding-top:.5rem;margin-top:.25rem;}
+		.currency-sel{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:.85rem;color:var(--muted);}
+		.currency-sel select{min-width:90px;}
+		.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--primary);color:#fff;padding:.75rem 1.5rem;border-radius:var(--radius-lg);font-weight:700;font-size:.9rem;opacity:0;transition:all .3s;z-index:999;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+		@media(max-width:600px){.form-row,.form-row.triple{grid-template-columns:1fr;}}
+
+		/* Print styles */
+		@media print{
+			body{padding:0;background:#fff !important;color:#000 !important;}
+			.wrap{box-shadow:none;border:none;max-width:100%;border-radius:0;}
+			header,.actions,.back,.btn,.remove-row,.currency-sel,.panel:last-child .actions{display:none !important;}
+			.panel{box-shadow:none;border:1px solid #ddd;page-break-inside:avoid;}
+			.toast{display:none !important;}
+		}
+	</style>
+</head>
+<body>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-file-invoice-dollar"></i> Invoice Generator</h1>
+		<p class="muted">Create and print professional invoices in seconds.</p>
+	</header>
+	<main>
+		<!-- From / To -->
+		<div class="panel">
+			<h3><i class="fas fa-building"></i> From (Your Business)</h3>
+			<div class="form-row">
+				<div class="form-group"><label>Company Name</label><input id="fromName" placeholder="Your Company"></div>
+				<div class="form-group"><label>Email</label><input id="fromEmail" type="email" placeholder="you@example.com"></div>
+			</div>
+			<div class="form-row">
+				<div class="form-group"><label>Phone</label><input id="fromPhone" placeholder="+1 555-123-4567"></div>
+				<div class="form-group"><label>Address</label><input id="fromAddress" placeholder="123 Main St, City"></div>
+			</div>
+		</div>
+
+		<div class="panel">
+			<h3><i class="fas fa-user"></i> Bill To (Client)</h3>
+			<div class="form-row">
+				<div class="form-group"><label>Client Name</label><input id="toName" placeholder="Client Name"></div>
+				<div class="form-group"><label>Email</label><input id="toEmail" type="email" placeholder="client@example.com"></div>
+			</div>
+			<div class="form-group"><label>Address</label><input id="toAddress" placeholder="456 Oak Ave, City"></div>
+		</div>
+
+		<!-- Invoice Details -->
+		<div class="panel">
+			<h3><i class="fas fa-info-circle"></i> Invoice Details</h3>
+			<div class="form-row triple">
+				<div class="form-group"><label>Invoice #</label><input id="invNo" readonly></div>
+				<div class="form-group"><label>Date</label><input type="date" id="invDate"></div>
+				<div class="form-group"><label>Due Date</label><input type="date" id="dueDate"></div>
+			</div>
+			<div class="currency-sel">
+				<label>Currency:</label>
+				<select id="currency" onchange="recalc()">
+					<option value="$" selected>USD ($)</option>
+					<option value="€">EUR (€)</option>
+					<option value="£">GBP (£)</option>
+					<option value="₹">INR (₹)</option>
+					<option value="¥">JPY (¥)</option>
+				</select>
+			</div>
+		</div>
+
+		<!-- Line Items -->
+		<div class="panel">
+			<h3><i class="fas fa-list"></i> Line Items</h3>
+			<table id="itemsTable">
+				<thead>
+					<tr>
+						<th>Description</th>
+						<th style="width:80px">Qty</th>
+						<th style="width:110px">Unit Price</th>
+						<th style="width:100px">Total</th>
+						<th style="width:40px"></th>
+					</tr>
+				</thead>
+				<tbody id="itemsBody"></tbody>
+			</table>
+			<div class="actions" style="margin-top:.5rem;">
+				<button class="btn btn-outline" onclick="addRow()"><i class="fas fa-plus"></i> Add Item</button>
+				<button class="btn btn-danger" onclick="removeLastRow()"><i class="fas fa-minus"></i> Remove Last</button>
+			</div>
+
+			<!-- Tax, Discount, Totals -->
+			<div class="form-row" style="margin-top:1rem;">
+				<div class="form-group">
+					<label>Tax Rate (%)</label>
+					<input id="taxRate" type="number" min="0" step="0.01" value="0" oninput="recalc()">
+				</div>
+				<div class="form-group">
+					<label>Discount</label>
+					<div style="display:flex;gap:.4rem;">
+						<input id="discountVal" type="number" min="0" step="0.01" value="0" oninput="recalc()" style="flex:1;">
+						<select id="discountType" onchange="recalc()" style="min-width:60px;">
+							<option value="%">%</option>
+							<option value="flat">Flat</option>
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div class="totals" id="totals">
+				<div class="line"><span>Subtotal:</span><strong id="subtotal">0.00</strong></div>
+				<div class="line"><span>Tax:</span><strong id="taxAmt">0.00</strong></div>
+				<div class="line"><span>Discount:</span><strong id="discAmt">−0.00</strong></div>
+				<div class="line grand"><span>Total:</span><strong id="grandTotal">0.00</strong></div>
+			</div>
+		</div>
+
+		<!-- Notes & Actions -->
+		<div class="panel">
+			<h3><i class="fas fa-sticky-note"></i> Notes</h3>
+			<div class="form-group full">
+				<textarea id="notes" rows="3" placeholder="Payment terms, bank details, thank you note…" style="resize:vertical;"></textarea>
+			</div>
+			<div class="actions" style="margin-top:1rem;">
+				<button class="btn btn-primary" onclick="printInvoice()"><i class="fas fa-print"></i> Print / Save PDF</button>
+				<button class="btn btn-success" onclick="saveInvoice()"><i class="fas fa-save"></i> Save to Browser</button>
+				<button class="btn btn-outline" onclick="loadInvoice()"><i class="fas fa-folder-open"></i> Load Saved</button>
+				<button class="btn btn-outline" onclick="resetInvoice()"><i class="fas fa-redo"></i> Reset</button>
+			</div>
+		</div>
+	</main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+	// ---- Auto-generate invoice number ----
+	function genInvNo() {
+		const d = new Date();
+		return 'INV-' + d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + '-' + String(Math.floor(Math.random()*9000)+1000);
+	}
+	document.getElementById('invNo').value = genInvNo();
+	document.getElementById('invDate').valueAsDate = new Date();
+	const due = new Date(); due.setDate(due.getDate()+30);
+	document.getElementById('dueDate').valueAsDate = due;
+
+	const tbody = document.getElementById('itemsBody');
+
+	function cur() { return document.getElementById('currency').value; }
+
+	function addRow(desc='', qty=1, price=0) {
+		const tr = document.createElement('tr');
+		tr.innerHTML = `
+			<td><input class="desc" value="${desc}" placeholder="Item description"></td>
+			<td><input class="qty" type="number" min="0" value="${qty}"></td>
+			<td><input class="price" type="number" min="0" step="0.01" value="${price}"></td>
+			<td class="row-total" style="font-weight:700;">0.00</td>
+			<td><button class="remove-row" onclick="this.closest('tr').remove();recalc();"><i class="fas fa-times"></i></button></td>`;
+		tbody.appendChild(tr);
+		tr.querySelectorAll('input').forEach(i => i.addEventListener('input', recalc));
+		recalc();
+	}
+
+	function removeLastRow() {
+		const rows = tbody.querySelectorAll('tr');
+		if (rows.length > 1) { rows[rows.length-1].remove(); recalc(); }
+		else showToast('At least one item required');
+	}
+
+	function recalc() {
+		const c = cur();
+		let sub = 0;
+		tbody.querySelectorAll('tr').forEach(tr => {
+			const qty = parseFloat(tr.querySelector('.qty').value) || 0;
+			const price = parseFloat(tr.querySelector('.price').value) || 0;
+			const total = qty * price;
+			tr.querySelector('.row-total').textContent = c + total.toFixed(2);
+			sub += total;
+		});
+
+		const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+		const tax = sub * taxRate / 100;
+
+		const discVal = parseFloat(document.getElementById('discountVal').value) || 0;
+		const discType = document.getElementById('discountType').value;
+		const disc = discType === '%' ? sub * discVal / 100 : discVal;
+
+		const grand = sub + tax - disc;
+
+		document.getElementById('subtotal').textContent = c + sub.toFixed(2);
+		document.getElementById('taxAmt').textContent = c + tax.toFixed(2);
+		document.getElementById('discAmt').textContent = '−' + c + disc.toFixed(2);
+		document.getElementById('grandTotal').textContent = c + Math.max(0, grand).toFixed(2);
+	}
+
+	function printInvoice() {
+		window.print();
+	}
+
+	function saveInvoice() {
+		const data = {
+			from: { name: v('fromName'), email: v('fromEmail'), phone: v('fromPhone'), address: v('fromAddress') },
+			to: { name: v('toName'), email: v('toEmail'), address: v('toAddress') },
+			invNo: v('invNo'), invDate: v('invDate'), dueDate: v('dueDate'),
+			currency: document.getElementById('currency').value,
+			taxRate: v('taxRate'), discountVal: v('discountVal'),
+			discountType: document.getElementById('discountType').value,
+			notes: v('notes'),
+			items: []
+		};
+		tbody.querySelectorAll('tr').forEach(tr => {
+			data.items.push({
+				desc: tr.querySelector('.desc').value,
+				qty: tr.querySelector('.qty').value,
+				price: tr.querySelector('.price').value
+			});
+		});
+		localStorage.setItem('mt-invoice', JSON.stringify(data));
+		showToast('Invoice saved to browser!');
+	}
+
+	function loadInvoice() {
+		const raw = localStorage.getItem('mt-invoice');
+		if (!raw) { showToast('No saved invoice found'); return; }
+		try {
+			const d = JSON.parse(raw);
+			s('fromName', d.from.name); s('fromEmail', d.from.email); s('fromPhone', d.from.phone); s('fromAddress', d.from.address);
+			s('toName', d.to.name); s('toEmail', d.to.email); s('toAddress', d.to.address);
+			s('invNo', d.invNo); s('invDate', d.invDate); s('dueDate', d.dueDate);
+			document.getElementById('currency').value = d.currency || '$';
+			s('taxRate', d.taxRate); s('discountVal', d.discountVal);
+			document.getElementById('discountType').value = d.discountType || '%';
+			s('notes', d.notes);
+			tbody.innerHTML = '';
+			(d.items || []).forEach(it => addRow(it.desc, it.qty, it.price));
+			if (!d.items || d.items.length === 0) { addRow(); addRow(); }
+			recalc();
+			showToast('Invoice loaded!');
+		} catch(e) { showToast('Failed to load saved invoice'); }
+	}
+
+	function resetInvoice() {
+		if (!confirm('Reset the entire invoice?')) return;
+		tbody.innerHTML = '';
+		['fromName','fromEmail','fromPhone','fromAddress','toName','toEmail','toAddress','notes'].forEach(id => s(id, ''));
+		document.getElementById('invNo').value = genInvNo();
+		document.getElementById('invDate').valueAsDate = new Date();
+		const d2 = new Date(); d2.setDate(d2.getDate()+30);
+		document.getElementById('dueDate').valueAsDate = d2;
+		document.getElementById('taxRate').value = '0';
+		document.getElementById('discountVal').value = '0';
+		document.getElementById('discountType').value = '%';
+		document.getElementById('currency').value = '$';
+		addRow(); addRow();
+		recalc();
+		showToast('Invoice reset');
+	}
+
+	function v(id) { return document.getElementById(id).value; }
+	function s(id, val) { document.getElementById(id).value = val || ''; }
+
+	function showToast(msg) {
+		const t = document.getElementById('toast');
+		t.textContent = msg;
+		t.classList.add('show');
+		setTimeout(() => t.classList.remove('show'), 2500);
+	}
+
+	// Init with 2 rows
+	addRow(); addRow();
+</script>
+<script src="js/global.js"></script>
+</body>
+</html>

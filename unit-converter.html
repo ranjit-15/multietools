@@ -5,114 +5,294 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Unit Converter - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root { --bg: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); --card:#0f172a; --accent:#38bdf8; --text:#e2e8f0; --muted:#94a3b8; --border:#1f2937; --radius:16px; --shadow:0 18px 50px rgba(0,0,0,0.35);} 
 		*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,-apple-system,sans-serif;min-height:100vh;background:var(--bg);color:var(--text);padding:1.5rem;}
-		.shell{max-width:960px;margin:0 auto;background:rgba(15,23,42,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(56,189,248,0.1);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1.25rem;} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-		.panel{background:#0b1224;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:0.75rem;}
-		label{font-weight:700;color:var(--text);} input,select{width:100%;padding:0.85rem 0.9rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} 
-		button{padding:0.9rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;}
-		button:hover{transform:translateY(-1px);} 
-		.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
-		.result{background:#0f192b;border:1px solid var(--border);border-radius:12px;padding:1rem;font-weight:800;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+
+		.tabs{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.5rem;}
+		.tabs button{padding:.55rem 1rem;border:1px solid var(--border);border-radius:var(--radius-full);background:var(--bg-alt);color:var(--muted);font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s;font-family:inherit;}
+		.tabs button.active{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border-color:transparent;}
+		.tabs button:hover:not(.active){color:var(--primary);border-color:var(--primary);}
+
+		.converter-row{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:end;}
+		@media(max-width:600px){.converter-row{grid-template-columns:1fr;}.swap-btn-wrap{text-align:center;}}
+		label{font-weight:600;font-size:.9rem;display:block;margin-bottom:.35rem;}
+		select,input[type="number"]{width:100%;padding:.7rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:1rem;font-family:inherit;}
+		select:focus,input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
+		.swap-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:var(--bg-alt);color:var(--primary);font-size:1.1rem;cursor:pointer;display:grid;place-items:center;transition:all .2s;margin-bottom:2px;}
+		.swap-btn:hover{background:var(--primary);color:#fff;transform:rotate(180deg);}
+		.swap-btn-wrap{display:flex;align-items:flex-end;justify-content:center;}
+
+		.result-box{text-align:center;padding:1.5rem;border-radius:var(--radius-md);background:var(--bg-alt);border:1px solid var(--border-light);margin-top:.5rem;}
+		.result-value{font-size:2.2rem;font-weight:900;line-height:1.2;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+		.formula-info{color:var(--muted);font-size:.88rem;margin-top:.5rem;}
+
+		.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 	</style>
 </head>
 <body>
-  
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-ruler-combined"></i> Unit Converter</h1>
+		<p class="muted">Convert between units across 8 categories instantly.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<div class="tabs" id="categoryTabs"></div>
+		</div>
 
-  
-
-	<!-- Adsterra Ad -->
-	<div class="shell">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-ruler-combined"></i> Unit Converter</h1>
-			<p class="muted">Convert length, weight, and temperature.</p>
-		</header>
-
-		<main class="grid">
-			<div class="panel">
-				<h3>Length</h3>
-				<label>Value</label>
-				<input id="len-val" type="number" value="1">
-				<label>From</label>
-				<select id="len-from"><option>m</option><option>cm</option><option>km</option><option>ft</option><option>in</option></select>
-				<label>To</label>
-				<select id="len-to"><option>m</option><option>cm</option><option>km</option><option>ft</option><option>in</option></select>
-				<button onclick="convertLen()">Convert</button>
-				<div class="result" id="len-out">—</div>
+		<div class="panel">
+			<div class="converter-row">
+				<div>
+					<label for="fromUnit">From</label>
+					<select id="fromUnit"></select>
+				</div>
+				<div class="swap-btn-wrap">
+					<button class="swap-btn" id="swapBtn" title="Swap units"><i class="fas fa-exchange-alt"></i></button>
+				</div>
+				<div>
+					<label for="toUnit">To</label>
+					<select id="toUnit"></select>
+				</div>
 			</div>
-			<div class="panel">
-				<h3>Weight</h3>
-				<label>Value</label>
-				<input id="w-val" type="number" value="1">
-				<label>From</label>
-				<select id="w-from"><option>kg</option><option>g</option><option>lb</option><option>oz</option></select>
-				<label>To</label>
-				<select id="w-to"><option>kg</option><option>g</option><option>lb</option><option>oz</option></select>
-				<button onclick="convertW()">Convert</button>
-				<div class="result" id="w-out">—</div>
+		</div>
+
+		<div class="panel">
+			<label for="amount">Value</label>
+			<input type="number" id="amount" value="1" step="any" placeholder="Enter value">
+		</div>
+
+		<div class="panel">
+			<div class="result-box">
+				<div class="result-value" id="resultValue">â€”</div>
+				<div class="formula-info" id="formulaInfo"></div>
 			</div>
-			<div class="panel">
-				<h3>Temperature</h3>
-				<label>Value</label>
-				<input id="t-val" type="number" value="0">
-				<label>From</label>
-				<select id="t-from"><option>C</option><option>F</option><option>K</option></select>
-				<label>To</label>
-				<select id="t-to"><option>C</option><option>F</option><option>K</option></select>
-				<button onclick="convertT()">Convert</button>
-				<div class="result" id="t-out">—</div>
-			</div>
-		</main>
-	</div>
+		</div>
+	</main>
+</div>
 
-	<script>
-		const lenFactor = { m:1, cm:0.01, km:1000, ft:0.3048, in:0.0254 };
-		function convertLen(){
-			const v = parseFloat(document.getElementById('len-val').value || '0');
-			const from = document.getElementById('len-from').value;
-			const to = document.getElementById('len-to').value;
-			const meters = v * lenFactor[from];
-			const out = meters / lenFactor[to];
-			document.getElementById('len-out').textContent = `${out.toFixed(4)} ${to}`;
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+	'use strict';
+
+	/* -------- Unit Data -------- */
+	const categories = {
+		Length: {
+			base:'m',
+			units:{
+				'mm':{factor:0.001,label:'Millimeter (mm)'},
+				'cm':{factor:0.01,label:'Centimeter (cm)'},
+				'm':{factor:1,label:'Meter (m)'},
+				'km':{factor:1000,label:'Kilometer (km)'},
+				'inch':{factor:0.0254,label:'Inch (in)'},
+				'foot':{factor:0.3048,label:'Foot (ft)'},
+				'yard':{factor:0.9144,label:'Yard (yd)'},
+				'mile':{factor:1609.344,label:'Mile (mi)'}
+			}
+		},
+		Weight: {
+			base:'kg',
+			units:{
+				'mg':{factor:0.000001,label:'Milligram (mg)'},
+				'g':{factor:0.001,label:'Gram (g)'},
+				'kg':{factor:1,label:'Kilogram (kg)'},
+				'pound':{factor:0.453592,label:'Pound (lb)'},
+				'ounce':{factor:0.0283495,label:'Ounce (oz)'},
+				'ton':{factor:1000,label:'Metric Ton (t)'}
+			}
+		},
+		Temperature: {
+			base:'special',
+			units:{
+				'Celsius':{label:'Celsius (\u00B0C)'},
+				'Fahrenheit':{label:'Fahrenheit (\u00B0F)'},
+				'Kelvin':{label:'Kelvin (K)'}
+			}
+		},
+		Volume: {
+			base:'l',
+			units:{
+				'ml':{factor:0.001,label:'Milliliter (ml)'},
+				'l':{factor:1,label:'Liter (L)'},
+				'gallon':{factor:3.78541,label:'Gallon (gal)'},
+				'quart':{factor:0.946353,label:'Quart (qt)'},
+				'pint':{factor:0.473176,label:'Pint (pt)'},
+				'cup':{factor:0.236588,label:'Cup'},
+				'fl oz':{factor:0.0295735,label:'Fluid Ounce (fl oz)'}
+			}
+		},
+		Area: {
+			base:'m\u00B2',
+			units:{
+				'mm\u00B2':{factor:0.000001,label:'mm\u00B2'},
+				'cm\u00B2':{factor:0.0001,label:'cm\u00B2'},
+				'm\u00B2':{factor:1,label:'m\u00B2'},
+				'km\u00B2':{factor:1000000,label:'km\u00B2'},
+				'inch\u00B2':{factor:0.00064516,label:'inch\u00B2'},
+				'foot\u00B2':{factor:0.092903,label:'foot\u00B2'},
+				'acre':{factor:4046.86,label:'Acre'},
+				'hectare':{factor:10000,label:'Hectare'}
+			}
+		},
+		Speed: {
+			base:'m/s',
+			units:{
+				'm/s':{factor:1,label:'m/s'},
+				'km/h':{factor:0.277778,label:'km/h'},
+				'mph':{factor:0.44704,label:'mph'},
+				'knot':{factor:0.514444,label:'Knot'}
+			}
+		},
+		Data: {
+			base:'byte',
+			units:{
+				'bit':{factor:0.125,label:'Bit'},
+				'byte':{factor:1,label:'Byte'},
+				'KB':{factor:1024,label:'Kilobyte (KB)'},
+				'MB':{factor:1048576,label:'Megabyte (MB)'},
+				'GB':{factor:1073741824,label:'Gigabyte (GB)'},
+				'TB':{factor:1099511627776,label:'Terabyte (TB)'},
+				'PB':{factor:1125899906842624,label:'Petabyte (PB)'}
+			}
+		},
+		Time: {
+			base:'second',
+			units:{
+				'ms':{factor:0.001,label:'Millisecond (ms)'},
+				'second':{factor:1,label:'Second (s)'},
+				'minute':{factor:60,label:'Minute (min)'},
+				'hour':{factor:3600,label:'Hour (hr)'},
+				'day':{factor:86400,label:'Day'},
+				'week':{factor:604800,label:'Week'},
+				'month':{factor:2629746,label:'Month (~30.44d)'},
+				'year':{factor:31556952,label:'Year (~365.25d)'}
+			}
 		}
-		const wFactor = { kg:1, g:0.001, lb:0.45359237, oz:0.0283495 };
-		function convertW(){
-			const v = parseFloat(document.getElementById('w-val').value || '0');
-			const from = document.getElementById('w-from').value;
-			const to = document.getElementById('w-to').value;
-			const kg = v * wFactor[from];
-			const out = kg / wFactor[to];
-			document.getElementById('w-out').textContent = `${out.toFixed(4)} ${to}`;
+	};
+
+	const catKeys = Object.keys(categories);
+	let currentCat = catKeys[0];
+
+	const tabsContainer = document.getElementById('categoryTabs');
+	const fromSel = document.getElementById('fromUnit');
+	const toSel   = document.getElementById('toUnit');
+	const amountIn = document.getElementById('amount');
+	const resultValue = document.getElementById('resultValue');
+	const formulaInfo = document.getElementById('formulaInfo');
+
+	/* -------- Build Tabs -------- */
+	catKeys.forEach(function(cat){
+		const btn = document.createElement('button');
+		btn.textContent = cat;
+		btn.dataset.cat = cat;
+		if(cat === currentCat) btn.classList.add('active');
+		btn.addEventListener('click', function(){
+			currentCat = cat;
+			tabsContainer.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
+			btn.classList.add('active');
+			populateUnits();
+			doConvert();
+		});
+		tabsContainer.appendChild(btn);
+	});
+
+	/* -------- Populate Selects -------- */
+	function populateUnits(){
+		const units = categories[currentCat].units;
+		const keys = Object.keys(units);
+		fromSel.innerHTML = '';
+		toSel.innerHTML = '';
+		keys.forEach(function(k){
+			fromSel.appendChild(new Option(units[k].label, k));
+			toSel.appendChild(new Option(units[k].label, k));
+		});
+		if(keys.length > 1) toSel.value = keys[1];
+	}
+
+	/* -------- Temperature Special -------- */
+	function convertTemp(val, from, to){
+		if(from === to) return val;
+		// Convert to Celsius first
+		var c;
+		if(from === 'Celsius') c = val;
+		else if(from === 'Fahrenheit') c = (val - 32) * 5/9;
+		else c = val - 273.15; // Kelvin
+		// Convert from Celsius to target
+		if(to === 'Celsius') return c;
+		if(to === 'Fahrenheit') return c * 9/5 + 32;
+		return c + 273.15; // Kelvin
+	}
+
+	/* -------- Convert -------- */
+	function doConvert(){
+		var amount = parseFloat(amountIn.value);
+		if(isNaN(amount)){ resultValue.textContent = 'â€”'; formulaInfo.textContent = ''; return; }
+
+		var from = fromSel.value;
+		var to = toSel.value;
+		var cat = categories[currentCat];
+		var result;
+
+		if(cat.base === 'special'){
+			result = convertTemp(amount, from, to);
+			formulaInfo.textContent = amount + ' ' + from + ' = ' + formatResult(result) + ' ' + to;
+		} else {
+			var fromFactor = cat.units[from].factor;
+			var toFactor = cat.units[to].factor;
+			result = amount * fromFactor / toFactor;
+			formulaInfo.textContent = '1 ' + from + ' = ' + formatResult(1 * fromFactor / toFactor) + ' ' + to;
 		}
-		function convertT(){
-			const v = parseFloat(document.getElementById('t-val').value || '0');
-			const from = document.getElementById('t-from').value;
-			const to = document.getElementById('t-to').value;
-			const c = from==='C'? v : from==='F'? (v-32)*(5/9) : v-273.15;
-			const out = to==='C'? c : to==='F'? c*(9/5)+32 : c+273.15;
-			document.getElementById('t-out').textContent = `${out.toFixed(2)} ${to}`;
-		}
-		convertLen(); convertW(); convertT();
-	</script>
 
+		resultValue.textContent = formatResult(result) + ' ' + to;
+	}
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+	function formatResult(n){
+		if(n === 0) return '0';
+		var abs = Math.abs(n);
+		if(abs >= 0.01 && abs < 1e12) return parseFloat(n.toPrecision(10)).toLocaleString(undefined, {maximumFractionDigits:10});
+		return n.toExponential(6);
+	}
 
+	/* -------- Swap -------- */
+	document.getElementById('swapBtn').addEventListener('click', function(){
+		var tmp = fromSel.value;
+		fromSel.value = toSel.value;
+		toSel.value = tmp;
+		doConvert();
+		showToast('Units swapped');
+	});
+
+	/* -------- Auto-convert -------- */
+	fromSel.addEventListener('change', doConvert);
+	toSel.addEventListener('change', doConvert);
+	amountIn.addEventListener('input', doConvert);
+
+	/* -------- Toast -------- */
+	function showToast(msg, type){
+		var t = document.getElementById('toast');
+		t.textContent = msg;
+		t.style.borderColor = type === 'error' ? 'var(--error)' : 'var(--primary)';
+		t.classList.add('show');
+		setTimeout(function(){ t.classList.remove('show'); }, 2500);
+	}
+
+	/* -------- Init -------- */
+	populateUnits();
+	doConvert();
+})();
+</script>
+
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

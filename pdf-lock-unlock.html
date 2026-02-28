@@ -1,108 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>PDF Lock / Unlock - Multietools</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:860px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} input[type=password]{padding:0.75rem 1rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.badge{padding:0.4rem 0.7rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--muted);} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-	</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Lock / Unlock - Multietools</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+.drop-zone{border:2px dashed var(--border);border-radius:var(--radius-md);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:border-color .25s,background .25s;position:relative;}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--primary);background:var(--primary-glow);}
+.drop-zone i.icon{font-size:2.5rem;color:var(--primary);margin-bottom:.75rem;display:block;}
+.drop-zone p{color:var(--muted);font-size:.95rem;}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.btn{padding:.8rem 1.2rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.9rem;transition:transform .15s,box-shadow .25s;display:inline-flex;align-items:center;gap:.4rem;}
+.btn:hover{transform:translateY(-1px);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-outline{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);}
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border-light);margin-bottom:1.25rem;}
+.tab{padding:.75rem 1.5rem;font-weight:700;cursor:pointer;border:none;background:none;color:var(--muted);font-size:.95rem;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+.tab-content{display:none;} .tab-content.active{display:block;}
+.form-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem;}
+.form-group label{font-weight:600;font-size:.9rem;color:var(--muted);}
+.form-group input{padding:.7rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border-light);background:var(--bg-alt);color:var(--text);font-size:.9rem;}
+.info-bar{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;}
+.info-item{padding:.5rem 1rem;border-radius:var(--radius-sm);background:var(--bg-alt);border:1px solid var(--border-light);font-size:.85rem;font-weight:600;}
+.info-item span{color:var(--primary);}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;}
+.note{padding:.75rem 1rem;border-radius:var(--radius-sm);background:var(--bg-alt);border-left:3px solid var(--warning);font-size:.85rem;color:var(--muted);margin-top:.75rem;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:var(--radius-full,50px);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  </style>
 </head>
 <body>
-  
+<div class="wrap">
+  <header>
+    <a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+    <h1><i class="fas fa-lock"></i> PDF Lock / Unlock</h1>
+    <p class="muted">Encrypt a PDF with a password or remove password protection. Fully client-side using pdf-lib.</p>
+  </header>
+  <main>
+    <div class="panel">
+      <div class="drop-zone" id="dropZone">
+        <i class="fas fa-cloud-upload-alt icon"></i>
+        <p>Drag & drop a PDF here or click to browse</p>
+        <p id="fileName" style="margin-top:.5rem;font-weight:700;color:var(--text);"></p>
+        <input type="file" id="fileInput" accept="application/pdf">
+      </div>
+    </div>
 
-  
+    <div class="panel" id="toolPanel" style="display:none;">
+      <div class="info-bar" id="infoBar"></div>
+      <div class="tabs">
+        <button class="tab active" data-tab="lock" onclick="switchTab('lock')"><i class="fas fa-lock"></i> Lock PDF</button>
+        <button class="tab" data-tab="unlock" onclick="switchTab('unlock')"><i class="fas fa-unlock"></i> Unlock PDF</button>
+      </div>
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-lock"></i> PDF Lock / Unlock</h1>
-			<p class="muted">Encrypt PDF bytes with a password (not a formal PDF password). Decrypt with the same password.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<input type="file" id="file" accept="application/pdf">
-					<input type="password" id="pwd" placeholder="Password">
-					<button onclick="lockPdf()">Lock</button>
-					<button onclick="unlockPdf()">Unlock</button>
-					<button onclick="download()">Download</button>
-					<span class="badge" id="status">Waiting</span>
-				</div>
-			</div>
-		</main>
-	</div>
+      <!-- Lock Tab -->
+      <div class="tab-content active" id="tab-lock">
+        <div class="form-group">
+          <label for="lockPwd"><i class="fas fa-key"></i> Password</label>
+          <input type="password" id="lockPwd" placeholder="Enter password to protect PDF">
+        </div>
+        <div class="form-group">
+          <label for="lockPwdConfirm"><i class="fas fa-key"></i> Confirm Password</label>
+          <input type="password" id="lockPwdConfirm" placeholder="Confirm password">
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="lockPdf()"><i class="fas fa-lock"></i> Lock PDF</button>
+        </div>
+        <div class="note"><i class="fas fa-info-circle"></i> This adds a user-password to the PDF using pdf-lib encryption. The PDF will require this password to open.</div>
+      </div>
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-	<script>
-		let lockedData = '';
-		let isLocked = false;
-		const file = document.getElementById('file');
-		const pwd = document.getElementById('pwd');
-		const status = document.getElementById('status');
+      <!-- Unlock Tab -->
+      <div class="tab-content" id="tab-unlock">
+        <div class="form-group">
+          <label for="unlockPwd"><i class="fas fa-key"></i> Current Password</label>
+          <input type="password" id="unlockPwd" placeholder="Enter current PDF password">
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="unlockPdf()"><i class="fas fa-unlock"></i> Unlock PDF</button>
+        </div>
+        <div class="note"><i class="fas fa-info-circle"></i> Enter the PDF's current password to create an unprotected copy. Only works for user-password protected PDFs.</div>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="js/global.js"></script>
+<script>
+const dropZone=document.getElementById('dropZone');
+const fileInput=document.getElementById('fileInput');
+const fileNameEl=document.getElementById('fileName');
+const toolPanel=document.getElementById('toolPanel');
+const infoBar=document.getElementById('infoBar');
+let currentFile=null;
 
-		function setStatus(text){ status.textContent = text; }
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-		async function lockPdf(){
-			const f = file.files?.[0];
-			if(!f){ setStatus('Select a PDF'); return; }
-			if(!pwd.value){ setStatus('Enter password'); return; }
-			const bytes = new Uint8Array(await f.arrayBuffer());
-			const wordArray = CryptoJS.lib.WordArray.create(bytes);
-			lockedData = CryptoJS.AES.encrypt(wordArray, pwd.value).toString();
-			isLocked = true;
-			setStatus('Locked (AES wrapped). Download to store .enc.txt');
-		}
+function formatSize(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(2)+' MB';}
 
-		async function unlockPdf(){
-			if(!lockedData){ setStatus('No locked data'); return; }
-			if(!pwd.value){ setStatus('Enter password'); return; }
-			try{
-				const decrypted = CryptoJS.AES.decrypt(lockedData, pwd.value);
-				const typedArray = new Uint8Array(CryptoJS.enc.Utf8.stringify(decrypted).split('').map(c=>c.charCodeAt(0)));
-				lockedData = typedArray; // store raw bytes for download
-				isLocked = false;
-				setStatus('Unlocked. Download as PDF.');
-			} catch(e){ setStatus('Unlock failed'); }
-		}
+/* Drag & Drop */
+['dragenter','dragover'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.add('dragover');}));
+['dragleave','drop'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.remove('dragover');}));
+dropZone.addEventListener('drop',ev=>{
+  const f=ev.dataTransfer.files[0];
+  if(f&&f.type==='application/pdf'){currentFile=f;handleFile();}
+  else showToast('Please drop a valid PDF file');
+});
+fileInput.addEventListener('change',()=>{currentFile=fileInput.files[0];if(currentFile)handleFile();});
 
-		function download(){
-			if(!lockedData){ setStatus('Nothing to download'); return; }
-			if(isLocked){
-				const blob = new Blob([lockedData], {type:'text/plain'});
-				const url = URL.createObjectURL(blob);
-				const a = document.createElement('a');
-				a.href = url; a.download = 'locked.enc.txt'; a.click(); URL.revokeObjectURL(url);
-			} else {
-				const blob = new Blob([lockedData], {type:'application/pdf'});
-				const url = URL.createObjectURL(blob);
-				const a = document.createElement('a');
-				a.href = url; a.download = 'unlocked.pdf'; a.click(); URL.revokeObjectURL(url);
-			}
-		}
-	</script>
+async function handleFile(){
+  fileNameEl.textContent=currentFile.name;
+  toolPanel.style.display='';
+  try{
+    const buf=await currentFile.arrayBuffer();
+    const pdf=await PDFLib.PDFDocument.load(buf,{ignoreEncryption:true});
+    const pages=pdf.getPageCount();
+    infoBar.innerHTML=`
+      <div class="info-item"><i class="fas fa-file"></i> <span>${currentFile.name}</span></div>
+      <div class="info-item"><i class="fas fa-copy"></i> Pages: <span>${pages}</span></div>
+      <div class="info-item"><i class="fas fa-weight-hanging"></i> Size: <span>${formatSize(currentFile.size)}</span></div>`;
+  }catch(e){
+    infoBar.innerHTML=`<div class="info-item"><i class="fas fa-file"></i> <span>${currentFile.name}</span></div>
+      <div class="info-item"><i class="fas fa-weight-hanging"></i> Size: <span>${formatSize(currentFile.size)}</span></div>`;
+  }
+}
 
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('.tab-content').forEach(tc=>tc.classList.toggle('active',tc.id==='tab-'+name));
+}
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+function download(bytes,name){
+  const blob=new Blob([bytes],{type:'application/pdf'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=name;a.click();
+  URL.revokeObjectURL(a.href);
+}
 
+async function lockPdf(){
+  if(!currentFile){showToast('Upload a PDF first');return;}
+  const pwd=document.getElementById('lockPwd').value;
+  const pwd2=document.getElementById('lockPwdConfirm').value;
+  if(!pwd){showToast('Enter a password');return;}
+  if(pwd!==pwd2){showToast('Passwords do not match');return;}
+
+  try{
+    const buf=await currentFile.arrayBuffer();
+    const srcDoc=await PDFLib.PDFDocument.load(buf,{ignoreEncryption:true});
+    const newDoc=await PDFLib.PDFDocument.create();
+    const pages=await newDoc.copyPages(srcDoc,srcDoc.getPageIndices());
+    pages.forEach(p=>newDoc.addPage(p));
+    const bytes=await newDoc.save({
+      userPassword:pwd,
+      ownerPassword:pwd,
+      permissions:{
+        printing:'highResolution',
+        modifying:false,
+        copying:false,
+        annotating:false,
+        fillingForms:false,
+        contentAccessibility:true,
+        documentAssembly:false
+      }
+    });
+    const name=currentFile.name.replace(/\.pdf$/i,'')+'_locked.pdf';
+    download(bytes,name);
+    showToast('PDF locked successfully!');
+  }catch(e){
+    console.error(e);
+    showToast('Error locking PDF: '+e.message);
+  }
+}
+
+async function unlockPdf(){
+  if(!currentFile){showToast('Upload a PDF first');return;}
+  const pwd=document.getElementById('unlockPwd').value;
+
+  try{
+    const buf=await currentFile.arrayBuffer();
+    const srcDoc=await PDFLib.PDFDocument.load(buf,{password:pwd,ignoreEncryption:false});
+    const newDoc=await PDFLib.PDFDocument.create();
+    const pages=await newDoc.copyPages(srcDoc,srcDoc.getPageIndices());
+    pages.forEach(p=>newDoc.addPage(p));
+    const bytes=await newDoc.save();
+    const name=currentFile.name.replace(/\.pdf$/i,'')+'_unlocked.pdf';
+    download(bytes,name);
+    showToast('PDF unlocked successfully!');
+  }catch(e){
+    console.error(e);
+    if(e.message&&e.message.includes('password')){
+      showToast('Incorrect password');
+    }else{
+      showToast('Error unlocking PDF: '+e.message);
+    }
+  }
+}
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-

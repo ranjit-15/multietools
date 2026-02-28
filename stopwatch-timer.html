@@ -3,130 +3,387 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Stopwatch & Timer - Multietools</title>
+	<title>Stopwatch &amp; Timer - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root { --bg: linear-gradient(135deg, #000428 0%, #004e92 100%); --card:#0f172a; --accent:#22d3ee; --text:#e2e8f0; --muted:#94a3b8; --border:#1f2937; --radius:16px; --shadow:0 18px 50px rgba(0,0,0,0.35);} 
 		*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,-apple-system,sans-serif;min-height:100vh;background:var(--bg);color:var(--text);padding:1.5rem;}
-		.shell{max-width:900px;margin:0 auto;background:rgba(15,23,42,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.75rem;display:grid;gap:1.25rem;} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-		.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
-		.panel{background:#0b1224;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:0.9rem;text-align:center;}
-		.time{font-size:2.4rem;font-weight:800;letter-spacing:0.05em;}
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;}
-		button:hover{transform:translateY(-1px);} .btn-secondary{background:rgba(255,255,255,0.05);color:var(--text);border:1px solid var(--border);} .btn-secondary:hover{transform:translateY(-1px);} 
-		.actions{display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;}
-		ul{list-style:none;text-align:left;max-height:180px;overflow:auto;padding:0;margin:0;} li{padding:0.4rem 0.5rem;border-bottom:1px solid var(--border);} 
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+
+		/* Tabs */
+		.mode-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;max-width:320px;margin:0 auto 1rem;}
+		.mode-tabs button{flex:1;padding:.7rem 1rem;border:none;background:var(--bg-alt);color:var(--muted);font-weight:700;font-size:.95rem;cursor:pointer;transition:all .2s;font-family:inherit;}
+		.mode-tabs button.active{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;}
+
+		/* Display */
+		.time-display{text-align:center;padding:2rem 1rem;font-family:'Courier New',monospace;font-size:3.6rem;font-weight:900;letter-spacing:2px;user-select:none;line-height:1.1;transition:color .3s;}
+		@media(max-width:500px){.time-display{font-size:2.2rem;}}
+		.time-display.flash{animation:flashAnim .5s ease 3;}
+		@keyframes flashAnim{0%,100%{opacity:1;}50%{opacity:.2;}}
+
+		/* Buttons */
+		.btn-row{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;}
+		.btn{padding:.7rem 1.5rem;border:none;border-radius:var(--radius-sm);font-weight:700;font-size:.95rem;cursor:pointer;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;gap:.5rem;}
+		.btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.25);}
+		.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,58,237,.35);}
+		.btn-secondary{background:var(--bg-alt);color:var(--text);border:1px solid var(--border);}
+		.btn-secondary:hover{border-color:var(--primary);color:var(--primary);}
+		.btn-danger{background:var(--error);color:#fff;}
+		.btn-danger:hover{opacity:.85;}
+
+		/* Timer inputs */
+		.timer-inputs{display:flex;gap:.5rem;justify-content:center;align-items:center;margin-bottom:1rem;}
+		.timer-inputs input{width:70px;text-align:center;padding:.65rem .5rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-alt);color:var(--text);font-size:1.3rem;font-family:'Courier New',monospace;font-weight:700;}
+		.timer-inputs input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
+		.timer-inputs span{font-size:1.5rem;font-weight:900;color:var(--muted);}
+
+		/* Presets */
+		.presets{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1rem;}
+		.presets button{padding:.45rem .9rem;border:1px solid var(--border);border-radius:var(--radius-full);background:var(--bg-alt);color:var(--muted);font-weight:700;font-size:.82rem;cursor:pointer;transition:all .2s;font-family:inherit;}
+		.presets button:hover{border-color:var(--primary);color:var(--primary);}
+
+		/* Lap list */
+		.lap-list{max-height:280px;overflow-y:auto;margin-top:1rem;}
+		.lap-list:empty{display:none;}
+		.lap-item{display:flex;justify-content:space-between;padding:.55rem .75rem;border-bottom:1px solid var(--border-light);font-size:.9rem;}
+		.lap-item:last-child{border-bottom:none;}
+		.lap-num{font-weight:700;color:var(--primary);}
+		.lap-split{color:var(--muted);font-size:.82rem;}
+		.lap-time{font-family:'Courier New',monospace;font-weight:600;}
+
+		/* View toggling */
+		.view{display:none;}
+		.view.active{display:block;}
+
+		.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 	</style>
 </head>
 <body>
-  
-
-  
-
-	<!-- Adsterra Ad -->
-	<div class="shell">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-stopwatch"></i> Stopwatch & Timer</h1>
-			<p class="muted">Track time, record laps, or run a countdown.</p>
-		</header>
-
-		<main class="grid">
-			<div class="panel">
-				<div class="time" id="sw-time">00:00.00</div>
-				<div class="actions">
-					<button onclick="swStart()" id="sw-start">Start</button>
-					<button class="btn-secondary" onclick="swLap()">Lap</button>
-					<button class="btn-secondary" onclick="swReset()">Reset</button>
-				</div>
-				<ul id="laps"></ul>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-stopwatch"></i> Stopwatch &amp; Timer</h1>
+		<p class="muted">Precise stopwatch with laps and countdown timer with audio alert.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<div class="mode-tabs">
+				<button class="active" data-mode="stopwatch"><i class="fas fa-stopwatch"></i>&nbsp; Stopwatch</button>
+				<button data-mode="timer"><i class="fas fa-hourglass-half"></i>&nbsp; Timer</button>
 			</div>
 
-			<div class="panel">
-				<div class="time" id="tm-time">00:00</div>
-				<div class="actions">
-					<button onclick="tmSet(300)">5m</button>
-					<button onclick="tmSet(600)">10m</button>
-					<button onclick="tmSet(1500)">25m</button>
+			<!-- ===== Stopwatch View ===== -->
+			<div class="view active" id="stopwatchView">
+				<div class="time-display" id="swDisplay">00:00:00<span style="font-size:.5em;opacity:.6">.000</span></div>
+				<div class="btn-row">
+					<button class="btn btn-primary" id="swStartPause"><i class="fas fa-play"></i> Start</button>
+					<button class="btn btn-secondary" id="swLap" disabled><i class="fas fa-flag"></i> Lap</button>
+					<button class="btn btn-secondary" id="swReset" disabled><i class="fas fa-redo"></i> Reset</button>
 				</div>
-				<div class="actions">
-					<button onclick="tmStart()" id="tm-start">Start</button>
-					<button class="btn-secondary" onclick="tmReset()">Reset</button>
+				<div class="lap-list" id="lapList"></div>
+			</div>
+
+			<!-- ===== Timer View ===== -->
+			<div class="view" id="timerView">
+				<div id="timerSetup">
+					<div class="timer-inputs">
+						<input type="number" id="timerH" min="0" max="99" value="0" placeholder="HH">
+						<span>:</span>
+						<input type="number" id="timerM" min="0" max="59" value="5" placeholder="MM">
+						<span>:</span>
+						<input type="number" id="timerS" min="0" max="59" value="0" placeholder="SS">
+					</div>
+					<div class="presets" id="presets">
+						<button data-sec="60">1 min</button>
+						<button data-sec="300">5 min</button>
+						<button data-sec="600">10 min</button>
+						<button data-sec="900">15 min</button>
+						<button data-sec="1800">30 min</button>
+						<button data-sec="3600">1 hr</button>
+					</div>
+				</div>
+				<div class="time-display" id="tmDisplay">00:05:00</div>
+				<div class="btn-row">
+					<button class="btn btn-primary" id="tmStartPause"><i class="fas fa-play"></i> Start</button>
+					<button class="btn btn-secondary" id="tmReset" disabled><i class="fas fa-redo"></i> Reset</button>
 				</div>
 			</div>
-		</main>
-	</div>
+		</div>
+	</main>
+</div>
 
-	<script>
-		// Stopwatch
-		let swInterval, swStartTime = 0, swElapsed = 0, lapCount = 0;
-		function swStart(){
-			if (swInterval) return;
-			swStartTime = performance.now() - swElapsed;
-			swInterval = requestAnimationFrame(swTick);
-			document.getElementById('sw-start').textContent = 'Running';
-		}
-		function swTick(ts){
-			swElapsed = ts - swStartTime;
-			document.getElementById('sw-time').textContent = formatMs(swElapsed);
-			swInterval = requestAnimationFrame(swTick);
-		}
-		function swLap(){
-			if (!swInterval) return;
-			lapCount++;
-			const li = document.createElement('li');
-			li.textContent = `Lap ${lapCount}: ${formatMs(swElapsed)}`;
-			document.getElementById('laps').prepend(li);
-		}
-		function swReset(){
-			if (swInterval){ cancelAnimationFrame(swInterval); swInterval = null; }
-			swElapsed = 0; lapCount = 0;
-			document.getElementById('sw-time').textContent = '00:00.00';
-			document.getElementById('laps').innerHTML = '';
-			document.getElementById('sw-start').textContent = 'Start';
-		}
-		function formatMs(ms){
-			const total = Math.floor(ms/10);
-			const hundredths = String(total % 100).padStart(2,'0');
-			const seconds = Math.floor(total/100)%60;
-			const minutes = Math.floor(total/6000);
-			return `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}.${hundredths}`;
-		}
+<div class="toast" id="toast"></div>
 
-		// Timer
-		let tmSeconds = 0, tmInterval = null;
-		function tmSet(sec){ tmSeconds = sec; renderTimer(); }
-		function tmStart(){
-			if (tmInterval || tmSeconds<=0) return;
-			tmInterval = setInterval(()=>{
-				tmSeconds--; renderTimer();
-				if (tmSeconds <=0){ clearInterval(tmInterval); tmInterval=null; alert('Time up!'); }
-			},1000);
+<script>
+(function(){
+	'use strict';
+
+	/* ======== Toast ======== */
+	function showToast(msg, type){
+		var t = document.getElementById('toast');
+		t.textContent = msg;
+		t.style.borderColor = type === 'error' ? 'var(--error)' : type === 'success' ? 'var(--success)' : 'var(--primary)';
+		t.classList.add('show');
+		setTimeout(function(){ t.classList.remove('show'); }, 3000);
+	}
+
+	/* ======== Audio Beep ======== */
+	var audioCtx = null;
+	function playBeep(){
+		try {
+			if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+			var osc = audioCtx.createOscillator();
+			var gain = audioCtx.createGain();
+			osc.type = 'sine';
+			osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+			gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+			gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+			osc.connect(gain);
+			gain.connect(audioCtx.destination);
+			osc.start(audioCtx.currentTime);
+			osc.stop(audioCtx.currentTime + 0.5);
+		} catch(e){}
+	}
+
+	/* ======== Tab Switching ======== */
+	var modeTabs = document.querySelectorAll('.mode-tabs button');
+	modeTabs.forEach(function(btn){
+		btn.addEventListener('click', function(){
+			modeTabs.forEach(function(b){ b.classList.remove('active'); });
+			btn.classList.add('active');
+			document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+			document.getElementById(btn.dataset.mode === 'stopwatch' ? 'stopwatchView' : 'timerView').classList.add('active');
+		});
+	});
+
+	/* ======== Helpers ======== */
+	function padZ(n, d){ return String(n).padStart(d || 2, '0'); }
+
+	function formatMs(ms){
+		var h = Math.floor(ms / 3600000);
+		var m = Math.floor((ms % 3600000) / 60000);
+		var s = Math.floor((ms % 60000) / 1000);
+		var mil = ms % 1000;
+		return padZ(h) + ':' + padZ(m) + ':' + padZ(s) + '.' + padZ(mil, 3);
+	}
+
+	function formatHMS(ms){
+		var h = Math.floor(ms / 3600000);
+		var m = Math.floor((ms % 3600000) / 60000);
+		var s = Math.floor((ms % 60000) / 1000);
+		return padZ(h) + ':' + padZ(m) + ':' + padZ(s);
+	}
+
+	/* ==================== STOPWATCH ==================== */
+	var swDisplay = document.getElementById('swDisplay');
+	var swStartBtn = document.getElementById('swStartPause');
+	var swLapBtn = document.getElementById('swLap');
+	var swResetBtn = document.getElementById('swReset');
+	var lapListEl = document.getElementById('lapList');
+
+	var swRunning = false;
+	var swElapsed = 0;
+	var swStart = 0;
+	var swInterval = null;
+	var laps = [];
+
+	function renderSW(){
+		var t = swElapsed;
+		var h = padZ(Math.floor(t / 3600000));
+		var m = padZ(Math.floor((t % 3600000) / 60000));
+		var s = padZ(Math.floor((t % 60000) / 1000));
+		var ms = padZ(t % 1000, 3);
+		swDisplay.innerHTML = h + ':' + m + ':' + s + '<span style="font-size:.5em;opacity:.6">.' + ms + '</span>';
+	}
+
+	function swTick(){
+		swElapsed = Date.now() - swStart;
+		renderSW();
+	}
+
+	swStartBtn.addEventListener('click', function(){
+		if(!swRunning){
+			swStart = Date.now() - swElapsed;
+			swInterval = setInterval(swTick, 37);
+			swRunning = true;
+			swStartBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+			swLapBtn.disabled = false;
+			swResetBtn.disabled = false;
+		} else {
+			clearInterval(swInterval);
+			swRunning = false;
+			swStartBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
+			swLapBtn.disabled = true;
 		}
-		function tmReset(){ if (tmInterval){ clearInterval(tmInterval); tmInterval=null; } tmSeconds=0; renderTimer(); }
-		function renderTimer(){
-			const m = Math.floor(tmSeconds/60); const s = tmSeconds%60;
-			document.getElementById('tm-time').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+	});
+
+	swLapBtn.addEventListener('click', function(){
+		if(!swRunning) return;
+		var prevTotal = laps.length > 0 ? laps[laps.length - 1].total : 0;
+		var lap = { num: laps.length + 1, total: swElapsed, split: swElapsed - prevTotal };
+		laps.push(lap);
+		renderLaps();
+		showToast('Lap ' + lap.num + ' recorded');
+	});
+
+	swResetBtn.addEventListener('click', function(){
+		clearInterval(swInterval);
+		swRunning = false;
+		swElapsed = 0;
+		laps = [];
+		renderSW();
+		lapListEl.innerHTML = '';
+		swStartBtn.innerHTML = '<i class="fas fa-play"></i> Start';
+		swLapBtn.disabled = true;
+		swResetBtn.disabled = true;
+		showToast('Stopwatch reset');
+	});
+
+	function renderLaps(){
+		lapListEl.innerHTML = '';
+		for(var i = laps.length - 1; i >= 0; i--){
+			var l = laps[i];
+			var div = document.createElement('div');
+			div.className = 'lap-item';
+			div.innerHTML = '<span class="lap-num">Lap ' + l.num + '</span>' +
+				'<span class="lap-split">+' + formatMs(l.split) + '</span>' +
+				'<span class="lap-time">' + formatMs(l.total) + '</span>';
+			lapListEl.appendChild(div);
 		}
-		renderTimer();
-	</script>
+	}
 
+	/* ==================== TIMER ==================== */
+	var tmDisplay = document.getElementById('tmDisplay');
+	var tmStartBtn = document.getElementById('tmStartPause');
+	var tmResetBtn = document.getElementById('tmReset');
+	var timerH = document.getElementById('timerH');
+	var timerM = document.getElementById('timerM');
+	var timerS = document.getElementById('timerS');
+	var timerSetup = document.getElementById('timerSetup');
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+	var tmRunning = false;
+	var tmTotalMs = 0;   // total duration set
+	var tmRemaining = 0; // remaining ms
+	var tmEnd = 0;       // end timestamp
+	var tmInterval = null;
 
+	function getTimerInputMs(){
+		var h = parseInt(timerH.value) || 0;
+		var m = parseInt(timerM.value) || 0;
+		var s = parseInt(timerS.value) || 0;
+		return (h * 3600 + m * 60 + s) * 1000;
+	}
+
+	function setTimerInputFromMs(ms){
+		var totalSec = Math.round(ms / 1000);
+		timerH.value = Math.floor(totalSec / 3600);
+		timerM.value = Math.floor((totalSec % 3600) / 60);
+		timerS.value = totalSec % 60;
+	}
+
+	function renderTM(){
+		tmDisplay.textContent = formatHMS(Math.max(0, tmRemaining));
+	}
+
+	function tmTick(){
+		tmRemaining = tmEnd - Date.now();
+		if(tmRemaining <= 0){
+			tmRemaining = 0;
+			renderTM();
+			tmDone();
+			return;
+		}
+		renderTM();
+	}
+
+	function tmDone(){
+		clearInterval(tmInterval);
+		tmRunning = false;
+		tmStartBtn.innerHTML = '<i class="fas fa-play"></i> Start';
+		tmResetBtn.disabled = false;
+		tmDisplay.classList.add('flash');
+		setTimeout(function(){ tmDisplay.classList.remove('flash'); }, 2000);
+		playBeep();
+		showToast('Timer complete!', 'success');
+	}
+
+	tmStartBtn.addEventListener('click', function(){
+		if(!tmRunning){
+			if(tmRemaining <= 0){
+				tmTotalMs = getTimerInputMs();
+				tmRemaining = tmTotalMs;
+			}
+			if(tmRemaining <= 0){
+				showToast('Set a time first', 'error');
+				return;
+			}
+			tmEnd = Date.now() + tmRemaining;
+			tmInterval = setInterval(tmTick, 100);
+			tmRunning = true;
+			tmStartBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+			tmResetBtn.disabled = false;
+			timerSetup.style.opacity = '0.5';
+			timerSetup.style.pointerEvents = 'none';
+		} else {
+			clearInterval(tmInterval);
+			tmRemaining = tmEnd - Date.now();
+			tmRunning = false;
+			tmStartBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
+		}
+	});
+
+	tmResetBtn.addEventListener('click', function(){
+		clearInterval(tmInterval);
+		tmRunning = false;
+		tmRemaining = 0;
+		tmTotalMs = 0;
+		renderTM();
+		tmStartBtn.innerHTML = '<i class="fas fa-play"></i> Start';
+		tmResetBtn.disabled = true;
+		timerSetup.style.opacity = '1';
+		timerSetup.style.pointerEvents = 'auto';
+		tmDisplay.classList.remove('flash');
+		showToast('Timer reset');
+		// Re-render from inputs
+		tmRemaining = getTimerInputMs();
+		renderTM();
+	});
+
+	// Presets
+	document.getElementById('presets').addEventListener('click', function(e){
+		var btn = e.target.closest('button[data-sec]');
+		if(!btn) return;
+		var sec = parseInt(btn.dataset.sec);
+		setTimerInputFromMs(sec * 1000);
+		tmRemaining = sec * 1000;
+		renderTM();
+		showToast(btn.textContent + ' preset selected');
+	});
+
+	// Update display when inputs change
+	[timerH, timerM, timerS].forEach(function(inp){
+		inp.addEventListener('input', function(){
+			if(!tmRunning){
+				tmRemaining = getTimerInputMs();
+				renderTM();
+			}
+		});
+	});
+
+	// Initial render
+	tmRemaining = getTimerInputMs();
+	renderTM();
+
+})();
+</script>
+
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

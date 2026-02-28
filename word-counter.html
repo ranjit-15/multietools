@@ -1,93 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Word Counter - Multietools</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 15% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 80% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:900px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:0.9rem;}
-		textarea{width:100%;min-height:220px;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);padding:1rem;font-size:1rem;}
-		.stats{display:flex;flex-wrap:wrap;gap:0.75rem;} .stat{flex:1 1 140px;background:#0f192b;border:1px solid var(--border);padding:0.9rem 1rem;border-radius:12px;} .stat span{display:block;} .stat .label{color:var(--muted);font-size:0.9rem;} .stat .value{font-size:1.4rem;font-weight:800;}
-		.row{display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center;} button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-	</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Counter - Multietools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/global.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+textarea{width:100%;min-height:200px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.95rem;font-family:inherit;resize:vertical;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:.75rem;margin-top:1rem;}
+.stat{background:var(--bg-alt);border:1px solid var(--border-light);padding:.9rem 1rem;border-radius:var(--radius-md);text-align:center;}
+.stat .label{color:var(--muted);font-size:.82rem;font-weight:600;margin-bottom:.25rem;}
+.stat .value{font-size:1.35rem;font-weight:800;color:var(--primary);}
+.kw-section{margin-top:1rem;}
+.kw-section h3{font-size:.95rem;margin-bottom:.5rem;color:var(--muted);}
+.kw-list{display:flex;flex-wrap:wrap;gap:.5rem;}
+.kw-tag{background:var(--primary-glow);border:1px solid var(--primary-light);color:var(--primary);padding:.35rem .75rem;border-radius:var(--radius-full);font-size:.82rem;font-weight:600;}
+.actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem;}
+button{padding:.75rem 1.1rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-weight:700;font-size:.88rem;box-shadow:var(--shadow-sm);transition:transform .15s ease,box-shadow .15s ease;}
+button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-md);font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:all .35s var(--ease-bounce);z-index:999;}
+.toast.show{transform:translateY(0);opacity:1;}
+</style>
 </head>
 <body>
-  
+<div class="wrap">
+<header>
+<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+<h1><i class="fas fa-file-word"></i> Word Counter</h1>
+<p class="muted">Count words, characters, sentences, paragraphs, and reading time in real-time.</p>
+</header>
+<main>
+<div class="panel">
+<textarea id="text" placeholder="Start typing or paste your text here…"></textarea>
+<div class="stats-grid">
+<div class="stat"><div class="label">Characters (spaces)</div><div class="value" id="charsS">0</div></div>
+<div class="stat"><div class="label">Characters (no spaces)</div><div class="value" id="charsNS">0</div></div>
+<div class="stat"><div class="label">Words</div><div class="value" id="words">0</div></div>
+<div class="stat"><div class="label">Sentences</div><div class="value" id="sentences">0</div></div>
+<div class="stat"><div class="label">Paragraphs</div><div class="value" id="paragraphs">0</div></div>
+<div class="stat"><div class="label">Avg Word Length</div><div class="value" id="avgLen">0</div></div>
+<div class="stat"><div class="label">Reading Time</div><div class="value" id="readTime">0s</div></div>
+<div class="stat"><div class="label">Speaking Time</div><div class="value" id="speakTime">0s</div></div>
+</div>
+<div class="kw-section">
+<h3><i class="fas fa-chart-bar"></i> Top 5 Keywords</h3>
+<div class="kw-list" id="keywords"><span class="kw-tag" style="opacity:.5">Type to see keywords…</span></div>
+</div>
+<div class="actions">
+<button onclick="copyText()"><i class="fas fa-copy"></i> Copy Text</button>
+<button onclick="clearText()"><i class="fas fa-eraser"></i> Clear</button>
+</div>
+</div>
+</main>
+</div>
+<div class="toast" id="toast"></div>
 
-  
+<script>
+const textEl=document.getElementById('text');
+const stopWords=new Set(['the','a','an','in','on','at','to','for','of','and','but','or','is','it','this','that','was','with','as','by','be','are','from','has','had','have','not','no','do','did','will','would','can','could','should','so','if','its','he','she','we','they','them','you','i','my','me','his','her','our','am','been','were','being','than','also','just','about','into','more','very','some','all','other','which','what','when','where','who','how']);
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-spell-check"></i> Word Counter</h1>
-			<p class="muted">Count words, characters, sentences, and reading time in real-time.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<textarea id="text" placeholder="Start typing or paste text..."></textarea>
-				<div class="stats">
-					<div class="stat"><span class="label">Words</span><span class="value" id="words">0</span></div>
-					<div class="stat"><span class="label">Characters</span><span class="value" id="chars">0</span></div>
-					<div class="stat"><span class="label">Sentences</span><span class="value" id="sentences">0</span></div>
-					<div class="stat"><span class="label">Lines</span><span class="value" id="lines">0</span></div>
-					<div class="stat"><span class="label">Read Time</span><span class="value" id="read">0s</span></div>
-				</div>
-				<div class="row">
-					<button onclick="copyText()"><i class="fas fa-copy"></i> Copy Text</button>
-					<button onclick="clearText()"><i class="fas fa-eraser"></i> Clear</button>
-				</div>
-			</div>
-		</main>
-	</div>
+function update(){
+  const val=textEl.value;
+  const charsS=val.length;
+  const charsNS=val.replace(/\s/g,'').length;
+  const wordList=val.trim()?val.trim().split(/\s+/):[];
+  const wordCount=wordList.length;
+  // Sentences: split by .!? followed by whitespace or end
+  const sentMatches=val.match(/[^.!?]*[.!?](?:\s|$)/g);
+  const sentCount=sentMatches?sentMatches.length:0;
+  // Paragraphs: non-empty lines
+  const paraCount=val.trim()?val.split(/\n+/).filter(l=>l.trim().length>0).length:0;
+  // Avg word length
+  const avgLen=wordCount?( wordList.reduce((s,w)=>s+w.length,0)/wordCount ).toFixed(1):'0';
+  // Times
+  const readMin=wordCount/200;
+  const speakMin=wordCount/130;
+  document.getElementById('charsS').textContent=charsS;
+  document.getElementById('charsNS').textContent=charsNS;
+  document.getElementById('words').textContent=wordCount;
+  document.getElementById('sentences').textContent=sentCount;
+  document.getElementById('paragraphs').textContent=paraCount;
+  document.getElementById('avgLen').textContent=avgLen;
+  document.getElementById('readTime').textContent=fmtTime(readMin);
+  document.getElementById('speakTime').textContent=fmtTime(speakMin);
+  // Keywords
+  buildKeywords(wordList);
+}
 
-	<script>
-		const text = document.getElementById('text');
-		const words = document.getElementById('words');
-		const chars = document.getElementById('chars');
-		const sentences = document.getElementById('sentences');
-		const lines = document.getElementById('lines');
-		const read = document.getElementById('read');
+function fmtTime(min){
+  const sec=Math.round(min*60);
+  if(sec<60) return sec+'s';
+  const m=Math.floor(sec/60), s=sec%60;
+  return m+'m '+(s?s+'s':'');
+}
 
-		function update(){
-			const val = text.value || '';
-			const wordList = val.trim() ? val.trim().split(/\s+/) : [];
-			const sentenceList = val.split(/[.!?]+/).filter(Boolean);
-			const lineList = val.split(/\r?\n/);
-			words.textContent = wordList.length;
-			chars.textContent = val.length;
-			sentences.textContent = sentenceList.length;
-			lines.textContent = lineList.length;
-			const minutes = wordList.length / 200; // ~200 wpm
-			const seconds = Math.round(minutes * 60);
-			read.textContent = seconds < 60 ? `${seconds}s` : `${Math.round(minutes * 10)/10}m`;
-		}
+function buildKeywords(wordList){
+  const freq={};
+  wordList.forEach(w=>{
+    const lw=w.toLowerCase().replace(/[^a-z0-9'-]/g,'');
+    if(lw.length>1 && !stopWords.has(lw)) freq[lw]=(freq[lw]||0)+1;
+  });
+  const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const container=document.getElementById('keywords');
+  if(!sorted.length){container.innerHTML='<span class="kw-tag" style="opacity:.5">No keywords yet</span>';return;}
+  container.innerHTML=sorted.map(([w,c])=>'<span class="kw-tag">'+w+' ('+c+')</span>').join('');
+}
 
-		function copyText(){ navigator.clipboard.writeText(text.value || ''); }
-		function clearText(){ text.value=''; update(); }
-		text.addEventListener('input', update);
-		update();
-	</script>
+function copyText(){
+  if(!textEl.value){showToast('Nothing to copy');return;}
+  navigator.clipboard.writeText(textEl.value).then(()=>showToast('Text copied!'));
+}
+function clearText(){textEl.value='';update();showToast('Cleared');}
 
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
-
+textEl.addEventListener('input',update);
+update();
+</script>
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

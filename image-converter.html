@@ -5,97 +5,203 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Image Converter - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:900px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} select{padding:0.75rem 0.9rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--text);} button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		img,canvas{max-width:100%;border-radius:12px;border:1px solid var(--border);} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		/* Drop zone */
+		.drop-zone{border:2px dashed var(--border);border-radius:var(--radius-md);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:border-color .25s,background .25s;position:relative;}
+		.drop-zone:hover,.drop-zone.dragover{border-color:var(--primary);background:var(--primary-glow);}
+		.drop-zone i{font-size:2.5rem;color:var(--primary);margin-bottom:.75rem;display:block;}
+		.drop-zone p{color:var(--muted);font-size:.95rem;}
+		.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+		/* Controls */
+		.controls{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;}
+		select,input[type=range]{padding:.7rem .9rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-family:inherit;font-size:.9rem;}
+		.quality-wrap{display:flex;align-items:center;gap:.5rem;flex:1;min-width:200px;}
+		.quality-wrap input[type=range]{flex:1;accent-color:var(--primary);}
+		.quality-wrap span{font-weight:700;min-width:2.5rem;text-align:center;}
+		.btn{padding:.8rem 1.2rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.9rem;box-shadow:0 2px 10px rgba(124,58,237,.2);transition:transform .15s,box-shadow .25s;}
+		.btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.3);}
+		.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+		.btn-outline{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);}
+		.btn-outline:hover{background:var(--primary-glow);}
+		/* Stats */
+		.stats{display:flex;flex-wrap:wrap;gap:1rem;margin-top:.75rem;}
+		.stat-card{flex:1;min-width:140px;background:var(--bg-alt);border-radius:var(--radius-sm);padding:.85rem;text-align:center;}
+		.stat-card .label{font-size:.78rem;color:var(--muted);text-transform:uppercase;font-weight:600;letter-spacing:.04em;}
+		.stat-card .value{font-size:1.15rem;font-weight:800;margin-top:.2rem;}
+		/* Preview */
+		.preview-area{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;}
+		.preview-box{text-align:center;}
+		.preview-box img{max-width:100%;max-height:300px;border-radius:var(--radius-sm);border:1px solid var(--border);object-fit:contain;background:repeating-conic-gradient(var(--border-light) 0% 25%, transparent 0% 50%) 50%/16px 16px;}
+		.preview-box .tag{display:inline-block;margin-top:.5rem;padding:.25rem .65rem;border-radius:var(--radius-full);background:var(--primary-glow);color:var(--primary);font-weight:700;font-size:.78rem;}
+		/* Batch */
+		.batch-list{display:grid;gap:.5rem;margin-top:.75rem;}
+		.batch-item{display:flex;align-items:center;gap:.75rem;padding:.65rem;background:var(--bg-alt);border-radius:var(--radius-sm);font-size:.9rem;}
+		.batch-item .name{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+		.batch-item .size{color:var(--muted);font-size:.8rem;}
+		.batch-item .status{font-weight:700;font-size:.8rem;}
+		.batch-item .status.done{color:var(--success);}
+		.batch-item .status.pending{color:var(--muted);}
+		/* Toast */
+		.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+		@media(max-width:640px){.preview-area{grid-template-columns:1fr;}.controls{flex-direction:column;}}
 	</style>
 </head>
 <body>
-  
-
-  
-
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-exchange-alt"></i> Image Converter</h1>
-			<p class="muted">Convert images to PNG, JPG, or WEBP.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<input type="file" id="file" accept="image/*">
-					<select id="format">
-						<option value="image/png">PNG</option>
-						<option value="image/jpeg">JPG</option>
-						<option value="image/webp">WEBP</option>
-					</select>
-					<button onclick="convert()">Convert</button>
-					<button onclick="downloadImg()">Download</button>
-				</div>
-				<img id="preview" alt="Preview">
-				<canvas id="canvas" style="display:none"></canvas>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-exchange-alt"></i> Image Converter</h1>
+		<p class="muted">Convert images to PNG, JPG, WEBP, or BMP — drag &amp; drop or browse files.</p>
+	</header>
+	<main>
+		<!-- Upload -->
+		<div class="panel">
+			<div class="drop-zone" id="dropZone">
+				<i class="fas fa-cloud-upload-alt"></i>
+				<p><strong>Drag &amp; drop images here</strong> or click to browse</p>
+				<p style="font-size:.82rem;margin-top:.35rem;">Supports PNG, JPG, WEBP, GIF, BMP &bull; Multiple files supported</p>
+				<input type="file" id="fileInput" accept="image/*" multiple>
 			</div>
-		</main>
-	</div>
+		</div>
 
-	<script>
-		const file = document.getElementById('file');
-		const format = document.getElementById('format');
-		const preview = document.getElementById('preview');
-		const canvas = document.getElementById('canvas');
-		const ctx = canvas.getContext('2d');
-		let img = new Image();
-		let dataUrl = '';
+		<!-- Controls -->
+		<div class="panel">
+			<div class="controls">
+				<select id="format">
+					<option value="image/png">PNG</option>
+					<option value="image/jpeg" selected>JPG</option>
+					<option value="image/webp">WEBP</option>
+					<option value="image/bmp">BMP</option>
+				</select>
+				<div class="quality-wrap" id="qualityWrap">
+					<label style="font-weight:600;font-size:.9rem;">Quality:</label>
+					<input type="range" id="quality" min="10" max="100" value="92">
+					<span id="qualityVal">92%</span>
+				</div>
+				<button class="btn" id="convertBtn" onclick="convertAll()" disabled><i class="fas fa-sync-alt"></i> Convert</button>
+				<button class="btn btn-outline" id="downloadBtn" onclick="downloadAll()" disabled><i class="fas fa-download"></i> Download All</button>
+			</div>
+		</div>
 
-		file.addEventListener('change', e=>{
-			const f = e.target.files[0];
-			if(!f) return;
-			const url = URL.createObjectURL(f);
-			img = new Image();
-			img.onload = ()=>{ preview.src = url; canvas.width = img.width; canvas.height = img.height; ctx.drawImage(img,0,0); };
-			img.src = url;
-		});
+		<!-- Stats -->
+		<div class="stats" id="stats" style="display:none;">
+			<div class="stat-card"><div class="label">Files</div><div class="value" id="statFiles">0</div></div>
+			<div class="stat-card"><div class="label">Original Size</div><div class="value" id="statOriginal">—</div></div>
+			<div class="stat-card"><div class="label">Converted Size</div><div class="value" id="statConverted">—</div></div>
+			<div class="stat-card"><div class="label">Savings</div><div class="value" id="statSavings">—</div></div>
+		</div>
 
-		function convert(){
-			if(!img.src) return;
-			canvas.width = img.width; canvas.height = img.height;
-			ctx.clearRect(0,0,canvas.width,canvas.height);
+		<!-- Batch list -->
+		<div class="batch-list" id="batchList"></div>
+
+		<!-- Preview (single file) -->
+		<div class="preview-area" id="previewArea" style="display:none;">
+			<div class="preview-box"><img id="origPreview" alt="Original"><span class="tag" id="origTag">Original</span></div>
+			<div class="preview-box"><img id="convPreview" alt="Converted"><span class="tag" id="convTag">Converted</span></div>
+		</div>
+	</main>
+</div>
+
+<div class="toast" id="toast"></div>
+<canvas id="canvas" style="display:none"></canvas>
+
+<script src="js/global.js"></script>
+<script>
+const dropZone=document.getElementById('dropZone'),fileInput=document.getElementById('fileInput'),formatSel=document.getElementById('format'),qualitySlider=document.getElementById('quality'),qualityVal=document.getElementById('qualityVal'),qualityWrap=document.getElementById('qualityWrap'),convertBtn=document.getElementById('convertBtn'),downloadBtn=document.getElementById('downloadBtn'),batchList=document.getElementById('batchList'),canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
+let files=[],converted=[];
+
+// Quality label
+qualitySlider.addEventListener('input',()=>qualityVal.textContent=qualitySlider.value+'%');
+formatSel.addEventListener('change',()=>{
+	const lossy=formatSel.value==='image/jpeg'||formatSel.value==='image/webp';
+	qualityWrap.style.display=lossy?'flex':'none';
+});
+qualityWrap.style.display='flex';
+
+// Drag & drop
+['dragenter','dragover'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.add('dragover');}));
+['dragleave','drop'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.remove('dragover');}));
+dropZone.addEventListener('drop',ev=>{handleFiles(ev.dataTransfer.files);});
+fileInput.addEventListener('change',ev=>{handleFiles(ev.target.files);});
+
+function handleFiles(fl){
+	files=Array.from(fl).filter(f=>f.type.startsWith('image/'));
+	if(!files.length){showToast('No valid image files selected.');return;}
+	convertBtn.disabled=false; downloadBtn.disabled=true; converted=[];
+	batchList.innerHTML='';
+	files.forEach((f,i)=>{
+		batchList.innerHTML+=`<div class="batch-item" id="batch-${i}"><span class="name">${f.name}</span><span class="size">${fmtSize(f.size)}</span><span class="status pending">Pending</span></div>`;
+	});
+	document.getElementById('stats').style.display='none';
+	document.getElementById('previewArea').style.display=files.length===1?'grid':'none';
+	if(files.length===1){document.getElementById('origPreview').src=URL.createObjectURL(files[0]);document.getElementById('origTag').textContent=`Original (${fmtSize(files[0].size)})`;}
+	showToast(`${files.length} file(s) loaded. Choose format & click Convert.`);
+}
+
+async function convertAll(){
+	convertBtn.disabled=true; converted=[]; let totalOrig=0,totalConv=0;
+	const fmt=formatSel.value, q=parseFloat(qualitySlider.value)/100;
+	for(let i=0;i<files.length;i++){
+		const f=files[i]; const el=document.getElementById('batch-'+i);
+		el.querySelector('.status').textContent='Converting...';el.querySelector('.status').className='status';
+		const blob=await convertFile(f,fmt,q);
+		converted.push({blob,name:newName(f.name,fmt)});
+		totalOrig+=f.size; totalConv+=blob.size;
+		el.querySelector('.status').textContent='Done ('+fmtSize(blob.size)+')';el.querySelector('.status').className='status done';
+	}
+	// Stats
+	document.getElementById('stats').style.display='flex';
+	document.getElementById('statFiles').textContent=files.length;
+	document.getElementById('statOriginal').textContent=fmtSize(totalOrig);
+	document.getElementById('statConverted').textContent=fmtSize(totalConv);
+	const pct=totalOrig>0?Math.round((1-totalConv/totalOrig)*100):0;
+	document.getElementById('statSavings').textContent=(pct>=0?pct+'% smaller':Math.abs(pct)+'% larger');
+	// Preview single
+	if(files.length===1&&converted[0]){
+		const url=URL.createObjectURL(converted[0].blob);
+		document.getElementById('convPreview').src=url;
+		document.getElementById('convTag').textContent=`Converted (${fmtSize(converted[0].blob.size)})`;
+		document.getElementById('previewArea').style.display='grid';
+	}
+	downloadBtn.disabled=false; convertBtn.disabled=false;
+	showToast('Conversion complete!');
+}
+
+function convertFile(f,fmt,q){
+	return new Promise(res=>{
+		const img=new Image();
+		img.onload=()=>{
+			canvas.width=img.width;canvas.height=img.height;
+			// White fill for JPEG (handles transparency)
+			if(fmt==='image/jpeg'||fmt==='image/bmp'){ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);}
+			else{ctx.clearRect(0,0,canvas.width,canvas.height);}
 			ctx.drawImage(img,0,0);
-			dataUrl = canvas.toDataURL(format.value, 0.92);
-			preview.src = dataUrl;
-		}
+			canvas.toBlob(blob=>res(blob),fmt,q);
+		};
+		img.src=URL.createObjectURL(f);
+	});
+}
 
-		function downloadImg(){
-			if(!dataUrl) convert();
-			if(!dataUrl) return;
-			const link = document.createElement('a');
-			const ext = format.value === 'image/png' ? 'png' : format.value === 'image/webp' ? 'webp' : 'jpg';
-			link.download = `converted.${ext}`;
-			link.href = dataUrl;
-			link.click();
-		}
-	</script>
+function downloadAll(){
+	converted.forEach(c=>{
+		const a=document.createElement('a');a.href=URL.createObjectURL(c.blob);a.download=c.name;a.click();
+	});
+	showToast('Download started!');
+}
 
-
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
-
+function newName(name,fmt){const base=name.replace(/\.[^.]+$/,'');const ext={['image/png']:'png',['image/jpeg']:'jpg',['image/webp']:'webp',['image/bmp']:'bmp'}[fmt]||'png';return base+'.'+ext;}
+function fmtSize(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(2)+' MB';}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-

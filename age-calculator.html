@@ -5,76 +5,193 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Age Calculator - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root { --bg: linear-gradient(135deg, #1d4350 0%, #a43931 100%); --card:#0f172a; --accent:#f97316; --text:#e2e8f0; --muted:#cbd5e1; --border:#1f2937; --radius:16px; --shadow:0 18px 50px rgba(0,0,0,0.35);} 
 		*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,-apple-system,sans-serif;min-height:100vh;background:var(--bg);color:var(--text);padding:1.5rem;}
-		.shell{max-width:720px;margin:0 auto;background:rgba(15,23,42,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(249,115,22,0.12);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1.1rem;} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-		.panel{background:#0b1224;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:0.75rem;}
-		label{font-weight:700;color:var(--text);} input{width:100%;padding:0.85rem 0.9rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} 
-		button{padding:0.9rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#fb923c);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;}
-		button:hover{transform:translateY(-1px);} 
-		.result{background:#0f192b;border:1px solid var(--border);border-radius:12px;padding:1rem;font-weight:800;display:grid;gap:0.35rem;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+
+		label{font-weight:600;font-size:.95rem;display:block;margin-bottom:.4rem;}
+		input[type="date"]{width:100%;max-width:320px;padding:.75rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:1rem;font-family:inherit;}
+		input[type="date"]:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
+
+		.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;margin-top:1rem;}
+		.stat{background:var(--bg-alt);border:1px solid var(--border-light);padding:1rem;border-radius:var(--radius-sm);text-align:center;}
+		.stat .label{color:var(--muted);font-size:.85rem;margin-bottom:.3rem;}
+		.stat .value{font-size:1.35rem;font-weight:800;}
+		.stat .value i{margin-right:.35rem;font-size:1rem;}
+
+		.highlight{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none;}
+		.highlight .label{color:rgba(255,255,255,.8);}
+		.highlight .value{color:#fff;}
+
+		.zodiac-icon{font-size:1.6rem;margin-bottom:.25rem;display:block;}
+
+		.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 	</style>
 </head>
 <body>
-  
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-birthday-cake"></i> Age Calculator</h1>
+		<p class="muted">Enter your date of birth to see your exact age, zodiac sign, and more.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<label for="dob"><i class="fas fa-calendar-alt"></i> Date of Birth</label>
+			<input type="date" id="dob">
+		</div>
 
-  
-
-	<!-- Adsterra Ad -->
-	<div class="shell">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-birthday-cake"></i> Age Calculator</h1>
-			<p class="muted">Enter your birthdate to get your exact age.</p>
-		</header>
-
-		<main>
-			<div class="panel">
-				<label for="dob">Date of Birth</label>
-				<input type="date" id="dob">
-				<button onclick="calc()"><i class="fas fa-calculator"></i> Calculate Age</button>
-				<div class="result" id="result">
-					<div>Years: �</div>
-					<div>Months: �</div>
-					<div>Days: �</div>
+		<div class="panel" id="results" style="display:none;">
+			<div class="stats">
+				<div class="stat highlight">
+					<div class="label">Your Age</div>
+					<div class="value" id="age">—</div>
+				</div>
+				<div class="stat">
+					<div class="label"><i class="fas fa-calendar-day"></i> Total Days</div>
+					<div class="value" id="totalDays">—</div>
+				</div>
+				<div class="stat">
+					<div class="label"><i class="fas fa-calendar-week"></i> Total Weeks</div>
+					<div class="value" id="totalWeeks">—</div>
+				</div>
+				<div class="stat">
+					<div class="label"><i class="fas fa-clock"></i> Total Hours</div>
+					<div class="value" id="totalHours">—</div>
+				</div>
+				<div class="stat">
+					<div class="label"><i class="fas fa-hourglass-half"></i> Next Birthday</div>
+					<div class="value" id="nextBday">—</div>
+				</div>
+				<div class="stat">
+					<div class="label"><i class="fas fa-star"></i> Zodiac Sign</div>
+					<div class="value" id="zodiac">—</div>
+				</div>
+				<div class="stat">
+					<div class="label"><i class="fas fa-calendar"></i> Day Born On</div>
+					<div class="value" id="dayBorn">—</div>
+				</div>
+				<div class="stat">
+					<div class="label"><i class="fas fa-moon"></i> Birth Month</div>
+					<div class="value" id="birthMonth">—</div>
 				</div>
 			</div>
-		</main>
-	</div>
+		</div>
+	</main>
+</div>
 
-	<script>
-		function calc(){
-			const dob = document.getElementById('dob').value;
-			if(!dob) return;
-			const birth = new Date(dob);
-			const today = new Date();
-			if (birth > today) return;
-			let years = today.getFullYear() - birth.getFullYear();
-			let months = today.getMonth() - birth.getMonth();
-			let days = today.getDate() - birth.getDate();
-			if (days < 0) { months -= 1; const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0); days += prevMonth.getDate(); }
-			if (months < 0) { years -= 1; months += 12; }
-			document.getElementById('result').innerHTML = `<div>Years: ${years}</div><div>Months: ${months}</div><div>Days: ${days}</div>`;
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+const dobInput = document.getElementById('dob');
+const resultsPanel = document.getElementById('results');
+
+// Set max date to today
+dobInput.max = new Date().toISOString().split('T')[0];
+
+dobInput.addEventListener('change', calculate);
+
+function calculate() {
+	const val = dobInput.value;
+	if (!val) { resultsPanel.style.display = 'none'; return; }
+
+	const dob = new Date(val + 'T00:00:00');
+	const now = new Date();
+
+	if (dob > now) {
+		showToast('Date of birth cannot be in the future!');
+		resultsPanel.style.display = 'none';
+		return;
+	}
+
+	resultsPanel.style.display = 'block';
+
+	// Calculate exact age
+	let years = now.getFullYear() - dob.getFullYear();
+	let months = now.getMonth() - dob.getMonth();
+	let days = now.getDate() - dob.getDate();
+
+	if (days < 0) {
+		months--;
+		const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+		days += prevMonth.getDate();
+	}
+	if (months < 0) {
+		years--;
+		months += 12;
+	}
+
+	document.getElementById('age').textContent = years + 'y ' + months + 'm ' + days + 'd';
+
+	// Total days, weeks, hours
+	const diffMs = now - dob;
+	const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+	const totalWeeks = Math.floor(totalDays / 7);
+	const totalHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+	document.getElementById('totalDays').textContent = totalDays.toLocaleString();
+	document.getElementById('totalWeeks').textContent = totalWeeks.toLocaleString();
+	document.getElementById('totalHours').textContent = totalHours.toLocaleString();
+
+	// Next birthday countdown
+	let nextBday = new Date(now.getFullYear(), dob.getMonth(), dob.getDate());
+	if (nextBday <= now) {
+		nextBday = new Date(now.getFullYear() + 1, dob.getMonth(), dob.getDate());
+	}
+	const daysUntil = Math.ceil((nextBday - now) / (1000 * 60 * 60 * 24));
+	document.getElementById('nextBday').textContent = daysUntil === 0 ? '🎉 Today!' : daysUntil + ' days';
+
+	// Zodiac sign
+	document.getElementById('zodiac').innerHTML = getZodiac(dob.getMonth() + 1, dob.getDate());
+
+	// Day born on
+	const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+	document.getElementById('dayBorn').textContent = dayNames[dob.getDay()];
+
+	// Birth month
+	const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+	document.getElementById('birthMonth').textContent = monthNames[dob.getMonth()];
+
+	showToast('Age calculated!');
+}
+
+function getZodiac(month, day) {
+	const signs = [
+		{ name: 'Capricorn', symbol: '♑', start: [1,1], end: [1,19] },
+		{ name: 'Aquarius', symbol: '♒', start: [1,20], end: [2,18] },
+		{ name: 'Pisces', symbol: '♓', start: [2,19], end: [3,20] },
+		{ name: 'Aries', symbol: '♈', start: [3,21], end: [4,19] },
+		{ name: 'Taurus', symbol: '♉', start: [4,20], end: [5,20] },
+		{ name: 'Gemini', symbol: '♊', start: [5,21], end: [6,20] },
+		{ name: 'Cancer', symbol: '♋', start: [6,21], end: [7,22] },
+		{ name: 'Leo', symbol: '♌', start: [7,23], end: [8,22] },
+		{ name: 'Virgo', symbol: '♍', start: [8,23], end: [9,22] },
+		{ name: 'Libra', symbol: '♎', start: [9,23], end: [10,22] },
+		{ name: 'Scorpio', symbol: '♏', start: [10,23], end: [11,21] },
+		{ name: 'Sagittarius', symbol: '♐', start: [11,22], end: [12,21] },
+		{ name: 'Capricorn', symbol: '♑', start: [12,22], end: [12,31] }
+	];
+	for (const s of signs) {
+		const afterStart = month > s.start[0] || (month === s.start[0] && day >= s.start[1]);
+		const beforeEnd = month < s.end[0] || (month === s.end[0] && day <= s.end[1]);
+		if (afterStart && beforeEnd) {
+			return '<span class="zodiac-icon">' + s.symbol + '</span>' + s.name;
 		}
-	</script>
+	}
+	return '—';
+}
+</script>
 
-
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
-
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

@@ -1,100 +1,188 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Gradient Generator - Multietools</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:860px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:0.9rem;align-items:center;}
-		input[type=color]{width:80px;height:80px;border:none;border-radius:12px;cursor:pointer;}
-		input[type=range]{width:180px;}
-		.preview{height:220px;border-radius:14px;border:1px solid var(--border);} 
-		textarea{width:100%;min-height:90px;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);padding:1rem;font-family:'JetBrains Mono','Cascadia Code',monospace;}
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-	</style>
-</head>
-<body>
-  
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gradient Generator - Multietools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/global.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+.controls-row{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin-bottom:1rem;}
+.control-group{display:grid;gap:.35rem;}
+.control-group label{font-weight:700;font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.control-group select,.control-group input[type=range]{padding:.5rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);color:var(--text);font-size:.9rem;min-width:130px;}
+.control-group input[type=range]{min-width:160px;cursor:pointer;}
+.stop-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;padding:.65rem;border:1px solid var(--border-light);border-radius:var(--radius-md);margin-bottom:.5rem;}
+.stop-row input[type=color]{width:48px;height:36px;border:none;border-radius:8px;cursor:pointer;background:transparent;padding:0;}
+.stop-row input[type=color]::-webkit-color-swatch-wrapper{padding:1px;}
+.stop-row input[type=color]::-webkit-color-swatch{border:1px solid var(--border);border-radius:6px;}
+.stop-row input[type=range]{flex:1;min-width:100px;}
+.stop-row .pos-label{font-family:'JetBrains Mono',monospace;font-size:.8rem;min-width:35px;text-align:center;}
+.remove-stop{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:#ef4444;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:background .15s;}
+.remove-stop:hover{background:#fef2f2;}
+.btn{padding:.8rem 1.2rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.9rem;transition:transform .15s;}
+.btn:hover{transform:translateY(-1px);} .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-sm{padding:.55rem .85rem;font-size:.8rem;}
+.btn-outline{background:var(--surface);border:1px solid var(--border);color:var(--text);}
+.btn-outline:hover{border-color:var(--primary);}
+.actions{display:flex;flex-wrap:wrap;gap:.5rem;}
+.gradient-preview{height:240px;border-radius:14px;border:2px solid var(--border);transition:background .3s;}
+.css-output{width:100%;min-height:80px;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);color:var(--text);font-family:'JetBrains Mono','Cascadia Code',monospace;font-size:.85rem;resize:vertical;}
+.presets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.65rem;}
+.preset-swatch{height:60px;border-radius:10px;border:2px solid var(--border);cursor:pointer;transition:transform .15s,border-color .15s;}
+.preset-swatch:hover{transform:scale(1.05);border-color:var(--primary);}
+h3{font-size:1rem;margin-bottom:.75rem;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style></head><body>
+<div class="wrap"><header>
+<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+<h1><i class="fas fa-fill-drip"></i> Gradient Generator</h1>
+<p class="muted">Create beautiful CSS gradients with multiple color stops and presets.</p>
+</header><main>
 
-  
+<div class="panel">
+<div class="controls-row">
+  <div class="control-group">
+    <label>Type</label>
+    <select id="gradType">
+      <option value="linear">Linear</option>
+      <option value="radial">Radial</option>
+      <option value="conic">Conic</option>
+    </select>
+  </div>
+  <div class="control-group" id="angleGroup">
+    <label>Angle: <span id="angleVal">135</span>&deg;</label>
+    <input type="range" id="angle" min="0" max="360" value="135">
+  </div>
+  <div class="actions">
+    <button class="btn btn-sm btn-outline" onclick="addStop()"><i class="fas fa-plus"></i> Add Stop</button>
+    <button class="btn btn-sm btn-outline" onclick="randomGradient()"><i class="fas fa-random"></i> Random</button>
+    <button class="btn btn-sm" onclick="copyCss()"><i class="fas fa-copy"></i> Copy CSS</button>
+  </div>
+</div>
+<div id="stopsContainer"></div>
+</div>
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-fill-drip"></i> Gradient Generator</h1>
-			<p class="muted">Pick two colors, angle, and copy the CSS gradient.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<div>
-						<div class="muted">Color A</div>
-						<input type="color" id="c1" value="#22d3ee">
-					</div>
-					<div>
-						<div class="muted">Color B</div>
-						<input type="color" id="c2" value="#7c3aed">
-					</div>
-					<div>
-						<div class="muted">Angle (<span id="angleVal">135</span>°)</div>
-						<input type="range" id="angle" min="0" max="360" value="135">
-					</div>
-					<button onclick="randomize()"><i class="fas fa-random"></i> Random</button>
-					<button onclick="copyCss()"><i class="fas fa-copy"></i> Copy CSS</button>
-				</div>
-				<div class="preview" id="preview"></div>
-				<textarea id="css" readonly></textarea>
-			</div>
-		</main>
-	</div>
+<div class="panel">
+<div class="gradient-preview" id="preview"></div>
+</div>
 
-	<script>
-		const c1 = document.getElementById('c1');
-		const c2 = document.getElementById('c2');
-		const angle = document.getElementById('angle');
-		const angleVal = document.getElementById('angleVal');
-		const preview = document.getElementById('preview');
-		const css = document.getElementById('css');
+<div class="panel">
+<textarea class="css-output" id="cssOutput" readonly></textarea>
+</div>
 
-		function update(){
-			const a = c1.value; const b = c2.value; const ang = angle.value;
-			angleVal.textContent = ang;
-			const gradient = `linear-gradient(${ang}deg, ${a}, ${b})`;
-			preview.style.background = gradient;
-			css.value = `background: ${gradient};`;
-		}
+<div class="panel">
+<h3><i class="fas fa-swatchbook"></i> Preset Gradients</h3>
+<div class="presets-grid" id="presetsGrid"></div>
+</div>
 
-		function randomColor(){ return '#'+crypto.getRandomValues(new Uint32Array(1))[0].toString(16).slice(-6).padStart(6,'0'); }
-		function randomize(){ c1.value = randomColor(); c2.value = randomColor(); angle.value = Math.floor(Math.random()*361); update(); }
-		function copyCss(){ navigator.clipboard.writeText(css.value || ''); }
+</main></div>
+<div class="toast" id="toast"></div>
+<script src="js/global.js"></script>
+<script>
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-		c1.addEventListener('input', update);
-		c2.addEventListener('input', update);
-		angle.addEventListener('input', update);
-		update();
-	</script>
+let stops=[
+  {color:'#667eea',pos:0},
+  {color:'#764ba2',pos:100}
+];
 
+const presets=[
+  [{color:'#667eea',pos:0},{color:'#764ba2',pos:100}],
+  [{color:'#f093fb',pos:0},{color:'#f5576c',pos:100}],
+  [{color:'#4facfe',pos:0},{color:'#00f2fe',pos:100}],
+  [{color:'#43e97b',pos:0},{color:'#38f9d7',pos:100}],
+  [{color:'#fa709a',pos:0},{color:'#fee140',pos:100}],
+  [{color:'#a18cd1',pos:0},{color:'#fbc2eb',pos:100}],
+  [{color:'#ffecd2',pos:0},{color:'#fcb69f',pos:100}],
+  [{color:'#ff9a9e',pos:0},{color:'#fecfef',pos:50},{color:'#fecfef',pos:100}],
+];
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+const gradType=document.getElementById('gradType');
+const angleSlider=document.getElementById('angle');
+const angleVal=document.getElementById('angleVal');
+const angleGroup=document.getElementById('angleGroup');
+const preview=document.getElementById('preview');
+const cssOutput=document.getElementById('cssOutput');
+const stopsContainer=document.getElementById('stopsContainer');
 
-</body>
-</html>
+function renderStops(){
+  stopsContainer.innerHTML=stops.map((s,i)=>`
+    <div class="stop-row">
+      <input type="color" value="${s.color}" onchange="stops[${i}].color=this.value;updateGradient()">
+      <input type="range" min="0" max="100" value="${s.pos}" oninput="stops[${i}].pos=+this.value;this.nextElementSibling.textContent=this.value+'%';updateGradient()">
+      <span class="pos-label">${s.pos}%</span>
+      ${stops.length>2?`<button class="remove-stop" onclick="removeStop(${i})" title="Remove"><i class="fas fa-times"></i></button>`:''}
+    </div>
+  `).join('');
+}
 
+function addStop(){
+  if(stops.length>=4){showToast('Maximum 4 color stops');return;}
+  const rnd='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');
+  const lastPos=stops[stops.length-1].pos;
+  stops.push({color:rnd,pos:Math.min(100,lastPos)});
+  renderStops();updateGradient();
+}
 
+function removeStop(i){
+  if(stops.length<=2)return;
+  stops.splice(i,1);renderStops();updateGradient();
+}
 
+function buildCss(){
+  const type=gradType.value;
+  const sorted=[...stops].sort((a,b)=>a.pos-b.pos);
+  const colorStops=sorted.map(s=>`${s.color} ${s.pos}%`).join(', ');
+  if(type==='linear') return `linear-gradient(${angleSlider.value}deg, ${colorStops})`;
+  if(type==='radial') return `radial-gradient(circle, ${colorStops})`;
+  return `conic-gradient(from ${angleSlider.value}deg, ${colorStops})`;
+}
 
+function updateGradient(){
+  const css=buildCss();
+  preview.style.background=css;
+  cssOutput.value=`background: ${css};`;
+  angleGroup.style.display=(gradType.value==='radial')?'none':'grid';
+}
 
+function randomColor(){return '#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');}
+function randomGradient(){
+  const count=2+Math.floor(Math.random()*2);
+  stops=[];
+  for(let i=0;i<count;i++){
+    stops.push({color:randomColor(),pos:Math.round(i/(count-1)*100)});
+  }
+  angleSlider.value=Math.floor(Math.random()*361);
+  angleVal.textContent=angleSlider.value;
+  renderStops();updateGradient();showToast('Random gradient generated!');
+}
 
+function copyCss(){navigator.clipboard.writeText(cssOutput.value);showToast('CSS copied to clipboard!');}
 
+function renderPresets(){
+  const grid=document.getElementById('presetsGrid');
+  grid.innerHTML=presets.map((p,i)=>{
+    const sorted=[...p].sort((a,b)=>a.pos-b.pos);
+    const css=`linear-gradient(135deg, ${sorted.map(s=>s.color+' '+s.pos+'%').join(', ')})`;
+    return `<div class="preset-swatch" style="background:${css}" onclick="loadPreset(${i})" title="Preset ${i+1}"></div>`;
+  }).join('');
+}
 
+function loadPreset(i){
+  stops=presets[i].map(s=>({...s}));
+  gradType.value='linear';angleSlider.value=135;angleVal.textContent='135';
+  renderStops();updateGradient();showToast('Preset loaded!');
+}
+
+gradType.addEventListener('change',updateGradient);
+angleSlider.addEventListener('input',()=>{angleVal.textContent=angleSlider.value;updateGradient();});
+
+renderStops();updateGradient();renderPresets();
+</script></body></html>

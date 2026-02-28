@@ -5,98 +5,225 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>GST Calculator - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:760px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} input[type=number]{padding:0.75rem 1rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);width:160px;} select{padding:0.75rem 1rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} 
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.75rem;} .stat{background:#0f192b;border:1px solid var(--border);padding:0.85rem 1rem;border-radius:12px;} .label{color:var(--muted);font-size:0.9rem;} .value{font-size:1.3rem;font-weight:800;}
-		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+
+		label{font-weight:600;font-size:.92rem;display:block;margin-bottom:.4rem;}
+		input[type="number"],select{width:100%;padding:.7rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:1rem;font-family:inherit;}
+		input[type="number"]:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
+		.field{margin-bottom:1rem;}
+
+		.toggle-group{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:1rem;}
+		.toggle-group button{flex:1;padding:.65rem 1rem;border:none;background:var(--bg-alt);color:var(--muted);font-weight:700;font-size:.9rem;cursor:pointer;transition:all .2s;}
+		.toggle-group button.active{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;}
+
+		.rate-options{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;}
+		.rate-options button{padding:.5rem 1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-alt);color:var(--text);font-weight:600;font-size:.9rem;cursor:pointer;transition:all .2s;}
+		.rate-options button.active{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border-color:transparent;}
+
+		.custom-rate{display:none;margin-top:.5rem;}
+		.custom-rate.show{display:block;}
+
+		.results{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin-top:1rem;}
+		.stat{background:var(--bg-alt);border:1px solid var(--border-light);padding:1rem;border-radius:var(--radius-sm);text-align:center;}
+		.stat .lbl{color:var(--muted);font-size:.85rem;margin-bottom:.3rem;}
+		.stat .val{font-size:1.35rem;font-weight:800;}
+		.stat.highlight{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none;}
+		.stat.highlight .lbl{color:rgba(255,255,255,.8);}
+		.stat.highlight .val{color:#fff;}
+
+		table{width:100%;border-collapse:collapse;margin-top:1rem;font-size:.9rem;}
+		th,td{padding:.6rem .75rem;text-align:left;border-bottom:1px solid var(--border-light);}
+		th{background:var(--bg-alt);font-weight:700;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;}
+		td{font-weight:500;}
+
+		.copy-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.1rem;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;cursor:pointer;font-size:.85rem;font-weight:700;transition:transform .15s;margin-top:1rem;}
+		.copy-btn:hover{transform:translateY(-1px);}
+
+		.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 	</style>
 </head>
 <body>
-  
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-receipt"></i> GST Calculator</h1>
+		<p class="muted">Calculate GST-inclusive or GST-exclusive amounts with full CGST/SGST breakdown.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<div class="field">
+				<label for="amount"><i class="fas fa-indian-rupee-sign"></i> Amount</label>
+				<input type="number" id="amount" placeholder="Enter amount" min="0" step="0.01">
+			</div>
 
-  
+			<label><i class="fas fa-percent"></i> GST Rate</label>
+			<div class="rate-options" id="rateOptions">
+				<button data-rate="5">5%</button>
+				<button data-rate="12">12%</button>
+				<button class="active" data-rate="18">18%</button>
+				<button data-rate="28">28%</button>
+				<button data-rate="custom">Custom</button>
+			</div>
+			<div class="custom-rate" id="customRateWrap">
+				<input type="number" id="customRate" placeholder="Enter custom GST %" min="0" max="100" step="0.01">
+			</div>
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-receipt"></i> GST Calculator</h1>
-			<p class="muted">Add or remove GST from an amount quickly.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<input type="number" id="amount" value="1000" min="0" step="0.01">
-					<select id="rate">
-						<option value="5">5%</option>
-						<option value="12">12%</option>
-						<option value="18" selected>18%</option>
-						<option value="28">28%</option>
-					</select>
-					<select id="mode">
-						<option value="add">Add GST</option>
-						<option value="remove">Remove GST</option>
-					</select>
-					<button onclick="calc()">Calculate</button>
+			<label><i class="fas fa-toggle-on"></i> Calculation Mode</label>
+			<div class="toggle-group" id="modeToggle">
+				<button class="active" data-mode="exclusive">GST Exclusive</button>
+				<button data-mode="inclusive">GST Inclusive</button>
+			</div>
+		</div>
+
+		<div class="panel" id="resultPanel" style="display:none;">
+			<h2 style="font-size:1.1rem;margin-bottom:.75rem;"><i class="fas fa-chart-bar" style="color:var(--primary);"></i> Results</h2>
+			<div class="results">
+				<div class="stat">
+					<div class="lbl">Net Amount</div>
+					<div class="val" id="netAmount">&#8377;0</div>
 				</div>
-				<div class="stats">
-					<div class="stat"><span class="label">Net Amount</span><span class="value" id="net">-</span></div>
-					<div class="stat"><span class="label">GST Amount</span><span class="value" id="gst">-</span></div>
-					<div class="stat"><span class="label">Total Amount</span><span class="value" id="total">-</span></div>
+				<div class="stat">
+					<div class="lbl">GST Amount</div>
+					<div class="val" id="gstAmount">&#8377;0</div>
+				</div>
+				<div class="stat highlight">
+					<div class="lbl">Total Amount</div>
+					<div class="val" id="totalAmount">&#8377;0</div>
 				</div>
 			</div>
-		</main>
-	</div>
 
-	<script>
-		const amount = document.getElementById('amount');
-		const rate = document.getElementById('rate');
-		const mode = document.getElementById('mode');
-		const net = document.getElementById('net');
-		const gst = document.getElementById('gst');
-		const total = document.getElementById('total');
+			<table id="breakdownTable">
+				<thead>
+					<tr>
+						<th>Component</th>
+						<th>Rate</th>
+						<th>Amount</th>
+					</tr>
+				</thead>
+				<tbody id="breakdownBody"></tbody>
+			</table>
 
-		function fmt(n){ return Number(n).toFixed(2); }
+			<button class="copy-btn" id="copyBtn"><i class="fas fa-copy"></i> Copy Result</button>
+		</div>
+	</main>
+</div>
+<div class="toast" id="toast"></div>
 
-		function calc(){
-			const amt = parseFloat(amount.value)||0;
-			const r = (parseFloat(rate.value)||0)/100;
-			if(mode.value === 'add'){
-				const gstAmt = amt * r;
-				net.textContent = fmt(amt);
-				gst.textContent = fmt(gstAmt);
-				total.textContent = fmt(amt + gstAmt);
+<script src="js/global.js"></script>
+<script>
+(function(){
+	'use strict';
+
+	var amountInput = document.getElementById('amount');
+	var rateButtons = document.querySelectorAll('#rateOptions button');
+	var customRateWrap = document.getElementById('customRateWrap');
+	var customRateInput = document.getElementById('customRate');
+	var modeButtons = document.querySelectorAll('#modeToggle button');
+	var resultPanel = document.getElementById('resultPanel');
+
+	var currentRate = 18;
+	var currentMode = 'exclusive';
+	var isCustom = false;
+
+	// Rate buttons
+	rateButtons.forEach(function(btn){
+		btn.addEventListener('click', function(){
+			rateButtons.forEach(function(b){ b.classList.remove('active'); });
+			btn.classList.add('active');
+			var rate = btn.getAttribute('data-rate');
+			if(rate === 'custom'){
+				isCustom = true;
+				customRateWrap.classList.add('show');
+				currentRate = parseFloat(customRateInput.value) || 0;
 			} else {
-				const netAmt = amt / (1 + r);
-				const gstAmt = amt - netAmt;
-				net.textContent = fmt(netAmt);
-				gst.textContent = fmt(gstAmt);
-				total.textContent = fmt(amt);
+				isCustom = false;
+				customRateWrap.classList.remove('show');
+				currentRate = parseFloat(rate);
 			}
+			calculate();
+		});
+	});
+
+	customRateInput.addEventListener('input', function(){
+		if(isCustom){
+			currentRate = parseFloat(this.value) || 0;
+			calculate();
+		}
+	});
+
+	// Mode toggle
+	modeButtons.forEach(function(btn){
+		btn.addEventListener('click', function(){
+			modeButtons.forEach(function(b){ b.classList.remove('active'); });
+			btn.classList.add('active');
+			currentMode = btn.getAttribute('data-mode');
+			calculate();
+		});
+	});
+
+	amountInput.addEventListener('input', calculate);
+
+	function calculate(){
+		var amt = parseFloat(amountInput.value);
+		if(!amt || amt <= 0 || currentRate < 0){
+			resultPanel.style.display = 'none';
+			return;
 		}
 
-		calc();
-	</script>
+		var net, gst, total;
+		if(currentMode === 'exclusive'){
+			net = amt;
+			gst = amt * (currentRate / 100);
+			total = net + gst;
+		} else {
+			total = amt;
+			net = amt / (1 + currentRate / 100);
+			gst = total - net;
+		}
 
+		var cgst = gst / 2;
+		var sgst = gst / 2;
+		var halfRate = currentRate / 2;
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+		document.getElementById('netAmount').textContent = '\u20B9' + net.toFixed(2);
+		document.getElementById('gstAmount').textContent = '\u20B9' + gst.toFixed(2);
+		document.getElementById('totalAmount').textContent = '\u20B9' + total.toFixed(2);
 
+		var tbody = document.getElementById('breakdownBody');
+		tbody.innerHTML =
+			'<tr><td>Net Amount</td><td>\u2014</td><td>\u20B9' + net.toFixed(2) + '</td></tr>' +
+			'<tr><td>CGST</td><td>' + halfRate.toFixed(2) + '%</td><td>\u20B9' + cgst.toFixed(2) + '</td></tr>' +
+			'<tr><td>SGST</td><td>' + halfRate.toFixed(2) + '%</td><td>\u20B9' + sgst.toFixed(2) + '</td></tr>' +
+			'<tr style="font-weight:800;"><td>Total</td><td>' + currentRate.toFixed(2) + '%</td><td>\u20B9' + total.toFixed(2) + '</td></tr>';
+
+		resultPanel.style.display = 'block';
+	}
+
+	document.getElementById('copyBtn').addEventListener('click', function(){
+		var net = document.getElementById('netAmount').textContent;
+		var gst = document.getElementById('gstAmount').textContent;
+		var total = document.getElementById('totalAmount').textContent;
+		var text = 'Net: ' + net + ' | GST: ' + gst + ' | Total: ' + total;
+		navigator.clipboard.writeText(text).then(function(){ showToast('Result copied!'); });
+	});
+
+	function showToast(msg){
+		var t = document.getElementById('toast');
+		t.textContent = msg;
+		t.classList.add('show');
+		setTimeout(function(){ t.classList.remove('show'); }, 2200);
+	}
+})();
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-

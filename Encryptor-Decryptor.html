@@ -5,81 +5,198 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Encryptor / Decryptor - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:900px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		textarea{width:100%;min-height:200px;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);padding:1rem;font-size:1rem;font-family:'JetBrains Mono','Cascadia Code',monospace;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} input[type=password]{padding:0.75rem 1rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} 
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		textarea{width:100%;min-height:180px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.9rem;font-family:'JetBrains Mono','Cascadia Code',monospace;resize:vertical;}
+		.row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:.75rem;}
+		select,input[type=text],input[type=password],input[type=number]{padding:.65rem .9rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:.9rem;}
+		input[type=password],input[type=text]{flex:1;min-width:160px;}
+		input[type=number]{width:80px;}
+		button{padding:.75rem 1.1rem;border-radius:var(--radius-sm);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-weight:700;font-size:.9rem;box-shadow:var(--shadow-sm);transition:transform .15s ease,box-shadow .15s ease;}
+		button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+		button.secondary{background:var(--bg-alt);color:var(--text);border:1px solid var(--border);}
+		button.secondary:hover{background:var(--border-light);}
+		.algo-note{font-size:.82rem;color:var(--muted);margin-top:.25rem;font-style:italic;}
+		.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-sm);font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:transform .35s var(--ease-bounce,.34 1.56 .64 1),opacity .3s;z-index:9999;pointer-events:none;}
+		.toast.show{transform:translateY(0);opacity:1;}
 	</style>
 </head>
 <body>
-  
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-shield-alt"></i> Encryptor / Decryptor</h1>
+		<p class="muted">Encrypt and decrypt text using AES-GCM (Web Crypto API), ROT13, or Caesar Cipher.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<label style="font-weight:600;display:block;margin-bottom:.35rem;">Input Text</label>
+			<textarea id="input" placeholder="Enter text to encrypt or decrypt…"></textarea>
+		</div>
 
-  
-
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-lock"></i> Encryptor / Decryptor</h1>
-			<p class="muted">AES-256 encryption in your browser. Keep your password safe.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<textarea id="input" placeholder="Enter text to encrypt/decrypt..."></textarea>
-				<div class="row">
-					<input type="password" id="pass" placeholder="Password">
-					<button onclick="enc()">Encrypt</button>
-					<button onclick="dec()">Decrypt</button>
-					<button onclick="copyOut()"><i class="fas fa-copy"></i> Copy</button>
-				</div>
-				<textarea id="output" placeholder="Result..." readonly></textarea>
+		<div class="panel">
+			<div class="row" style="margin-top:0;">
+				<label style="font-weight:600;">Algorithm:</label>
+				<select id="algo" onchange="algoChanged()">
+					<option value="aes" selected>AES-GCM (256-bit)</option>
+					<option value="rot13">ROT13</option>
+					<option value="caesar">Caesar Cipher</option>
+				</select>
 			</div>
-		</main>
-	</div>
+			<div class="row" id="keyRow">
+				<label style="font-weight:600;">Password:</label>
+				<input type="password" id="password" placeholder="Enter encryption password">
+			</div>
+			<div class="row hidden" id="shiftRow" style="display:none;">
+				<label style="font-weight:600;">Shift:</label>
+				<input type="number" id="shift" value="3" min="1" max="25">
+			</div>
+			<p class="algo-note" id="algoNote">AES-GCM with PBKDF2 key derivation. IV + salt are embedded in the output.</p>
+			<div class="row">
+				<button onclick="doEncrypt()"><i class="fas fa-lock"></i> Encrypt</button>
+				<button onclick="doDecrypt()"><i class="fas fa-unlock"></i> Decrypt</button>
+				<button class="secondary" onclick="copyOutput()"><i class="fas fa-copy"></i> Copy Output</button>
+			</div>
+		</div>
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" integrity="sha512-GO/JGq7GQLN0OOcCXa7GNp22CGYaTg65eya8rclMOG66QBaCepnl+vDCIO6Fl1DA9qS+g9PjZ/Hx0wK8Qv5A==" crossorigin="anonymous"></script>
-	<script>
-		const input = document.getElementById('input');
-		const output = document.getElementById('output');
-		const pass = document.getElementById('pass');
+		<div class="panel">
+			<label style="font-weight:600;display:block;margin-bottom:.35rem;">Output</label>
+			<textarea id="output" placeholder="Result will appear here…" readonly></textarea>
+		</div>
+	</main>
+</div>
 
-		function enc(){
-			const text = input.value || '';
-			if(!pass.value) { alert('Enter password'); return; }
-			const cipher = CryptoJS.AES.encrypt(text, pass.value).toString();
-			output.value = cipher;
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(msg,ms=2200){
+	const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+	clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),ms);
+}
+
+const inputEl=document.getElementById('input');
+const outputEl=document.getElementById('output');
+const algoSel=document.getElementById('algo');
+const passEl=document.getElementById('password');
+const shiftEl=document.getElementById('shift');
+
+function algoChanged(){
+	const a=algoSel.value;
+	document.getElementById('keyRow').style.display=a==='aes'?'flex':'none';
+	document.getElementById('shiftRow').style.display=a==='caesar'?'flex':'none';
+	const notes={aes:'AES-GCM with PBKDF2 key derivation. IV + salt are embedded in the output.',rot13:'ROT13 is its own inverse — encrypt and decrypt are the same operation. No key needed.',caesar:'Caesar cipher shifts each letter by the given number. Use same shift to decrypt.'};
+	document.getElementById('algoNote').textContent=notes[a];
+}
+
+/* === AES-GCM with Web Crypto === */
+function b64Encode(buf){return btoa(String.fromCharCode(...new Uint8Array(buf)));}
+function b64Decode(str){const bin=atob(str);const buf=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++) buf[i]=bin.charCodeAt(i);return buf;}
+
+async function deriveKey(password,salt){
+	const enc=new TextEncoder();
+	const keyMaterial=await crypto.subtle.importKey('raw',enc.encode(password),{name:'PBKDF2'},false,['deriveKey']);
+	return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:100000,hash:'SHA-256'},keyMaterial,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+
+async function aesEncrypt(plaintext,password){
+	const enc=new TextEncoder();
+	const salt=crypto.getRandomValues(new Uint8Array(16));
+	const iv=crypto.getRandomValues(new Uint8Array(12));
+	const key=await deriveKey(password,salt);
+	const cipherBuf=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,enc.encode(plaintext));
+	// Format: base64(salt) + '.' + base64(iv) + '.' + base64(cipher)
+	return b64Encode(salt)+'.'+b64Encode(iv)+'.'+b64Encode(cipherBuf);
+}
+
+async function aesDecrypt(encoded,password){
+	const parts=encoded.split('.');
+	if(parts.length!==3) throw new Error('Invalid encrypted format');
+	const salt=b64Decode(parts[0]);
+	const iv=b64Decode(parts[1]);
+	const cipherBuf=b64Decode(parts[2]);
+	const key=await deriveKey(password,salt);
+	const plainBuf=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,cipherBuf);
+	return new TextDecoder().decode(plainBuf);
+}
+
+/* === ROT13 === */
+function rot13(text){
+	return text.replace(/[A-Za-z]/g,c=>{
+		const base=c<='Z'?65:97;
+		return String.fromCharCode(((c.charCodeAt(0)-base+13)%26)+base);
+	});
+}
+
+/* === Caesar Cipher === */
+function caesarEncrypt(text,shift){
+	shift=((shift%26)+26)%26;
+	return text.replace(/[A-Za-z]/g,c=>{
+		const base=c<='Z'?65:97;
+		return String.fromCharCode(((c.charCodeAt(0)-base+shift)%26)+base);
+	});
+}
+function caesarDecrypt(text,shift){
+	return caesarEncrypt(text,26-shift);
+}
+
+/* === Main Actions === */
+async function doEncrypt(){
+	const text=inputEl.value;
+	if(!text){showToast('Please enter text to encrypt');return;}
+	const algo=algoSel.value;
+	try{
+		let result;
+		if(algo==='aes'){
+			if(!passEl.value){showToast('Please enter a password');return;}
+			result=await aesEncrypt(text,passEl.value);
+		}else if(algo==='rot13'){
+			result=rot13(text);
+		}else{
+			result=caesarEncrypt(text,parseInt(shiftEl.value)||3);
 		}
-		function dec(){
-			if(!pass.value) { alert('Enter password'); return; }
-			try{
-				const bytes = CryptoJS.AES.decrypt(input.value || '', pass.value);
-				const plain = bytes.toString(CryptoJS.enc.Utf8);
-				if(!plain) throw new Error('Incorrect password or data');
-				output.value = plain;
-			} catch(e){ output.value = 'Decrypt error: ' + e.message; }
+		outputEl.value=result;
+		showToast('Encrypted successfully!');
+	}catch(e){
+		outputEl.value='Error: '+e.message;
+		showToast('Encryption failed');
+	}
+}
+
+async function doDecrypt(){
+	const text=inputEl.value;
+	if(!text){showToast('Please enter text to decrypt');return;}
+	const algo=algoSel.value;
+	try{
+		let result;
+		if(algo==='aes'){
+			if(!passEl.value){showToast('Please enter a password');return;}
+			result=await aesDecrypt(text,passEl.value);
+		}else if(algo==='rot13'){
+			result=rot13(text);
+		}else{
+			result=caesarDecrypt(text,parseInt(shiftEl.value)||3);
 		}
-		function copyOut(){ navigator.clipboard.writeText(output.value || ''); }
-	</script>
+		outputEl.value=result;
+		showToast('Decrypted successfully!');
+	}catch(e){
+		outputEl.value='Error: '+e.message;
+		showToast('Decryption failed — wrong password or corrupted data');
+	}
+}
 
-
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
-
+function copyOutput(){
+	if(!outputEl.value){showToast('Nothing to copy');return;}
+	navigator.clipboard.writeText(outputEl.value).then(()=>showToast('Copied to clipboard!'));
+}
+</script>
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

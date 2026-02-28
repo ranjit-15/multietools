@@ -1,374 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barcode Scanner - Tools Hub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Barcode Scanner - Multietools</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
+	<style>
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            min-height: 100vh;
-            padding: 2rem;
-        }
+		label{display:block;font-weight:700;margin-bottom:.4rem;font-size:.92rem;}
+		select{width:100%;padding:.75rem .9rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:.95rem;font-family:inherit;}
+		select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
+		.btn{padding:.8rem 1.2rem;border-radius:var(--radius-sm);border:none;cursor:pointer;font-weight:700;font-size:.92rem;display:inline-flex;align-items:center;gap:.5rem;transition:transform .15s,box-shadow .2s;}
+		.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;box-shadow:var(--shadow-sm);}
+		.btn-primary:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+		.btn-danger{background:var(--error);color:#fff;}
+		.btn-danger:hover{opacity:.9;}
+		.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);}
+		.btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+		.actions{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;}
 
-        .header {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
+		/* Camera */
+		.camera-box{position:relative;width:100%;max-width:600px;margin:0 auto;background:#0f0e1a;border-radius:var(--radius-md);overflow:hidden;display:none;}
+		.camera-box video{width:100%;display:block;}
+		#scanner-region{width:100%;min-height:300px;}
 
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
+		/* Upload */
+		.drop-zone{border:2px dashed var(--border);border-radius:var(--radius-md);padding:2rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;color:var(--muted);}
+		.drop-zone:hover,.drop-zone.dragover{border-color:var(--primary);background:var(--primary-glow);}
+		.drop-zone i{font-size:2rem;margin-bottom:.5rem;display:block;}
+		.file-input{display:none;}
 
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: white;
-            text-decoration: none;
-            padding: 0.75rem 1.5rem;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            transition: all 0.3s;
-            margin-bottom: 1rem;
-        }
+		/* Result */
+		.result-panel{display:none;background:var(--bg-alt);border:2px solid var(--success);border-radius:var(--radius-md);padding:1.25rem;}
+		.result-panel h3{color:var(--success);display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;}
+		.result-text{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:.9rem;font-family:'Courier New',monospace;word-break:break-all;margin-bottom:.5rem;font-size:.95rem;}
+		.result-meta{color:var(--muted);font-size:.85rem;margin-bottom:.75rem;}
+		.result-link{color:var(--primary);text-decoration:underline;word-break:break-all;}
 
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
+		.toast{position:fixed;bottom:2rem;right:2rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-md);font-weight:700;font-size:.92rem;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:transform .35s var(--ease-bounce),opacity .3s;z-index:9999;display:flex;align-items:center;gap:.5rem;}
+		.toast.show{transform:translateY(0);opacity:1;}
 
-        .content {
-            padding: 2rem;
-        }
+		.info-box{background:var(--bg-alt);border-left:4px solid var(--primary);border-radius:var(--radius-sm);padding:1rem 1.25rem;color:var(--muted);font-size:.9rem;}
+		.info-box h4{color:var(--primary);margin-bottom:.5rem;}
+		.info-box ul{margin-left:1.25rem;}
+		.info-box li{margin:.35rem 0;}
 
-        .ad-container {
-            text-align: center;
-            margin: 1rem 0;
-            padding: 1rem;
-            background: #f8fafc;
-            border-radius: 12px;
-        }
-
-        .scanner-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto 2rem;
-            background: #1e293b;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        #video {
-            width: 100%;
-            display: block;
-        }
-
-        .scanner-line {
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            background: #fa709a;
-            box-shadow: 0 0 10px #fa709a;
-            animation: scan 2s linear infinite;
-        }
-
-        @keyframes scan {
-            0%, 100% {
-                top: 0;
-            }
-            50% {
-                top: 100%;
-            }
-        }
-
-        .controls {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin: 0.5rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(250, 112, 154, 0.3);
-        }
-
-        .btn-secondary {
-            background: #ef4444;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #dc2626;
-        }
-
-        .result-container {
-            display: none;
-            background: #f0fdf4;
-            padding: 2rem;
-            border-radius: 12px;
-            border: 2px solid #10b981;
-            margin-bottom: 2rem;
-        }
-
-        .result-container h3 {
-            color: #10b981;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .result-info {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .result-info p {
-            margin: 0.5rem 0;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .result-info strong {
-            color: #1e293b;
-        }
-
-        .file-input-section {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .file-input-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1rem 2rem;
-            background: #f8fafc;
-            border: 2px dashed #cbd5e1;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .file-input-label:hover {
-            background: #e2e8f0;
-            border-color: #fa709a;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 1rem;
-            }
-        }
-    </style>
+		/* html5-qrcode overrides */
+		#scanner-region img[alt="Info icon"]{display:none!important;}
+		#scanner-region video{border-radius:var(--radius-sm)!important;}
+	</style>
 </head>
 <body>
-  
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-barcode"></i> Barcode Scanner</h1>
+		<p class="muted">Scan barcodes from your camera or an uploaded image.</p>
+	</header>
 
-  
+	<main>
+		<!-- Camera section -->
+		<div class="panel">
+			<div class="actions" style="margin-bottom:1rem;">
+				<button class="btn btn-primary" id="start-btn"><i class="fas fa-video"></i> Start Camera</button>
+				<button class="btn btn-danger" id="stop-btn" style="display:none;"><i class="fas fa-stop"></i> Stop</button>
+				<div style="flex:1;"></div>
+				<div style="min-width:180px;" id="cam-select-wrap" hidden>
+					<select id="cam-select"></select>
+				</div>
+			</div>
+			<div class="camera-box" id="camera-box">
+				<div id="scanner-region"></div>
+			</div>
+		</div>
 
-    <div class="container">
-        <div class="header">
-            <a href="index.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i>
-                Back to Home
-            </a>
-            <h1><i class="fas fa-barcode"></i> Barcode Scanner</h1>
-            <p>Scan barcodes using your camera or upload an image</p>
-        </div>
+		<!-- Upload section -->
+		<div class="panel">
+			<label><i class="fas fa-upload"></i> Or Upload an Image</label>
+			<div class="drop-zone" id="drop-zone">
+				<i class="fas fa-cloud-upload-alt"></i>
+				<p>Click or drag &amp; drop a barcode image here</p>
+			</div>
+			<input type="file" id="file-input" class="file-input" accept="image/*">
+		</div>
 
-        <div class="content">
-            <!-- Adsterra Ad -->
-            <div class="scanner-container" id="scanner-container" style="display: none;">
-                <video id="video" autoplay playsinline></video>
-                <div class="scanner-line"></div>
-            </div>
+		<!-- Result -->
+		<div class="result-panel" id="result-panel">
+			<h3><i class="fas fa-check-circle"></i> Scanned Barcode</h3>
+			<div class="result-text" id="result-text"></div>
+			<div class="result-meta" id="result-meta"></div>
+			<div id="result-link-wrap" style="display:none;margin-bottom:.75rem;">
+				<a class="result-link" id="result-link" href="#" target="_blank" rel="noopener"></a>
+			</div>
+			<div class="actions">
+				<button class="btn btn-primary" id="copy-btn"><i class="fas fa-copy"></i> Copy</button>
+				<button class="btn btn-outline" id="search-btn"><i class="fas fa-search"></i> Search Online</button>
+			</div>
+		</div>
 
-            <div class="controls">
-                <button class="btn btn-primary" id="start-btn" onclick="startScanner()">
-                    <i class="fas fa-camera"></i> Start Camera Scanner
-                </button>
-                <button class="btn btn-secondary" id="stop-btn" onclick="stopScanner()" style="display: none;">
-                    <i class="fas fa-stop"></i> Stop Scanner
-                </button>
-            </div>
+		<!-- Info -->
+		<div class="info-box">
+			<h4><i class="fas fa-info-circle"></i> Supported Barcode Types</h4>
+			<ul>
+				<li><strong>1D:</strong> Code 128, Code 39, EAN-13, EAN-8, UPC-A, UPC-E, ITF, Codabar</li>
+				<li><strong>2D:</strong> QR Code, Data Matrix, Aztec, PDF 417</li>
+			</ul>
+		</div>
+	</main>
+</div>
 
-            <div class="file-input-section">
-                <label for="file-input" class="file-input-label">
-                    <i class="fas fa-upload"></i>
-                    <span>Or Upload Barcode Image</span>
-                </label>
-                <input type="file" id="file-input" class="file-input" accept="image/*">
-            </div>
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toast-msg"></span></div>
 
-            <div class="result-container" id="result">
-                <h3><i class="fas fa-check-circle"></i> Scanned Barcode:</h3>
-                <div class="result-info" id="result-info"></div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button class="btn btn-primary" onclick="copyResult()">
-                        <i class="fas fa-copy"></i> Copy Code
-                    </button>
-                    <button class="btn btn-primary" onclick="searchProduct()">
-                        <i class="fas fa-search"></i> Search Online
-                    </button>
-                </div>
-            </div>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
-            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border-left: 4px solid #fa709a;">
-                <h4 style="color: #fa709a; margin-bottom: 1rem;"><i class="fas fa-info-circle"></i> Supported Barcode Types:</h4>
-                <ul style="margin-left: 1.5rem; color: #475569;">
-                    <li>EAN-13 (Standard product barcodes)</li>
-                    <li>EAN-8 (Compact product barcodes)</li>
-                    <li>UPC-A (North American barcodes)</li>
-                    <li>UPC-E (Compact UPC barcodes)</li>
-                    <li>Code 128 (Logistics and shipping)</li>
-                    <li>Code 39 (Industrial barcodes)</li>
-                </ul>
-            </div>
-        </div>
-    </div>
+<script>
+(function(){
+	'use strict';
 
-    <script src="https://unpkg.com/@zxing/library@latest"></script>
-    <script>
-        let stream = null;
-        let scanning = false;
-        let codeReader;
-        let currentBarcodeData = '';
+	const cameraBox  = document.getElementById('camera-box');
+	const startBtn   = document.getElementById('start-btn');
+	const stopBtn    = document.getElementById('stop-btn');
+	const camSelect  = document.getElementById('cam-select');
+	const camWrap    = document.getElementById('cam-select-wrap');
+	const dropZone   = document.getElementById('drop-zone');
+	const fileInput  = document.getElementById('file-input');
+	const resPanel   = document.getElementById('result-panel');
+	const resText    = document.getElementById('result-text');
+	const resMeta    = document.getElementById('result-meta');
+	const resLink    = document.getElementById('result-link');
+	const resLinkW   = document.getElementById('result-link-wrap');
+	const copyBtn    = document.getElementById('copy-btn');
+	const searchBtn  = document.getElementById('search-btn');
 
-        async function startScanner() {
-            try {
-                codeReader = new ZXing.BrowserMultiFormatReader();
-                const videoInputDevices = await codeReader.listVideoInputDevices();
-                
-                if (videoInputDevices.length === 0) {
-                    alert('No camera found');
-                    return;
-                }
+	let html5Scanner = null;
+	let isScanning   = false;
+	let currentData  = '';
 
-                const selectedDeviceId = videoInputDevices[0].deviceId;
-                document.getElementById('scanner-container').style.display = 'block';
-                document.getElementById('start-btn').style.display = 'none';
-                document.getElementById('stop-btn').style.display = 'inline-flex';
-                scanning = true;
+	/* ---------- Populate camera list ---------- */
+	async function listCameras() {
+		try {
+			const devices = await Html5Qrcode.getCameras();
+			if (devices && devices.length > 1) {
+				camWrap.hidden = false;
+				camSelect.innerHTML = devices.map(d =>
+					`<option value="${d.id}">${d.label || 'Camera'}</option>`
+				).join('');
+			}
+			return devices;
+		} catch(e) { return []; }
+	}
 
-                codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
-                    if (result) {
-                        displayResult(result);
-                        stopScanner();
-                    }
-                });
-            } catch (err) {
-                alert('Unable to access camera. Please ensure you have granted camera permissions.');
-                console.error('Error accessing camera:', err);
-            }
-        }
+	/* ---------- Start / Stop ---------- */
+	async function startScanner() {
+		try {
+			const devices = await listCameras();
+			if (!devices || devices.length === 0) {
+				showToast('No cameras found');
+				return;
+			}
+			const camId = camSelect.value || devices[0].id;
 
-        function stopScanner() {
-            scanning = false;
-            if (codeReader) {
-                codeReader.reset();
-            }
-            document.getElementById('scanner-container').style.display = 'none';
-            document.getElementById('start-btn').style.display = 'inline-flex';
-            document.getElementById('stop-btn').style.display = 'none';
-        }
+			cameraBox.style.display = 'block';
+			startBtn.style.display = 'none';
+			stopBtn.style.display = 'inline-flex';
 
-        document.getElementById('file-input').addEventListener('change', async function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+			html5Scanner = new Html5Qrcode('scanner-region');
+			await html5Scanner.start(
+				camId,
+				{ fps: 10, qrbox: { width: 280, height: 160 }, aspectRatio: 1.5 },
+				(decodedText, decodedResult) => {
+					displayResult(decodedText, decodedResult);
+					stopScanner();
+				},
+				() => { /* ignore scan failures */ }
+			);
+			isScanning = true;
+		} catch(e) {
+			showToast('Camera access denied or error');
+			console.error(e);
+			stopScanner();
+		}
+	}
 
-            try {
-                codeReader = new ZXing.BrowserMultiFormatReader();
-                const result = await codeReader.decodeFromImageUrl(URL.createObjectURL(file));
-                displayResult(result);
-            } catch (err) {
-                alert('No barcode found in the image. Please try another image.');
-                console.error('Barcode read error:', err);
-            }
-        });
+	async function stopScanner() {
+		try {
+			if (html5Scanner && isScanning) {
+				await html5Scanner.stop();
+			}
+		} catch(e) { /* ignore */ }
+		isScanning = false;
+		html5Scanner = null;
+		cameraBox.style.display = 'none';
+		startBtn.style.display = 'inline-flex';
+		stopBtn.style.display = 'none';
+	}
 
-        function displayResult(result) {
-            currentBarcodeData = result.text;
-            const format = result.format || result.getBarcodeFormat();
-            
-            document.getElementById('result-info').innerHTML = `
-                <p><strong>Barcode Data:</strong> <span style="font-family: monospace; color: #667eea;">${result.text}</span></p>
-                <p><strong>Format:</strong> <span>${ZXing.BarcodeFormat[format]}</span></p>
-            `;
-            document.getElementById('result').style.display = 'block';
-        }
+	startBtn.addEventListener('click', startScanner);
+	stopBtn.addEventListener('click', stopScanner);
+	camSelect.addEventListener('change', async () => {
+		await stopScanner();
+		startScanner();
+	});
 
-        function copyResult() {
-            navigator.clipboard.writeText(currentBarcodeData).then(() => {
-                alert('Barcode copied to clipboard!');
-            });
-        }
+	/* ---------- File / Drop upload ---------- */
+	dropZone.addEventListener('click', () => fileInput.click());
+	dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+	dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+	dropZone.addEventListener('drop', e => {
+		e.preventDefault();
+		dropZone.classList.remove('dragover');
+		handleFile(e.dataTransfer.files[0]);
+	});
+	fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); });
 
-        function searchProduct() {
-            if (currentBarcodeData) {
-                window.open(`https://www.google.com/search?q=${encodeURIComponent(currentBarcodeData)}`, '_blank');
-            }
-        }
-    </script>
+	function handleFile(file) {
+		if (!file || !file.type.startsWith('image/')) { showToast('Please select an image'); return; }
+		const scanner = new Html5Qrcode('scanner-region-file-' + Date.now(), /* verbose= */ false);
+		// Create a temporary element for the scanner
+		const tempDiv = document.createElement('div');
+		tempDiv.id = 'scanner-region-file-' + Date.now();
+		tempDiv.style.display = 'none';
+		document.body.appendChild(tempDiv);
 
+		const tempScanner = new Html5Qrcode(tempDiv.id);
+		tempScanner.scanFile(file, true)
+			.then(decodedText => {
+				displayResult(decodedText, null);
+			})
+			.catch(() => {
+				showToast('No barcode found in image');
+			})
+			.finally(() => {
+				tempDiv.remove();
+			});
+	}
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+	/* ---------- Display result ---------- */
+	function displayResult(text, result) {
+		currentData = text;
+		resText.textContent = text;
 
+		// Format detection
+		let format = 'Unknown';
+		if (result && result.result && result.result.format) {
+			format = result.result.format.formatName || result.result.format.toString();
+		}
+		resMeta.textContent = format !== 'Unknown' ? `Format: ${format}` : '';
+
+		const isURL = /^https?:\/\//i.test(text);
+		resLinkW.style.display = isURL ? 'block' : 'none';
+		if (isURL) { resLink.href = text; resLink.textContent = text; }
+
+		resPanel.style.display = 'block';
+		showToast('Barcode decoded!');
+	}
+
+	copyBtn.addEventListener('click', () => {
+		navigator.clipboard.writeText(currentData).then(() => showToast('Copied to clipboard'));
+	});
+
+	searchBtn.addEventListener('click', () => {
+		if (currentData) window.open('https://www.google.com/search?q=' + encodeURIComponent(currentData), '_blank');
+	});
+
+	/* ---------- Toast ---------- */
+	let toastTimer;
+	function showToast(msg) {
+		const toast = document.getElementById('toast');
+		document.getElementById('toast-msg').textContent = msg;
+		toast.classList.add('show');
+		clearTimeout(toastTimer);
+		toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+	}
+})();
+</script>
+
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

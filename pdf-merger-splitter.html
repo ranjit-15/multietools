@@ -1,133 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>PDF Merger & Splitter - Multietools</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:980px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} input[type=text]{padding:0.75rem 1rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.badge{padding:0.4rem 0.7rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--muted);} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-	</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Merger & Splitter - Multietools</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+.panel h3{font-size:1rem;margin-bottom:.75rem;color:var(--primary);}
+.drop-zone{border:2px dashed var(--border);border-radius:var(--radius-md);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:border-color .25s,background .25s;position:relative;}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--primary);background:var(--primary-glow);}
+.drop-zone i.icon{font-size:2.5rem;color:var(--primary);margin-bottom:.75rem;display:block;}
+.drop-zone p{color:var(--muted);font-size:.95rem;}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.btn{padding:.8rem 1.2rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.9rem;transition:transform .15s,box-shadow .25s;display:inline-flex;align-items:center;gap:.4rem;}
+.btn:hover{transform:translateY(-1px);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-outline{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);}
+.btn-sm{padding:.5rem .8rem;font-size:.8rem;}
+.btn-danger{background:linear-gradient(135deg,var(--error),#f87171);color:#fff;}
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border-light);margin-bottom:1.25rem;}
+.tab{padding:.75rem 1.5rem;font-weight:700;cursor:pointer;border:none;background:none;color:var(--muted);font-size:.95rem;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+.tab-content{display:none;} .tab-content.active{display:block;}
+.file-list{list-style:none;display:grid;gap:.5rem;margin:1rem 0;}
+.file-item{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;border:1px solid var(--border-light);border-radius:var(--radius-sm);background:var(--bg-alt);}
+.file-item .name{flex:1;font-weight:600;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.file-item .info{font-size:.8rem;color:var(--muted);}
+.file-item .btn-icon{width:32px;height:32px;display:grid;place-items:center;border-radius:var(--radius-sm);border:1px solid var(--border-light);background:var(--surface);cursor:pointer;font-size:.8rem;color:var(--muted);transition:color .2s,border-color .2s;}
+.file-item .btn-icon:hover{color:var(--primary);border-color:var(--primary);}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;}
+.form-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-bottom:1rem;}
+.form-row label{font-weight:600;font-size:.85rem;color:var(--muted);}
+.form-row input[type="text"]{flex:1;min-width:200px;padding:.6rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border-light);background:var(--bg-alt);color:var(--text);font-size:.9rem;}
+.info-bar{padding:.6rem 1rem;border-radius:var(--radius-sm);background:var(--bg-alt);border:1px solid var(--border-light);font-size:.85rem;font-weight:600;margin-bottom:.75rem;}
+.info-bar span{color:var(--primary);}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:var(--radius-full,50px);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  </style>
 </head>
 <body>
-  
+<div class="wrap">
+  <header>
+    <a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+    <h1><i class="fas fa-object-group"></i> PDF Merger & Splitter</h1>
+    <p class="muted">Merge multiple PDFs into one or split a PDF by page ranges. Client-side with pdf-lib.</p>
+  </header>
+  <main>
+    <div class="panel">
+      <div class="tabs">
+        <button class="tab active" data-tab="merge" onclick="switchTab('merge')"><i class="fas fa-layer-group"></i> Merge</button>
+        <button class="tab" data-tab="split" onclick="switchTab('split')"><i class="fas fa-cut"></i> Split</button>
+      </div>
 
-  
+      <!-- Merge Tab -->
+      <div class="tab-content active" id="tab-merge">
+        <div class="drop-zone" id="mergeDropZone">
+          <i class="fas fa-cloud-upload-alt icon"></i>
+          <p>Drag & drop PDFs here or click to browse (multiple)</p>
+          <input type="file" id="mergeInput" accept="application/pdf" multiple>
+        </div>
+        <ul class="file-list" id="mergeList"></ul>
+        <div class="actions">
+          <button class="btn" onclick="mergePdfs()" id="mergeBtn" disabled><i class="fas fa-layer-group"></i> Merge All</button>
+          <button class="btn btn-outline" onclick="clearMerge()"><i class="fas fa-trash"></i> Clear</button>
+        </div>
+      </div>
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-object-group"></i> PDF Merger & Splitter</h1>
-			<p class="muted">Merge multiple PDFs or split by page range in-browser.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<input type="file" id="mergeFiles" accept="application/pdf" multiple>
-					<button onclick="merge()">Merge PDFs</button>
-					<button onclick="downloadMerge()">Download Merge</button>
-					<span class="badge" id="mergeStatus">No files</span>
-				</div>
-				<div class="row">
-					<input type="file" id="splitFile" accept="application/pdf">
-					<input type="text" id="range" placeholder="e.g. 1-3,5" style="flex:1;min-width:200px;" aria-label="Page ranges">
-					<button onclick="split()">Split</button>
-					<button onclick="downloadSplit()">Download Split</button>
-					<span class="badge" id="splitStatus">Waiting</span>
-				</div>
-			</div>
-		</main>
-	</div>
+      <!-- Split Tab -->
+      <div class="tab-content" id="tab-split">
+        <div class="drop-zone" id="splitDropZone">
+          <i class="fas fa-cloud-upload-alt icon"></i>
+          <p>Drag & drop a single PDF here or click to browse</p>
+          <p id="splitFileName" style="margin-top:.5rem;font-weight:700;color:var(--text);"></p>
+          <input type="file" id="splitInput" accept="application/pdf">
+        </div>
+        <div class="info-bar" id="splitInfo" style="display:none;"></div>
+        <div class="form-row">
+          <label>Page Ranges:</label>
+          <input type="text" id="splitRange" placeholder='e.g. "1-3, 5, 7-10" — each range becomes a separate PDF'>
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="splitPdf()" id="splitBtn" disabled><i class="fas fa-cut"></i> Split</button>
+        </div>
+        <ul class="file-list" id="splitResults"></ul>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="js/global.js"></script>
+<script>
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function formatSize(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(2)+' MB';}
 
-	<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-	<script>
-		let mergedBytes = null;
-		let splitBytes = null;
-		const mergeFiles = document.getElementById('mergeFiles');
-		const splitFile = document.getElementById('splitFile');
-		const range = document.getElementById('range');
-		const mergeStatus = document.getElementById('mergeStatus');
-		const splitStatus = document.getElementById('splitStatus');
+/* --- Tab switching --- */
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('.tab-content').forEach(tc=>tc.classList.toggle('active',tc.id==='tab-'+name));
+}
 
-		async function merge(){
-			const files = Array.from(mergeFiles.files||[]);
-			if(!files.length){ mergeStatus.textContent = 'Select PDFs'; return; }
-			mergeStatus.textContent = 'Merging...';
-			const output = await PDFLib.PDFDocument.create();
-			for(const f of files){
-				const bytes = await f.arrayBuffer();
-				const src = await PDFLib.PDFDocument.load(bytes);
-				const pages = await output.copyPages(src, src.getPageIndices());
-				pages.forEach(p=>output.addPage(p));
-			}
-			mergedBytes = await output.save({useObjectStreams:true});
-			mergeStatus.textContent = `Merged ${(mergedBytes.length/1024).toFixed(1)} KB`;
-		}
+/* ==================== MERGE ==================== */
+let mergeFiles=[];
+const mergeInput=document.getElementById('mergeInput');
+const mergeList=document.getElementById('mergeList');
+const mergeDropZone=document.getElementById('mergeDropZone');
+const mergeBtn=document.getElementById('mergeBtn');
 
-		function downloadMerge(){
-			if(!mergedBytes){ mergeStatus.textContent = 'No merged file'; return; }
-			const blob = new Blob([mergedBytes], {type:'application/pdf'});
-			const url = URL.createObjectURL(blob); const a = document.createElement('a');
-			a.href = url; a.download = 'merged.pdf'; a.click(); URL.revokeObjectURL(url);
-		}
+['dragenter','dragover'].forEach(e=>mergeDropZone.addEventListener(e,ev=>{ev.preventDefault();mergeDropZone.classList.add('dragover');}));
+['dragleave','drop'].forEach(e=>mergeDropZone.addEventListener(e,ev=>{ev.preventDefault();mergeDropZone.classList.remove('dragover');}));
+mergeDropZone.addEventListener('drop',ev=>{
+  const files=[...ev.dataTransfer.files].filter(f=>f.type==='application/pdf');
+  if(files.length===0){showToast('Drop PDF files only');return;}
+  mergeFiles.push(...files);renderMergeList();
+});
+mergeInput.addEventListener('change',()=>{mergeFiles.push(...mergeInput.files);renderMergeList();mergeInput.value='';});
 
-		function parseRanges(str){
-			return str.split(',').map(part=>{
-				const [a,b] = part.split('-').map(n=>parseInt(n,10));
-				if(!isNaN(a) && !isNaN(b)) return [a,b];
-				if(!isNaN(a)) return [a,a];
-				return null;
-			}).filter(Boolean);
-		}
+function renderMergeList(){
+  mergeList.innerHTML='';
+  mergeFiles.forEach((f,i)=>{
+    const li=document.createElement('li');li.className='file-item';
+    li.innerHTML=`<i class="fas fa-file-pdf" style="color:var(--primary);"></i>
+      <span class="name">${f.name}</span>
+      <span class="info">${formatSize(f.size)}</span>
+      <button class="btn-icon" title="Move Up" onclick="moveMerge(${i},-1)"><i class="fas fa-arrow-up"></i></button>
+      <button class="btn-icon" title="Move Down" onclick="moveMerge(${i},1)"><i class="fas fa-arrow-down"></i></button>
+      <button class="btn-icon" title="Remove" onclick="removeMerge(${i})"><i class="fas fa-times"></i></button>`;
+    mergeList.appendChild(li);
+  });
+  mergeBtn.disabled=mergeFiles.length<2;
+}
+function moveMerge(i,dir){
+  const j=i+dir;if(j<0||j>=mergeFiles.length)return;
+  [mergeFiles[i],mergeFiles[j]]=[mergeFiles[j],mergeFiles[i]];renderMergeList();
+}
+function removeMerge(i){mergeFiles.splice(i,1);renderMergeList();}
+function clearMerge(){mergeFiles=[];renderMergeList();}
 
-		async function split(){
-			const f = splitFile.files?.[0];
-			if(!f){ splitStatus.textContent = 'Select a PDF'; return; }
-			const ranges = parseRanges(range.value || '');
-			if(!ranges.length){ splitStatus.textContent = 'Enter ranges like 1-3,5'; return; }
-			splitStatus.textContent = 'Splitting...';
-			const bytes = await f.arrayBuffer();
-			const pdf = await PDFLib.PDFDocument.load(bytes);
-			const out = await PDFLib.PDFDocument.create();
-			for(const [start,end] of ranges){
-				const s = Math.max(1, start); const e = Math.min(pdf.getPageCount(), end);
-				for(let i=s-1;i<e;i++){
-					const [page] = await out.copyPages(pdf, [i]);
-					out.addPage(page);
-				}
-			}
-			splitBytes = await out.save({useObjectStreams:true});
-			splitStatus.textContent = `Split ${(splitBytes.length/1024).toFixed(1)} KB`;
-		}
+async function mergePdfs(){
+  if(mergeFiles.length<2){showToast('Add at least 2 PDFs');return;}
+  mergeBtn.disabled=true;
+  try{
+    const merged=await PDFLib.PDFDocument.create();
+    for(const f of mergeFiles){
+      const buf=await f.arrayBuffer();
+      const src=await PDFLib.PDFDocument.load(buf);
+      const pages=await merged.copyPages(src,src.getPageIndices());
+      pages.forEach(p=>merged.addPage(p));
+    }
+    const bytes=await merged.save();
+    downloadBlob(bytes,'merged.pdf');
+    showToast('PDFs merged successfully!');
+  }catch(e){console.error(e);showToast('Merge failed: '+e.message);}
+  finally{mergeBtn.disabled=false;}
+}
 
-		function downloadSplit(){
-			if(!splitBytes){ splitStatus.textContent = 'No split file'; return; }
-			const blob = new Blob([splitBytes], {type:'application/pdf'});
-			const url = URL.createObjectURL(blob); const a = document.createElement('a');
-			a.href = url; a.download = 'split.pdf'; a.click(); URL.revokeObjectURL(url);
-		}
-	</script>
+/* ==================== SPLIT ==================== */
+let splitFile=null;let splitPageCount=0;
+const splitInput=document.getElementById('splitInput');
+const splitDropZone=document.getElementById('splitDropZone');
+const splitBtn=document.getElementById('splitBtn');
+const splitInfo=document.getElementById('splitInfo');
+const splitResults=document.getElementById('splitResults');
 
+['dragenter','dragover'].forEach(e=>splitDropZone.addEventListener(e,ev=>{ev.preventDefault();splitDropZone.classList.add('dragover');}));
+['dragleave','drop'].forEach(e=>splitDropZone.addEventListener(e,ev=>{ev.preventDefault();splitDropZone.classList.remove('dragover');}));
+splitDropZone.addEventListener('drop',ev=>{
+  const f=ev.dataTransfer.files[0];
+  if(f&&f.type==='application/pdf'){splitFile=f;handleSplitFile();}
+  else showToast('Drop a PDF file');
+});
+splitInput.addEventListener('change',()=>{splitFile=splitInput.files[0];if(splitFile)handleSplitFile();});
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+async function handleSplitFile(){
+  document.getElementById('splitFileName').textContent=splitFile.name;
+  try{
+    const buf=await splitFile.arrayBuffer();
+    const doc=await PDFLib.PDFDocument.load(buf);
+    splitPageCount=doc.getPageCount();
+    splitInfo.style.display='';
+    splitInfo.innerHTML=`<i class="fas fa-file-pdf"></i> <span>${splitFile.name}</span> — ${splitPageCount} pages — ${formatSize(splitFile.size)}`;
+    splitBtn.disabled=false;splitResults.innerHTML='';
+  }catch(e){showToast('Error reading PDF');}
+}
 
+function parseRanges(str,max){
+  const ranges=[];
+  str.split(',').forEach(part=>{
+    part=part.trim();if(!part)return;
+    if(part.includes('-')){
+      const [a,b]=part.split('-').map(Number);
+      if(a>=1&&b<=max&&a<=b){const r=[];for(let i=a;i<=b;i++)r.push(i-1);ranges.push(r);}
+    }else{
+      const n=Number(part);
+      if(n>=1&&n<=max)ranges.push([n-1]);
+    }
+  });
+  return ranges;
+}
+
+async function splitPdf(){
+  if(!splitFile){showToast('Upload a PDF first');return;}
+  const rangeStr=document.getElementById('splitRange').value.trim();
+  if(!rangeStr){showToast('Enter page ranges');return;}
+  const ranges=parseRanges(rangeStr,splitPageCount);
+  if(ranges.length===0){showToast('Invalid page ranges');return;}
+  splitBtn.disabled=true;splitResults.innerHTML='';
+
+  try{
+    const buf=await splitFile.arrayBuffer();
+    const baseName=splitFile.name.replace(/\.pdf$/i,'');
+    for(let ri=0;ri<ranges.length;ri++){
+      const srcDoc=await PDFLib.PDFDocument.load(buf);
+      const newDoc=await PDFLib.PDFDocument.create();
+      const pages=await newDoc.copyPages(srcDoc,ranges[ri]);
+      pages.forEach(p=>newDoc.addPage(p));
+      const bytes=await newDoc.save();
+      const label=ranges[ri].length===1?`Page ${ranges[ri][0]+1}`:`Pages ${ranges[ri][0]+1}-${ranges[ri][ranges[ri].length-1]+1}`;
+      const fileName=`${baseName}_${label.replace(/\s/g,'_')}.pdf`;
+      const li=document.createElement('li');li.className='file-item';
+      li.innerHTML=`<i class="fas fa-file-pdf" style="color:var(--primary);"></i>
+        <span class="name">${fileName}</span>
+        <span class="info">${label} — ${formatSize(bytes.length)}</span>
+        <button class="btn btn-sm btn-outline" onclick="this._bytes&&downloadBlob(this._bytes,'${fileName}')"><i class="fas fa-download"></i></button>`;
+      li.querySelector('button')._bytes=bytes;
+      splitResults.appendChild(li);
+    }
+    showToast(`Split into ${ranges.length} PDF(s)!`);
+  }catch(e){console.error(e);showToast('Split failed: '+e.message);}
+  finally{splitBtn.disabled=false;}
+}
+
+/* --- Download helper --- */
+function downloadBlob(bytes,name){
+  const blob=new Blob([bytes],{type:'application/pdf'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
+  URL.revokeObjectURL(a.href);
+}
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-

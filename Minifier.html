@@ -5,97 +5,180 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Code Minifier - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:980px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		textarea{width:100%;min-height:220px;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);padding:1rem;font-size:1rem;font-family:'JetBrains Mono','Cascadia Code',monospace;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} select{padding:0.7rem 0.9rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--text);} 
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.badge{padding:0.4rem 0.7rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--muted);} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		textarea{width:100%;min-height:200px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.9rem;font-family:'JetBrains Mono','Cascadia Code',monospace;resize:vertical;}
+		.row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;}
+		.tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+		.tab{padding:.6rem 1.1rem;border:none;background:var(--bg-alt);color:var(--muted);font-weight:700;cursor:pointer;font-size:.85rem;transition:all .15s;}
+		.tab.active{background:var(--primary);color:#fff;}
+		button{padding:.75rem 1.1rem;border-radius:var(--radius-sm);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-weight:700;font-size:.9rem;box-shadow:var(--shadow-sm);transition:transform .15s ease;}
+		button:hover{transform:translateY(-1px);}
+		button.secondary{background:var(--bg-alt);color:var(--text);border:1px solid var(--border);}
+		.stats{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;font-size:.85rem;color:var(--muted);font-weight:600;}
+		.stats .num{color:var(--primary);font-weight:800;}
+		.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-sm);font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:transform .35s var(--ease-bounce,.34 1.56 .64 1),opacity .3s;z-index:9999;pointer-events:none;}
+		.toast.show{transform:translateY(0);opacity:1;}
 	</style>
 </head>
 <body>
-  
-
-  
-
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-compress"></i> Code Minifier</h1>
-			<p class="muted">Quickly minify HTML, CSS, or JS snippets.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<textarea id="input" placeholder="Paste HTML, CSS, or JS..."></textarea>
-				<div class="row">
-					<select id="type">
-						<option value="html">HTML</option>
-						<option value="css">CSS</option>
-						<option value="js">JavaScript</option>
-					</select>
-					<button onclick="minify()">Minify</button>
-					<button onclick="copyOut()"><i class="fas fa-copy"></i> Copy</button>
-					<span class="badge" id="stats">Ready</span>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-compress"></i> Code Minifier</h1>
+		<p class="muted">Minify HTML, CSS, or JavaScript with proper string-safe processing.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<div class="row" style="margin-bottom:.75rem;">
+				<div class="tabs" id="langTabs">
+					<button class="tab active" data-lang="html" onclick="selectLang(this)">HTML</button>
+					<button class="tab" data-lang="css" onclick="selectLang(this)">CSS</button>
+					<button class="tab" data-lang="js" onclick="selectLang(this)">JavaScript</button>
 				</div>
-				<textarea id="output" placeholder="Minified code..." readonly></textarea>
 			</div>
-		</main>
-	</div>
+			<textarea id="input" placeholder="Paste your code here…"></textarea>
+			<div class="row" style="margin-top:.75rem;">
+				<button onclick="minify()"><i class="fas fa-compress"></i> Minify</button>
+				<button class="secondary" onclick="copyOut()"><i class="fas fa-copy"></i> Copy Output</button>
+			</div>
+		</div>
+		<div class="panel">
+			<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">
+				<label style="font-weight:700;">Output</label>
+				<div class="stats" id="stats"></div>
+			</div>
+			<textarea id="output" placeholder="Minified output…" readonly></textarea>
+		</div>
+	</main>
+</div>
 
-	<script>
-		const input = document.getElementById('input');
-		const output = document.getElementById('output');
-		const type = document.getElementById('type');
-		const stats = document.getElementById('stats');
+<div class="toast" id="toast"></div>
 
-		function setStats(msg){ stats.textContent = msg; }
+<script>
+let currentLang='html';
 
-		function minify(){
-			const text = input.value || '';
-			const before = text.length;
-			let out = text;
-			if(type.value === 'html'){
-				out = text.replace(/<!--[^]*?-->/g,'')
-									.replace(/>\s+</g,'><')
-									.replace(/\s{2,}/g,' ');
-			} else if(type.value === 'css'){
-				out = text.replace(/\/\*[^]*?\*\//g,'')
-									.replace(/\s*([{}:;,>+~])\s*/g,'$1')
-									.replace(/;}/g,'}')
-									.replace(/\s{2,}/g,' ')
-									.replace(/\n/g,'');
-			} else {
-				out = text.replace(/\/\*[^]*?\*\//g,'')
-									.replace(/([^:])\/\/.*$/gm,'$1')
-									.replace(/\s*([{}();,:+\-/*<>?&|=!])\s*/g,'$1')
-									.replace(/\n+/g,'');
+function showToast(msg,ms=2200){
+	const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+	clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),ms);
+}
+
+function selectLang(btn){
+	document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+	btn.classList.add('active');
+	currentLang=btn.dataset.lang;
+}
+
+function byteLen(s){return new Blob([s]).size;}
+
+function showStats(before,after){
+	const bBefore=byteLen(before),bAfter=byteLen(after);
+	const pct=bBefore?((1-bAfter/bBefore)*100).toFixed(1):0;
+	document.getElementById('stats').innerHTML=
+		`<span>Before: <span class="num">${bBefore.toLocaleString()} B</span></span>` +
+		`<span>After: <span class="num">${bAfter.toLocaleString()} B</span></span>` +
+		`<span>Saved: <span class="num">${pct}%</span></span>`;
+}
+
+/* ---- Minifiers ---- */
+
+function minifyHTML(src){
+	return src
+		.replace(/<!--[\s\S]*?-->/g,'')           // remove comments
+		.replace(/>\s+</g,'><')                    // collapse between tags
+		.replace(/\s{2,}/g,' ')                    // collapse runs of whitespace
+		.replace(/\s*=\s*"([^"]*?)"\s*/g,'="$1" ') // normalise attr spacing
+		.trim();
+}
+
+function minifyCSS(src){
+	return src
+		.replace(/\/\*[\s\S]*?\*\//g,'')           // remove comments
+		.replace(/\s*([{}:;,>+~!])\s*/g,'$1')      // collapse around tokens
+		.replace(/;}/g,'}')                         // drop last semicolons
+		.replace(/\s{2,}/g,' ')
+		.trim();
+}
+
+/* JS minifier with state machine to preserve strings */
+function minifyJS(src){
+	let out='';
+	let i=0;
+	const len=src.length;
+	while(i<len){
+		const c=src[i];
+		// String literals
+		if(c==='"'||c==="'"||c==='`'){
+			const quote=c;
+			out+=c;i++;
+			while(i<len){
+				const sc=src[i];
+				if(sc==='\\'){ out+=sc+src[i+1];i+=2;continue; }
+				if(sc===quote){ out+=sc;i++;break; }
+				out+=sc;i++;
 			}
-			output.value = out.trim();
-			const after = output.value.length;
-			setStats(`Compressed ${before} ? ${after} chars`);
+			continue;
 		}
+		// Single-line comment
+		if(c==='/'&&src[i+1]==='/'){
+			// Skip to end of line
+			while(i<len&&src[i]!=='\n') i++;
+			continue;
+		}
+		// Multi-line comment
+		if(c==='/'&&src[i+1]==='*'){
+			i+=2;
+			while(i<len-1&&!(src[i]==='*'&&src[i+1]==='/')){i++;}
+			i+=2;
+			continue;
+		}
+		// Whitespace collapsing
+		if(c===' '||c==='\t'||c==='\n'||c==='\r'){
+			// Collapse to a single space, but skip if next/prev is an operator
+			while(i<len&&(src[i]===' '||src[i]==='\t'||src[i]==='\n'||src[i]==='\r')) i++;
+			const prev=out[out.length-1]||'';
+			const next=src[i]||'';
+			const ops='{}();:,+-*/%=<>!&|?^~[]';
+			if(ops.includes(prev)||ops.includes(next)){
+				// no space needed
+			}else{
+				out+=' ';
+			}
+			continue;
+		}
+		out+=c;i++;
+	}
+	return out.trim();
+}
 
-		function copyOut(){ navigator.clipboard.writeText(output.value || ''); }
-	</script>
+function minify(){
+	const src=document.getElementById('input').value;
+	if(!src.trim()){showToast('Enter some code first');return;}
+	let result='';
+	switch(currentLang){
+		case 'html':result=minifyHTML(src);break;
+		case 'css':result=minifyCSS(src);break;
+		case 'js':result=minifyJS(src);break;
+	}
+	document.getElementById('output').value=result;
+	showStats(src,result);
+	showToast('Minified!');
+}
 
-
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
-
+function copyOut(){
+	const v=document.getElementById('output').value;
+	if(!v){showToast('Nothing to copy');return;}
+	navigator.clipboard.writeText(v).then(()=>showToast('Copied to clipboard!'));
+}
+</script>
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

@@ -1,89 +1,179 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>HEX ? RGB Converter - Multietools</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 15% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 80% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:760px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;}
-		input[type=text]{padding:0.85rem 1rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);flex:1;min-width:180px;font-family:'JetBrains Mono','Cascadia Code',monospace;}
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.preview{height:140px;border-radius:12px;border:1px solid var(--border);} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-	</style>
-</head>
-<body>
-  
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEX ↔ RGB Converter - Multietools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/global.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+.converter-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:start;}
+@media(max-width:700px){.converter-grid{grid-template-columns:1fr;}}
+.field-group{display:grid;gap:.75rem;}
+.field-group label{font-weight:700;font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.field-group input[type=text]{width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);color:var(--text);font-family:'JetBrains Mono','Cascadia Code',monospace;font-size:1rem;}
+.field-group input[type=number]{width:100%;padding:.65rem .75rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);color:var(--text);font-family:'JetBrains Mono','Cascadia Code',monospace;font-size:.95rem;}
+.rgb-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;}
+.btn{padding:.8rem 1.2rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.9rem;transition:transform .15s;}
+.btn:hover{transform:translateY(-1px);} .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-sm{padding:.55rem .85rem;font-size:.8rem;}
+.swap-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;padding-top:1.5rem;}
+.swap-btn{width:48px;height:48px;border-radius:50%;border:2px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.2rem;transition:transform .2s,border-color .2s;}
+.swap-btn:hover{transform:rotate(180deg);border-color:var(--primary);}
+.preview-bar{height:120px;border-radius:12px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;font-family:'JetBrains Mono',monospace;transition:background .2s;}
+.output-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;}
+.output-box{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1rem;display:flex;justify-content:space-between;align-items:center;}
+.output-box .label{font-weight:700;font-size:.8rem;color:var(--muted);text-transform:uppercase;}
+.output-box .val{font-family:'JetBrains Mono',monospace;font-weight:600;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style></head><body>
+<div class="wrap"><header>
+<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+<h1><i class="fas fa-swatchbook"></i> HEX ↔ RGB Converter</h1>
+<p class="muted">Convert between HEX, RGB, and HSL color formats with live preview.</p>
+</header><main>
 
-  
+<div class="panel">
+<div class="converter-grid">
+  <div class="field-group">
+    <label>HEX Value</label>
+    <input type="text" id="hexInput" value="#22d3ee" placeholder="#22d3ee or fff" spellcheck="false" maxlength="7">
+    <button class="btn" onclick="convertHexToRgb()"><i class="fas fa-arrow-right"></i> HEX → RGB</button>
+  </div>
+  <div class="swap-col">
+    <button class="swap-btn" onclick="swapValues()" title="Swap"><i class="fas fa-exchange-alt"></i></button>
+  </div>
+  <div class="field-group">
+    <label>RGB Values</label>
+    <div class="rgb-inputs">
+      <input type="number" id="rInput" min="0" max="255" value="34" placeholder="R">
+      <input type="number" id="gInput" min="0" max="255" value="211" placeholder="G">
+      <input type="number" id="bInput" min="0" max="255" value="238" placeholder="B">
+    </div>
+    <input type="text" id="rgbText" placeholder="Or type: 34,211,238" spellcheck="false">
+    <button class="btn" onclick="convertRgbToHex()"><i class="fas fa-arrow-left"></i> RGB → HEX</button>
+  </div>
+</div>
+</div>
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-swatchbook"></i> HEX ? RGB Converter</h1>
-			<p class="muted">Convert between HEX and RGB and preview the color.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<input type="text" id="hex" placeholder="#22d3ee" value="#22d3ee">
-					<button onclick="hexToRgb()">HEX ? RGB</button>
-				</div>
-				<div class="row">
-					<input type="text" id="rgb" placeholder="34,211,238" value="34,211,238">
-					<button onclick="rgbToHex()">RGB ? HEX</button>
-				</div>
-				<div class="preview" id="preview"></div>
-			</div>
-		</main>
-	</div>
+<div class="panel">
+<div class="preview-bar" id="preview"></div>
+</div>
 
-	<script>
-		const hex = document.getElementById('hex');
-		const rgb = document.getElementById('rgb');
-		const preview = document.getElementById('preview');
+<div class="output-grid">
+  <div class="output-box">
+    <div><div class="label">HEX</div><div class="val" id="outHex">#22d3ee</div></div>
+    <button class="btn btn-sm" onclick="copyVal('outHex','HEX')"><i class="fas fa-copy"></i></button>
+  </div>
+  <div class="output-box">
+    <div><div class="label">RGB</div><div class="val" id="outRgb">rgb(34, 211, 238)</div></div>
+    <button class="btn btn-sm" onclick="copyVal('outRgb','RGB')"><i class="fas fa-copy"></i></button>
+  </div>
+  <div class="output-box">
+    <div><div class="label">HSL</div><div class="val" id="outHsl">hsl(188, 83%, 53%)</div></div>
+    <button class="btn btn-sm" onclick="copyVal('outHsl','HSL')"><i class="fas fa-copy"></i></button>
+  </div>
+</div>
 
-		function setPreview(color){ preview.style.background = color; }
+</main></div>
+<div class="toast" id="toast"></div>
+<script src="js/global.js"></script>
+<script>
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-		function hexToRgb(){
-			const val = hex.value.trim();
-			const res = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(val);
-			if(!res){ rgb.value = 'Invalid HEX'; return; }
-			const r = parseInt(res[1],16), g = parseInt(res[2],16), b = parseInt(res[3],16);
-			rgb.value = `${r},${g},${b}`;
-			setPreview(`rgb(${r},${g},${b})`);
-		}
+const hexInput=document.getElementById('hexInput');
+const rInput=document.getElementById('rInput'),gInput=document.getElementById('gInput'),bInput=document.getElementById('bInput');
+const rgbText=document.getElementById('rgbText');
+const preview=document.getElementById('preview');
+const outHex=document.getElementById('outHex'),outRgb=document.getElementById('outRgb'),outHsl=document.getElementById('outHsl');
 
-		function rgbToHex(){
-			const parts = rgb.value.split(',').map(p=>parseInt(p.trim(),10));
-			if(parts.length!==3 || parts.some(n=>isNaN(n)||n<0||n>255)){ hex.value = 'Invalid RGB'; return; }
-			const [r,g,b] = parts;
-			hex.value = '#' + [r,g,b].map(n=>n.toString(16).padStart(2,'0')).join('');
-			setPreview(hex.value);
-		}
+function expandHex(h){
+  h=h.replace('#','').trim();
+  if(h.length===3)h=h.split('').map(c=>c+c).join('');
+  return h.length===6?'#'+h:null;
+}
+function hexToRgb(hex){
+  const full=expandHex(hex);
+  if(!full)return null;
+  const m=/^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(full);
+  return m?[parseInt(m[1],16),parseInt(m[2],16),parseInt(m[3],16)]:null;
+}
+function rgbToHex(r,g,b){return '#'+[r,g,b].map(n=>Math.max(0,Math.min(255,Math.round(n))).toString(16).padStart(2,'0')).join('');}
+function rgbToHsl(r,g,b){
+  r/=255;g/=255;b/=255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b);
+  let h,s,l=(max+min)/2;
+  if(max===min){h=s=0;}else{
+    const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);
+    switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break;}
+    h/=6;
+  }
+  return[Math.round(h*360),Math.round(s*100),Math.round(l*100)];
+}
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,Number(v)||0));}
 
-		hexToRgb();
-	</script>
+function updateOutputs(r,g,b){
+  const hex=rgbToHex(r,g,b);
+  const[h,s,l]=rgbToHsl(r,g,b);
+  outHex.textContent=hex;
+  outRgb.textContent=`rgb(${r}, ${g}, ${b})`;
+  outHsl.textContent=`hsl(${h}, ${s}%, ${l}%)`;
+  preview.style.background=hex;
+  const lum=[r,g,b].map(v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);});
+  const L=0.2126*lum[0]+0.7152*lum[1]+0.0722*lum[2];
+  preview.style.color=L>0.179?'#000':'#fff';
+  preview.textContent=hex;
+}
 
+function convertHexToRgb(){
+  const rgb=hexToRgb(hexInput.value);
+  if(!rgb){showToast('Invalid HEX value');return;}
+  const[r,g,b]=rgb;
+  rInput.value=r;gInput.value=g;bInput.value=b;
+  rgbText.value=`${r},${g},${b}`;
+  hexInput.value=expandHex(hexInput.value);
+  updateOutputs(r,g,b);
+}
+function convertRgbToHex(){
+  let r,g,b;
+  const txt=rgbText.value.trim();
+  if(txt){
+    const parts=txt.replace(/rgb\s*\(/i,'').replace(')','').split(/[\s,]+/).map(Number);
+    if(parts.length>=3&&parts.every(n=>!isNaN(n))){[r,g,b]=parts.map(n=>clamp(n,0,255));}
+    else{showToast('Invalid RGB text');return;}
+  }else{
+    r=clamp(rInput.value,0,255);g=clamp(gInput.value,0,255);b=clamp(bInput.value,0,255);
+  }
+  rInput.value=r;gInput.value=g;bInput.value=b;
+  const hex=rgbToHex(r,g,b);
+  hexInput.value=hex;
+  rgbText.value=`${r},${g},${b}`;
+  updateOutputs(r,g,b);
+}
+function swapValues(){
+  const curHex=hexInput.value;
+  const rgb=hexToRgb(curHex);
+  if(rgb){
+    const[r,g,b]=rgb;
+    rgbText.value=`${r},${g},${b}`;
+    rInput.value=r;gInput.value=g;bInput.value=b;
+  }
+  convertRgbToHex();
+  showToast('Values synced!');
+}
+function copyVal(id,label){navigator.clipboard.writeText(document.getElementById(id).textContent);showToast(label+' copied!');}
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+hexInput.addEventListener('input',()=>{const rgb=hexToRgb(hexInput.value);if(rgb){const[r,g,b]=rgb;rInput.value=r;gInput.value=g;bInput.value=b;rgbText.value=`${r},${g},${b}`;updateOutputs(r,g,b);}});
+[rInput,gInput,bInput].forEach(el=>el.addEventListener('input',()=>{
+  const r=clamp(rInput.value,0,255),g=clamp(gInput.value,0,255),b=clamp(bInput.value,0,255);
+  hexInput.value=rgbToHex(r,g,b);rgbText.value=`${r},${g},${b}`;updateOutputs(r,g,b);
+}));
 
-</body>
-</html>
-
-
-
-
-
-
-
-
+convertHexToRgb();
+</script></body></html>

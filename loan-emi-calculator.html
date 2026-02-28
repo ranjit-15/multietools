@@ -5,103 +5,298 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Loan EMI Calculator - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:980px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:0.9rem;align-items:center;} label{color:var(--muted);font-weight:600;} input[type=number]{padding:0.75rem 0.9rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);width:170px;}
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0.8rem;} .stat{background:#0f192b;border:1px solid var(--border);padding:0.85rem 1rem;border-radius:12px;} .label{color:var(--muted);font-size:0.9rem;} .value{font-size:1.3rem;font-weight:800;}
-		table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:12px;overflow:hidden;} th,td{padding:0.65rem 0.8rem;text-align:right;} th{text-align:right;background:#0f192b;color:var(--muted);} tr:nth-child(even){background:#0c1528;} 
-		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+
+		label{font-weight:600;font-size:.92rem;display:block;margin-bottom:.4rem;}
+		input[type="number"]{width:100%;padding:.7rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:1rem;font-family:inherit;}
+		input[type="number"]:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
+		.field{margin-bottom:1rem;}
+		.unit-hint{color:var(--muted);font-size:.8rem;font-weight:400;}
+
+		.toggle-group{display:inline-flex;gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-left:.5rem;vertical-align:middle;}
+		.toggle-group button{padding:.45rem .85rem;border:none;background:var(--bg-alt);color:var(--muted);font-weight:700;font-size:.8rem;cursor:pointer;transition:all .2s;}
+		.toggle-group button.active{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;}
+
+		.btn-calc{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.5rem;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;cursor:pointer;font-size:1rem;font-weight:700;transition:transform .15s;margin-top:.5rem;}
+		.btn-calc:hover{transform:translateY(-1px);}
+
+		.results{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin-bottom:1.25rem;}
+		.stat{background:var(--bg-alt);border:1px solid var(--border-light);padding:1rem;border-radius:var(--radius-sm);text-align:center;}
+		.stat .lbl{color:var(--muted);font-size:.85rem;margin-bottom:.3rem;}
+		.stat .val{font-size:1.3rem;font-weight:800;}
+		.stat.highlight{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none;}
+		.stat.highlight .lbl{color:rgba(255,255,255,.8);}
+		.stat.highlight .val{color:#fff;}
+
+		.chart-wrap{display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem;justify-content:center;margin:1.25rem 0;}
+		canvas{max-width:200px;max-height:200px;}
+		.legend{display:flex;flex-direction:column;gap:.5rem;}
+		.legend-item{display:flex;align-items:center;gap:.5rem;font-size:.9rem;font-weight:600;}
+		.legend-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+
+		.table-wrap{max-height:420px;overflow-y:auto;border:1px solid var(--border-light);border-radius:var(--radius-sm);}
+		table{width:100%;border-collapse:collapse;font-size:.85rem;}
+		th,td{padding:.55rem .7rem;text-align:right;border-bottom:1px solid var(--border-light);}
+		th{background:var(--bg-alt);font-weight:700;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0;z-index:1;}
+		td:first-child,th:first-child{text-align:center;}
+
+		.show-all-btn{display:block;margin:.75rem auto 0;padding:.5rem 1.2rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-alt);color:var(--text);cursor:pointer;font-weight:600;font-size:.85rem;transition:all .2s;}
+		.show-all-btn:hover{border-color:var(--primary);color:var(--primary);}
+
+		.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 	</style>
 </head>
 <body>
-  
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-university"></i> Loan EMI Calculator</h1>
+		<p class="muted">Calculate your monthly EMI, total interest, and view the amortization schedule.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<div class="field">
+				<label for="loanAmt"><i class="fas fa-money-bill-wave"></i> Loan Amount</label>
+				<input type="number" id="loanAmt" placeholder="e.g. 500000" min="1" step="1">
+			</div>
+			<div class="field">
+				<label for="interestRate"><i class="fas fa-percentage"></i> Annual Interest Rate (%)</label>
+				<input type="number" id="interestRate" placeholder="e.g. 8.5" min="0.01" step="0.01">
+			</div>
+			<div class="field">
+				<label for="tenure"><i class="fas fa-calendar-alt"></i> Loan Tenure
+					<span class="toggle-group" id="tenureToggle">
+						<button class="active" data-unit="months">Months</button>
+						<button data-unit="years">Years</button>
+					</span>
+				</label>
+				<input type="number" id="tenure" placeholder="e.g. 60" min="1" step="1">
+			</div>
+			<button class="btn-calc" id="calcBtn"><i class="fas fa-calculator"></i> Calculate EMI</button>
+		</div>
 
-  
+		<div class="panel" id="resultPanel" style="display:none;">
+			<h2 style="font-size:1.1rem;margin-bottom:.75rem;"><i class="fas fa-chart-pie" style="color:var(--primary);"></i> EMI Summary</h2>
+			<div class="results">
+				<div class="stat highlight">
+					<div class="lbl">Monthly EMI</div>
+					<div class="val" id="emiVal">&#8377;0</div>
+				</div>
+				<div class="stat">
+					<div class="lbl">Total Interest</div>
+					<div class="val" id="totalInterest">&#8377;0</div>
+				</div>
+				<div class="stat">
+					<div class="lbl">Total Amount</div>
+					<div class="val" id="totalAmt">&#8377;0</div>
+				</div>
+			</div>
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-calculator"></i> Loan EMI Calculator</h1>
-			<p class="muted">Compute monthly EMI, total interest, and schedule.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<label>Loan Amount</label><input type="number" id="amount" value="500000" min="1">
-					<label>Annual Rate %</label><input type="number" id="rate" value="8" step="0.01" min="0">
-					<label>Tenure (months)</label><input type="number" id="months" value="60" min="1">
-					<button onclick="calc()">Calculate</button>
+			<div class="chart-wrap">
+				<canvas id="pieChart" width="200" height="200"></canvas>
+				<div class="legend">
+					<div class="legend-item"><span class="legend-dot" style="background:#7c3aed;"></span> Principal</div>
+					<div class="legend-item"><span class="legend-dot" style="background:#ec4899;"></span> Interest</div>
 				</div>
-				<div class="stats">
-					<div class="stat"><span class="label">Monthly EMI</span><span class="value" id="emi">-</span></div>
-					<div class="stat"><span class="label">Total Interest</span><span class="value" id="interest">-</span></div>
-					<div class="stat"><span class="label">Total Payment</span><span class="value" id="total">-</span></div>
-				</div>
+			</div>
+
+			<h3 style="font-size:1rem;margin-bottom:.5rem;"><i class="fas fa-table" style="color:var(--primary);"></i> Amortization Schedule</h3>
+			<div class="table-wrap" id="tableWrap">
 				<table>
-					<thead><tr><th style="text-align:left">Month</th><th>Interest</th><th>Principal</th><th>Balance</th></tr></thead>
-					<tbody id="schedule"><tr><td colspan="4" style="text-align:left" class="muted">Run calculation to see schedule.</td></tr></tbody>
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>EMI</th>
+							<th>Principal</th>
+							<th>Interest</th>
+							<th>Balance</th>
+						</tr>
+					</thead>
+					<tbody id="amortBody"></tbody>
 				</table>
 			</div>
-		</main>
-	</div>
+			<button class="show-all-btn" id="showAllBtn" style="display:none;">Show All Rows</button>
+		</div>
+	</main>
+</div>
+<div class="toast" id="toast"></div>
 
-	<script>
-		const amount = document.getElementById('amount');
-		const rate = document.getElementById('rate');
-		const months = document.getElementById('months');
-		const emiEl = document.getElementById('emi');
-		const interestEl = document.getElementById('interest');
-		const totalEl = document.getElementById('total');
-		const scheduleEl = document.getElementById('schedule');
+<script src="js/global.js"></script>
+<script>
+(function(){
+	'use strict';
 
-		function format(n){ return Intl.NumberFormat('en-IN', {maximumFractionDigits:2}).format(n); }
+	var loanInput = document.getElementById('loanAmt');
+	var rateInput = document.getElementById('interestRate');
+	var tenureInput = document.getElementById('tenure');
+	var tenureButtons = document.querySelectorAll('#tenureToggle button');
+	var calcBtn = document.getElementById('calcBtn');
+	var resultPanel = document.getElementById('resultPanel');
+	var showAllBtn = document.getElementById('showAllBtn');
 
-		function calc(){
-			const P = parseFloat(amount.value)||0;
-			const r = (parseFloat(rate.value)||0)/12/100;
-			const n = Math.max(1, parseInt(months.value,10) || 1);
-			if(P<=0){ return; }
-			const emi = r === 0 ? P/n : P * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
-			let balance = P;
-			let totalInterest = 0;
-			const rows = [];
-			for(let i=1;i<=n;i++){
-				const interest = balance * r;
-				const principal = emi - interest;
-				balance = Math.max(0, balance - principal);
-				totalInterest += interest;
-				if(i<=120){
-					rows.push(`<tr><td style="text-align:left">${i}</td><td>${format(interest)}</td><td>${format(principal)}</td><td>${format(balance)}</td></tr>`);
-				}
-			}
-			emiEl.textContent = format(emi);
-			interestEl.textContent = format(totalInterest);
-			totalEl.textContent = format(P + totalInterest);
-			scheduleEl.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="4" class="muted" style="text-align:left">Schedule truncated.</td></tr>';
+	var tenureUnit = 'months';
+	var fullSchedule = [];
+	var showingAll = false;
+
+	tenureButtons.forEach(function(btn){
+		btn.addEventListener('click', function(e){
+			e.preventDefault();
+			tenureButtons.forEach(function(b){ b.classList.remove('active'); });
+			btn.classList.add('active');
+			tenureUnit = btn.getAttribute('data-unit');
+		});
+	});
+
+	calcBtn.addEventListener('click', calculate);
+
+	// also allow Enter key
+	[loanInput, rateInput, tenureInput].forEach(function(el){
+		el.addEventListener('keydown', function(e){
+			if(e.key === 'Enter') calculate();
+		});
+	});
+
+	function calculate(){
+		var P = parseFloat(loanInput.value);
+		var annualRate = parseFloat(rateInput.value);
+		var t = parseInt(tenureInput.value, 10);
+
+		if(!P || P <= 0 || !annualRate || annualRate <= 0 || !t || t <= 0){
+			showToast('Please enter valid values');
+			return;
 		}
 
-		calc();
-	</script>
+		var n = tenureUnit === 'years' ? t * 12 : t;
+		var r = annualRate / 12 / 100;
 
+		// EMI = P * r * (1+r)^n / ((1+r)^n - 1)
+		var factor = Math.pow(1 + r, n);
+		var emi = P * r * factor / (factor - 1);
+		var totalAmt = emi * n;
+		var totalInterest = totalAmt - P;
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+		document.getElementById('emiVal').textContent = '\u20B9' + formatNum(emi);
+		document.getElementById('totalInterest').textContent = '\u20B9' + formatNum(totalInterest);
+		document.getElementById('totalAmt').textContent = '\u20B9' + formatNum(totalAmt);
 
+		// Draw pie chart
+		drawPie(P, totalInterest);
+
+		// Build amortization schedule
+		fullSchedule = [];
+		var balance = P;
+		for(var i = 1; i <= n; i++){
+			var intPart = balance * r;
+			var prinPart = emi - intPart;
+			balance -= prinPart;
+			if(balance < 0) balance = 0;
+			fullSchedule.push({ month: i, emi: emi, principal: prinPart, interest: intPart, balance: balance });
+		}
+
+		showingAll = false;
+		renderTable(false);
+
+		if(n > 12){
+			showAllBtn.style.display = 'block';
+			showAllBtn.textContent = 'Show All ' + n + ' Rows';
+		} else {
+			showAllBtn.style.display = 'none';
+		}
+
+		resultPanel.style.display = 'block';
+		resultPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		showToast('EMI calculated!');
+	}
+
+	function renderTable(all){
+		var tbody = document.getElementById('amortBody');
+		var rows = all ? fullSchedule : fullSchedule.slice(0, 12);
+		var html = '';
+		for(var i = 0; i < rows.length; i++){
+			var r = rows[i];
+			html += '<tr>' +
+				'<td>' + r.month + '</td>' +
+				'<td>\u20B9' + formatNum(r.emi) + '</td>' +
+				'<td>\u20B9' + formatNum(r.principal) + '</td>' +
+				'<td>\u20B9' + formatNum(r.interest) + '</td>' +
+				'<td>\u20B9' + formatNum(r.balance) + '</td>' +
+			'</tr>';
+		}
+		tbody.innerHTML = html;
+	}
+
+	showAllBtn.addEventListener('click', function(){
+		showingAll = !showingAll;
+		renderTable(showingAll);
+		showAllBtn.textContent = showingAll ? 'Show First 12 Rows' : 'Show All ' + fullSchedule.length + ' Rows';
+	});
+
+	function drawPie(principal, interest){
+		var canvas = document.getElementById('pieChart');
+		var ctx = canvas.getContext('2d');
+		var size = 200;
+		canvas.width = size;
+		canvas.height = size;
+		ctx.clearRect(0, 0, size, size);
+
+		var total = principal + interest;
+		var pAngle = (principal / total) * 2 * Math.PI;
+		var cx = size / 2, cy = size / 2, radius = size / 2 - 10;
+
+		// Principal slice
+		ctx.beginPath();
+		ctx.moveTo(cx, cy);
+		ctx.arc(cx, cy, radius, -Math.PI / 2, -Math.PI / 2 + pAngle);
+		ctx.closePath();
+		ctx.fillStyle = '#7c3aed';
+		ctx.fill();
+
+		// Interest slice
+		ctx.beginPath();
+		ctx.moveTo(cx, cy);
+		ctx.arc(cx, cy, radius, -Math.PI / 2 + pAngle, -Math.PI / 2 + 2 * Math.PI);
+		ctx.closePath();
+		ctx.fillStyle = '#ec4899';
+		ctx.fill();
+
+		// Center circle for donut effect
+		ctx.beginPath();
+		ctx.arc(cx, cy, radius * 0.55, 0, 2 * Math.PI);
+		var bg = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#fff';
+		ctx.fillStyle = bg;
+		ctx.fill();
+
+		// Center text
+		ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#1e293b';
+		ctx.font = 'bold 13px Inter, sans-serif';
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		var pPct = ((principal / total) * 100).toFixed(1);
+		ctx.fillText(pPct + '% P', cx, cy - 8);
+		ctx.fillText((100 - parseFloat(pPct)).toFixed(1) + '% I', cx, cy + 10);
+	}
+
+	function formatNum(n){
+		return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+	}
+
+	function showToast(msg){
+		var t = document.getElementById('toast');
+		t.textContent = msg;
+		t.classList.add('show');
+		setTimeout(function(){ t.classList.remove('show'); }, 2200);
+	}
+})();
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-

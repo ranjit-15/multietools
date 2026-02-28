@@ -3,81 +3,134 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Remove Duplicate Lines - Multietools</title>
+	<title>Remove Duplicates - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 20% 20%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 80% 10%,rgba(56,189,248,0.14),transparent 30%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:860px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:0.9rem;}
-		textarea{width:100%;min-height:220px;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);padding:1rem;font-size:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} label{color:var(--muted);font-weight:600;} select{padding:0.6rem 0.8rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--text);} 
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} .actions{display:flex;flex-wrap:wrap;gap:0.6rem;}
-		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		textarea{width:100%;min-height:180px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.9rem;font-family:'JetBrains Mono','Cascadia Code',monospace;resize:vertical;}
+		.row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:.75rem;}
+		.options{display:flex;flex-wrap:wrap;gap:1rem;margin-top:.5rem;}
+		.options label{display:flex;align-items:center;gap:.5rem;font-weight:600;font-size:.9rem;cursor:pointer;}
+		.options input[type=checkbox]{accent-color:var(--primary);width:18px;height:18px;}
+		button{padding:.75rem 1.1rem;border-radius:var(--radius-sm);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-weight:700;font-size:.9rem;box-shadow:var(--shadow-sm);transition:transform .15s ease,box-shadow .15s ease;}
+		button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+		button.secondary{background:var(--bg-alt);color:var(--text);border:1px solid var(--border);}
+		button.secondary:hover{background:var(--border-light);}
+		.stats{display:flex;flex-wrap:wrap;gap:1rem;margin-top:.5rem;}
+		.stat{background:var(--bg-alt);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.65rem 1rem;text-align:center;flex:1;min-width:120px;}
+		.stat-val{font-size:1.5rem;font-weight:800;color:var(--primary);}
+		.stat-label{font-size:.78rem;color:var(--muted);font-weight:600;margin-top:.15rem;}
+		.badge{padding:.4rem .75rem;border-radius:var(--radius-full,999px);border:1px solid var(--border);background:var(--bg-alt);color:var(--muted);font-size:.85rem;}
+		.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-sm);font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:transform .35s var(--ease-bounce,.34 1.56 .64 1),opacity .3s;z-index:9999;pointer-events:none;}
+		.toast.show{transform:translateY(0);opacity:1;}
 	</style>
 </head>
 <body>
-  
-
-  
-
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-clone"></i> Remove Duplicate Lines</h1>
-			<p class="muted">Clean lists by removing duplicates while keeping order.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<textarea id="input" placeholder="Paste lines here..."></textarea>
-				<div class="row">
-					<label for="mode">Keep</label>
-					<select id="mode">
-						<option value="first">First occurrence</option>
-						<option value="last">Last occurrence</option>
-					</select>
-					<button onclick="dedupe()">Remove Duplicates</button>
-					<button onclick="copyOut()"><i class="fas fa-copy"></i> Copy</button>
-				</div>
-				<textarea id="output" placeholder="Cleaned lines..." readonly></textarea>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-eraser"></i> Remove Duplicates</h1>
+		<p class="muted">Remove duplicate lines from text while preserving order.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<label style="font-weight:600;display:block;margin-bottom:.35rem;">Input (one item per line)</label>
+			<textarea id="input" placeholder="Paste your lines here…&#10;apple&#10;banana&#10;apple&#10;cherry&#10;banana"></textarea>
+			<div class="options">
+				<label><input type="checkbox" id="caseSensitive" checked> Case sensitive</label>
+				<label><input type="checkbox" id="trimWhitespace" checked> Trim whitespace</label>
+				<label><input type="checkbox" id="sortOutput"> Sort output</label>
 			</div>
-		</main>
-	</div>
+			<div class="row">
+				<button onclick="removeDuplicates()"><i class="fas fa-eraser"></i> Remove Duplicates</button>
+				<button class="secondary" onclick="copyOutput()"><i class="fas fa-copy"></i> Copy Output</button>
+			</div>
+		</div>
 
-	<script>
-		const input = document.getElementById('input');
-		const output = document.getElementById('output');
-		const mode = document.getElementById('mode');
+		<div class="stats" id="statsRow">
+			<div class="stat">
+				<div class="stat-val" id="statOriginal">0</div>
+				<div class="stat-label">Original Lines</div>
+			</div>
+			<div class="stat">
+				<div class="stat-val" id="statUnique">0</div>
+				<div class="stat-label">Unique Lines</div>
+			</div>
+			<div class="stat">
+				<div class="stat-val" id="statRemoved">0</div>
+				<div class="stat-label">Duplicates Removed</div>
+			</div>
+		</div>
 
-		function dedupe(){
-			const lines = (input.value || '').split(/\r?\n/);
-			const seen = new Map();
-			if(mode.value === 'first'){
-				lines.forEach((line, idx) => { if(!seen.has(line)) seen.set(line, idx); });
-			} else {
-				lines.forEach((line, idx) => seen.set(line, idx));
-			}
-			const sorted = [...seen.entries()].sort((a,b)=>a[1]-b[1]).map(e=>e[0]);
-			output.value = sorted.join('\n');
+		<div class="panel">
+			<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem;">
+				<label style="font-weight:600;">Output</label>
+			</div>
+			<textarea id="output" placeholder="Cleaned output will appear here…" readonly></textarea>
+		</div>
+	</main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(msg,ms=2200){
+	const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+	clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),ms);
+}
+
+function removeDuplicates(){
+	const raw=document.getElementById('input').value;
+	if(!raw.trim()){showToast('Please enter some text');return;}
+
+	const caseSensitive=document.getElementById('caseSensitive').checked;
+	const trimWS=document.getElementById('trimWhitespace').checked;
+	const sortOut=document.getElementById('sortOutput').checked;
+
+	let lines=raw.split(/\r?\n/);
+	const originalCount=lines.length;
+
+	if(trimWS) lines=lines.map(l=>l.trim());
+
+	const seen=new Set();
+	const unique=[];
+	lines.forEach(line=>{
+		const key=caseSensitive?line:line.toLowerCase();
+		if(!seen.has(key)){
+			seen.add(key);
+			unique.push(line);
 		}
-		function copyOut(){ navigator.clipboard.writeText(output.value || ''); }
-	</script>
+	});
 
+	let result=unique;
+	if(sortOut) result=[...result].sort((a,b)=>{
+		const A=caseSensitive?a:a.toLowerCase();
+		const B=caseSensitive?b:b.toLowerCase();
+		return A<B?-1:A>B?1:0;
+	});
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+	document.getElementById('output').value=result.join('\n');
+	document.getElementById('statOriginal').textContent=originalCount;
+	document.getElementById('statUnique').textContent=unique.length;
+	document.getElementById('statRemoved').textContent=originalCount-unique.length;
 
+	showToast(`Removed ${originalCount-unique.length} duplicate${originalCount-unique.length!==1?'s':''}!`);
+}
+
+function copyOutput(){
+	const v=document.getElementById('output').value;
+	if(!v){showToast('Nothing to copy');return;}
+	navigator.clipboard.writeText(v).then(()=>showToast('Copied to clipboard!'));
+}
+</script>
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

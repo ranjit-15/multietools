@@ -5,76 +5,200 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>BMI Calculator - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root { --bg: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); --card:#0f172a; --accent:#22c55e; --text:#e2e8f0; --muted:#94a3b8; --border:#1f2937; --radius:16px; --shadow:0 18px 50px rgba(0,0,0,0.35);} 
 		*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,-apple-system,sans-serif;min-height:100vh;background:var(--bg);color:var(--text);padding:1.5rem;}
-		.shell{max-width:760px;margin:0 auto;background:rgba(15,23,42,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,197,94,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1.1rem;} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-		.panel{background:#0b1224;border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:0.75rem;}
-		label{font-weight:700;color:var(--text);} input{width:100%;padding:0.85rem 0.9rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} 
-		button{padding:0.9rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#4ade80);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;}
-		button:hover{transform:translateY(-1px);} 
-		.result{background:#0f192b;border:1px solid var(--border);border-radius:12px;padding:1rem;font-weight:800;display:grid;gap:0.35rem;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+
+		.toggle-group{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;max-width:300px;margin-bottom:1rem;}
+		.toggle-group button{flex:1;padding:.65rem 1rem;border:none;background:var(--bg-alt);color:var(--muted);font-weight:700;font-size:.9rem;cursor:pointer;transition:all .2s;}
+		.toggle-group button.active{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;}
+
+		.inputs{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+		@media(max-width:500px){.inputs{grid-template-columns:1fr;}}
+		label{font-weight:600;font-size:.9rem;display:block;margin-bottom:.35rem;}
+		input[type="number"]{width:100%;padding:.7rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:1rem;font-family:inherit;}
+		input[type="number"]:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
+		.unit{color:var(--muted);font-size:.8rem;font-weight:400;}
+
+		.result-box{text-align:center;padding:1.5rem;border-radius:var(--radius-md);background:var(--bg-alt);border:1px solid var(--border-light);margin-top:.5rem;}
+		.bmi-value{font-size:3rem;font-weight:900;line-height:1.1;}
+		.bmi-category{font-size:1.15rem;font-weight:700;margin-top:.35rem;}
+		.bmi-detail{color:var(--muted);font-size:.9rem;margin-top:.5rem;}
+
+		/* Gauge */
+		.gauge-wrap{margin-top:1.25rem;position:relative;}
+		.gauge-bar{height:14px;border-radius:99px;background:linear-gradient(to right,#3b82f6 0%,#22c55e 25%,#eab308 55%,#f97316 75%,#ef4444 100%);position:relative;overflow:visible;}
+		.gauge-labels{display:flex;justify-content:space-between;margin-top:.35rem;font-size:.75rem;color:var(--muted);font-weight:600;}
+		.gauge-pointer{position:absolute;top:-6px;width:4px;height:26px;background:var(--text);border-radius:2px;transform:translateX(-50%);transition:left .4s var(--ease);box-shadow:0 0 6px rgba(0,0,0,.3);}
+		.gauge-pointer::after{content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:6px solid var(--text);}
+
+		/* Color categories */
+		.cat-underweight{color:#3b82f6;} .cat-normal{color:#22c55e;} .cat-overweight{color:#f59e0b;} .cat-obese{color:#ef4444;}
+
+		.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+		.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 	</style>
 </head>
 <body>
-  
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-weight"></i> BMI Calculator</h1>
+		<p class="muted">Calculate your Body Mass Index and see your health category.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<div class="toggle-group" id="unitToggle">
+				<button class="active" data-unit="metric">Metric (kg/cm)</button>
+				<button data-unit="imperial">Imperial (lb/in)</button>
+			</div>
 
-  
-
-	<!-- Adsterra Ad -->
-	<div class="shell">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-weight"></i> BMI Calculator</h1>
-			<p class="muted">Calculate Body Mass Index and category.</p>
-		</header>
-
-		<main>
-			<div class="panel">
-				<label for="weight">Weight (kg)</label>
-				<input type="number" id="weight" placeholder="e.g. 70" step="0.1">
-				<label for="height">Height (cm)</label>
-				<input type="number" id="height" placeholder="e.g. 175" step="0.1">
-				<button onclick="calc()"><i class="fas fa-calculator"></i> Calculate BMI</button>
-				<div class="result" id="result">
-					<div>BMI: �</div>
-					<div>Category: �</div>
+			<div class="inputs">
+				<div>
+					<label for="weight"><i class="fas fa-weight-hanging"></i> Weight <span class="unit" id="weightUnit">(kg)</span></label>
+					<input type="number" id="weight" placeholder="70" min="1" step="0.1">
+				</div>
+				<div>
+					<label for="height"><i class="fas fa-ruler-vertical"></i> Height <span class="unit" id="heightUnit">(cm)</span></label>
+					<input type="number" id="height" placeholder="175" min="1" step="0.1">
 				</div>
 			</div>
-		</main>
-	</div>
+		</div>
 
-	<script>
-		function calc(){
-			const w = parseFloat(document.getElementById('weight').value);
-			const h = parseFloat(document.getElementById('height').value);
-			if(!w || !h) return;
-			const bmi = w / ((h/100)*(h/100));
-			let cat = 'Normal';
-			if (bmi < 18.5) cat = 'Underweight';
-			else if (bmi < 25) cat = 'Normal';
-			else if (bmi < 30) cat = 'Overweight';
-			else cat = 'Obese';
-			document.getElementById('result').innerHTML = `<div>BMI: ${bmi.toFixed(2)}</div><div>Category: ${cat}</div>`;
-		}
-	</script>
+		<div class="panel" id="resultPanel" style="display:none;">
+			<div class="result-box">
+				<div class="bmi-value" id="bmiValue">—</div>
+				<div class="bmi-category" id="bmiCategory">—</div>
+				<div class="bmi-detail" id="bmiDetail"></div>
+			</div>
 
+			<div class="gauge-wrap">
+				<div class="gauge-bar">
+					<div class="gauge-pointer" id="gaugePointer" style="left:0%"></div>
+				</div>
+				<div class="gauge-labels">
+					<span>Underweight</span>
+					<span>Normal</span>
+					<span>Overweight</span>
+					<span>Obese</span>
+				</div>
+			</div>
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+			<div class="bmi-detail" id="idealRange" style="margin-top:1rem;text-align:center;font-weight:600;"></div>
+		</div>
+	</main>
+</div>
 
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+let unit = 'metric';
+
+const weightInput = document.getElementById('weight');
+const heightInput = document.getElementById('height');
+const resultPanel = document.getElementById('resultPanel');
+const bmiValue = document.getElementById('bmiValue');
+const bmiCategory = document.getElementById('bmiCategory');
+const bmiDetail = document.getElementById('bmiDetail');
+const gaugePointer = document.getElementById('gaugePointer');
+const idealRange = document.getElementById('idealRange');
+
+// Unit toggle
+document.getElementById('unitToggle').addEventListener('click', function(e) {
+	const btn = e.target.closest('button');
+	if (!btn || btn.classList.contains('active')) return;
+	this.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+	btn.classList.add('active');
+	unit = btn.dataset.unit;
+
+	if (unit === 'imperial') {
+		document.getElementById('weightUnit').textContent = '(lb)';
+		document.getElementById('heightUnit').textContent = '(in)';
+		weightInput.placeholder = '154';
+		heightInput.placeholder = '69';
+	} else {
+		document.getElementById('weightUnit').textContent = '(kg)';
+		document.getElementById('heightUnit').textContent = '(cm)';
+		weightInput.placeholder = '70';
+		heightInput.placeholder = '175';
+	}
+	weightInput.value = '';
+	heightInput.value = '';
+	resultPanel.style.display = 'none';
+});
+
+// Auto-calculate
+weightInput.addEventListener('input', calc);
+heightInput.addEventListener('input', calc);
+
+function calc() {
+	let w = parseFloat(weightInput.value);
+	let h = parseFloat(heightInput.value);
+	if (!w || !h || w <= 0 || h <= 0) {
+		resultPanel.style.display = 'none';
+		return;
+	}
+
+	// Convert to metric for calculation
+	let wKg = w, hM;
+	if (unit === 'imperial') {
+		wKg = w * 0.453592;        // lb -> kg
+		hM = h * 0.0254;           // in -> m
+	} else {
+		hM = h / 100;              // cm -> m
+	}
+
+	const bmi = wKg / (hM * hM);
+	if (bmi < 5 || bmi > 100) return;
+
+	resultPanel.style.display = 'block';
+	bmiValue.textContent = bmi.toFixed(1);
+
+	// Category
+	let cat, catClass;
+	if (bmi < 18.5) { cat = 'Underweight'; catClass = 'cat-underweight'; }
+	else if (bmi < 25) { cat = 'Normal Weight'; catClass = 'cat-normal'; }
+	else if (bmi < 30) { cat = 'Overweight'; catClass = 'cat-overweight'; }
+	else { cat = 'Obese'; catClass = 'cat-obese'; }
+
+	bmiCategory.textContent = cat;
+	bmiCategory.className = 'bmi-category ' + catClass;
+	bmiValue.className = 'bmi-value ' + catClass;
+
+	// Detail
+	if (bmi < 18.5) bmiDetail.textContent = 'You are below the healthy weight range.';
+	else if (bmi < 25) bmiDetail.textContent = 'Great! You are within the healthy weight range.';
+	else if (bmi < 30) bmiDetail.textContent = 'You are above the healthy weight range.';
+	else bmiDetail.textContent = 'You are significantly above the healthy weight range.';
+
+	// Gauge position (map BMI 10-45 to 0-100%)
+	const pct = Math.min(100, Math.max(0, ((bmi - 10) / 35) * 100));
+	gaugePointer.style.left = pct + '%';
+
+	// Ideal weight range (BMI 18.5–24.9)
+	const idealLow = 18.5 * hM * hM;
+	const idealHigh = 24.9 * hM * hM;
+	if (unit === 'imperial') {
+		idealRange.innerHTML = '<i class="fas fa-bullseye"></i> Ideal weight range: ' +
+			(idealLow * 2.20462).toFixed(1) + ' – ' + (idealHigh * 2.20462).toFixed(1) + ' lb';
+	} else {
+		idealRange.innerHTML = '<i class="fas fa-bullseye"></i> Ideal weight range: ' +
+			idealLow.toFixed(1) + ' – ' + idealHigh.toFixed(1) + ' kg';
+	}
+
+	showToast('BMI: ' + bmi.toFixed(1) + ' — ' + cat);
+}
+</script>
+
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

@@ -1,121 +1,202 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Contrast Checker - Multietools</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 15% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 80% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:860px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;}
-		input[type=color]{width:80px;height:80px;border:none;border-radius:12px;cursor:pointer;}
-		.preview{padding:1rem;border-radius:12px;border:1px solid var(--border);} .preview .box{height:140px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.4rem;}
-		.stat{display:flex;align-items:center;gap:0.5rem;font-weight:700;} .badge{padding:0.25rem 0.6rem;border-radius:999px;font-size:0.85rem;}
-		.pass{background:#10b98133;color:#34d399;} .fail{background:#ef444433;color:#f87171;} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-		button{padding:0.75rem 1rem;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);} 
-	</style>
-</head>
-<body>
-  
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contrast Checker - Multietools</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/global.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+.color-inputs{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:start;}
+@media(max-width:700px){.color-inputs{grid-template-columns:1fr;}}
+.color-field{display:grid;gap:.75rem;text-align:center;}
+.color-field label{font-weight:700;font-size:.9rem;}
+.color-field input[type=color]{width:100%;height:80px;border:none;border-radius:12px;cursor:pointer;background:transparent;}
+.color-field input[type=color]::-webkit-color-swatch-wrapper{padding:2px;}
+.color-field input[type=color]::-webkit-color-swatch{border:2px solid var(--border);border-radius:10px;}
+.color-field input[type=text]{width:100%;padding:.65rem .75rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.95rem;text-align:center;}
+.swap-center{display:flex;align-items:center;justify-content:center;}
+.swap-btn{width:48px;height:48px;border-radius:50%;border:2px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.2rem;transition:transform .2s,border-color .2s;}
+.swap-btn:hover{transform:rotate(180deg);border-color:var(--primary);}
+.preview-box{border-radius:12px;border:2px solid var(--border);overflow:hidden;}
+.preview-text{padding:2rem;text-align:center;}
+.preview-text .large{font-size:2rem;font-weight:800;margin-bottom:.5rem;}
+.preview-text .normal{font-size:1rem;line-height:1.6;}
+.ratio-display{text-align:center;padding:1.5rem;}
+.ratio-number{font-size:3rem;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.ratio-label{color:var(--muted);font-weight:600;margin-top:.25rem;}
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;}
+.badge-card{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;border-radius:var(--radius-md);border:1px solid var(--border-light);}
+.badge-card .info{font-weight:700;font-size:.9rem;}
+.badge-card .info small{display:block;font-weight:500;color:var(--muted);font-size:.75rem;}
+.badge-pill{padding:.35rem .8rem;border-radius:999px;font-size:.8rem;font-weight:700;}
+.badge-pass{background:#10b98133;color:#059669;} .badge-fail{background:#ef444433;color:#dc2626;}
+.btn{padding:.8rem 1.2rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.9rem;transition:transform .15s;}
+.btn:hover{transform:translateY(-1px);}
+.suggest-panel h3{font-size:1rem;margin-bottom:.75rem;}
+.suggest-swatches{display:flex;flex-wrap:wrap;gap:.5rem;}
+.suggest-swatch{width:48px;height:48px;border-radius:8px;border:2px solid var(--border);cursor:pointer;transition:transform .15s;}
+.suggest-swatch:hover{transform:scale(1.15);}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:50px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style></head><body>
+<div class="wrap"><header>
+<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+<h1><i class="fas fa-adjust"></i> Contrast Checker</h1>
+<p class="muted">Check WCAG contrast ratios between foreground and background colors.</p>
+</header><main>
 
-  
+<div class="panel">
+<div class="color-inputs">
+  <div class="color-field">
+    <label><i class="fas fa-font"></i> Text Color</label>
+    <input type="color" id="fgColor" value="#ffffff">
+    <input type="text" id="fgHex" value="#ffffff" maxlength="7" spellcheck="false">
+  </div>
+  <div class="swap-center">
+    <button class="swap-btn" onclick="swapColors()" title="Swap Colors"><i class="fas fa-exchange-alt"></i></button>
+  </div>
+  <div class="color-field">
+    <label><i class="fas fa-fill-drip"></i> Background Color</label>
+    <input type="color" id="bgColor" value="#0f172a">
+    <input type="text" id="bgHex" value="#0f172a" maxlength="7" spellcheck="false">
+  </div>
+</div>
+</div>
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-adjust"></i> Contrast Checker</h1>
-			<p class="muted">Check WCAG contrast between foreground and background colors.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<div>
-						<div class="muted">Text Color</div>
-						<input type="color" id="fg" value="#ffffff">
-					</div>
-					<div>
-						<div class="muted">Background Color</div>
-						<input type="color" id="bg" value="#0f172a">
-					</div>
-					<button onclick="swap()"><i class="fas fa-exchange-alt"></i> Swap</button>
-				</div>
-				<div class="preview">
-					<div class="box" id="box">Aa</div>
-				</div>
-				<div class="row">
-					<div class="stat">Contrast Ratio: <span id="ratio">0</span></div>
-					<div class="stat">Normal Text: <span id="aa" class="badge"></span></div>
-					<div class="stat">Large Text: <span id="aaa" class="badge"></span></div>
-				</div>
-			</div>
-		</main>
-	</div>
+<div class="panel preview-box">
+<div class="preview-text" id="previewBox">
+  <div class="large">Large Text Preview (18pt+)</div>
+  <div class="normal">Normal body text preview. The quick brown fox jumps over the lazy dog. This demonstrates how your chosen text color appears against the background color at regular size.</div>
+</div>
+</div>
 
-	<script>
-		const fg = document.getElementById('fg');
-		const bg = document.getElementById('bg');
-		const box = document.getElementById('box');
-		const ratioEl = document.getElementById('ratio');
-		const aa = document.getElementById('aa');
-		const aaa = document.getElementById('aaa');
+<div class="panel ratio-display">
+  <div class="ratio-number" id="ratioDisplay">0.00:1</div>
+  <div class="ratio-label">Contrast Ratio</div>
+</div>
 
-		function hexToRgb(hex){
-			const res = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex);
-			return res ? res.slice(1).map(h=>parseInt(h,16)/255) : [1,1,1];
-		}
-		function luminance([r,g,b]){
-			const map = [r,g,b].map(v=>{
-				return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
-			});
-			return 0.2126*map[0] + 0.7152*map[1] + 0.0722*map[2];
-		}
-		function contrast(c1, c2){
-			const l1 = luminance(c1), l2 = luminance(c2);
-			const bright = Math.max(l1,l2), dark = Math.min(l1,l2);
-			return (bright + 0.05) / (dark + 0.05);
-		}
+<div class="panel">
+<div class="badges-grid">
+  <div class="badge-card">
+    <div class="info">AA Normal Text<small>Minimum 4.5:1</small></div>
+    <span class="badge-pill" id="aaNormal">--</span>
+  </div>
+  <div class="badge-card">
+    <div class="info">AA Large Text<small>Minimum 3:1</small></div>
+    <span class="badge-pill" id="aaLarge">--</span>
+  </div>
+  <div class="badge-card">
+    <div class="info">AAA Normal Text<small>Minimum 7:1</small></div>
+    <span class="badge-pill" id="aaaNormal">--</span>
+  </div>
+  <div class="badge-card">
+    <div class="info">AAA Large Text<small>Minimum 4.5:1</small></div>
+    <span class="badge-pill" id="aaaLarge">--</span>
+  </div>
+</div>
+</div>
 
-		function update(){
-			const fgRgb = hexToRgb(fg.value), bgRgb = hexToRgb(bg.value);
-			const ratio = contrast(fgRgb, bgRgb);
-			ratioEl.textContent = ratio.toFixed(2);
-			box.style.color = fg.value; box.style.background = bg.value;
-			setBadge(aa, ratio >= 4.5 ? 'Pass AA' : 'Fail AA', ratio >= 4.5);
-			setBadge(aaa, ratio >= 7 ? 'Pass AAA' : 'Fail AAA', ratio >= 7);
-		}
+<div class="panel suggest-panel" id="suggestPanel" style="display:none;">
+  <h3><i class="fas fa-magic"></i> Suggested Accessible Alternatives</h3>
+  <p class="muted" style="margin-bottom:.75rem;font-size:.85rem;">Click a swatch to use it as the text color.</p>
+  <div class="suggest-swatches" id="suggestSwatches"></div>
+</div>
 
-		function setBadge(el, text, pass){
-			el.textContent = text;
-			el.className = 'badge ' + (pass ? 'pass' : 'fail');
-		}
+</main></div>
+<div class="toast" id="toast"></div>
+<script src="js/global.js"></script>
+<script>
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-		function swap(){
-			const tmp = fg.value; fg.value = bg.value; bg.value = tmp; update();
-		}
+const fgColor=document.getElementById('fgColor'),bgColor=document.getElementById('bgColor');
+const fgHex=document.getElementById('fgHex'),bgHex=document.getElementById('bgHex');
+const previewBox=document.getElementById('previewBox');
 
-		fg.addEventListener('input', update);
-		bg.addEventListener('input', update);
-		update();
-	</script>
+function hexToRgb(hex){
+  hex=hex.replace('#','').trim();
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  const m=/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex);
+  return m?[parseInt(m[1],16),parseInt(m[2],16),parseInt(m[3],16)]:[0,0,0];
+}
+function rgbToHex(r,g,b){return '#'+[r,g,b].map(n=>Math.max(0,Math.min(255,Math.round(n))).toString(16).padStart(2,'0')).join('');}
+function relativeLuminance(r,g,b){
+  const[rs,gs,bs]=[r,g,b].map(c=>{c/=255;return c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4);});
+  return 0.2126*rs+0.7152*gs+0.0722*bs;
+}
+function contrastRatio(fg,bg){
+  const l1=relativeLuminance(...fg),l2=relativeLuminance(...bg);
+  const bright=Math.max(l1,l2),dark=Math.min(l1,l2);
+  return(bright+0.05)/(dark+0.05);
+}
 
+function setBadge(el,pass){
+  el.textContent=pass?'PASS':'FAIL';
+  el.className='badge-pill '+(pass?'badge-pass':'badge-fail');
+}
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+function update(){
+  const fg=hexToRgb(fgColor.value),bg=hexToRgb(bgColor.value);
+  const ratio=contrastRatio(fg,bg);
+  document.getElementById('ratioDisplay').textContent=ratio.toFixed(2)+':1';
+  previewBox.style.color=fgColor.value;
+  previewBox.style.background=bgColor.value;
+  setBadge(document.getElementById('aaNormal'),ratio>=4.5);
+  setBadge(document.getElementById('aaLarge'),ratio>=3);
+  setBadge(document.getElementById('aaaNormal'),ratio>=7);
+  setBadge(document.getElementById('aaaLarge'),ratio>=4.5);
+  if(ratio<4.5)showSuggestions(bg);else document.getElementById('suggestPanel').style.display='none';
+}
 
-</body>
-</html>
+function showSuggestions(bgRgb){
+  const panel=document.getElementById('suggestPanel');
+  const container=document.getElementById('suggestSwatches');
+  const candidates=[];
+  for(let l=0;l<=100;l+=5){
+    for(let shade of[
+      [l,l,l],
+      [Math.min(255,l*2.55|0),0,0],
+      [0,Math.min(255,l*2.55|0),0],
+      [0,0,Math.min(255,l*2.55|0)],
+      [Math.min(255,l*2.55|0),Math.min(255,l*1.5|0),0],
+    ]){
+      const r=contrastRatio(shade,bgRgb);
+      if(r>=4.5&&candidates.length<12){
+        const hex=rgbToHex(...shade);
+        if(!candidates.find(c=>c===hex))candidates.push(hex);
+      }
+    }
+  }
+  if(candidates.length===0){panel.style.display='none';return;}
+  panel.style.display='block';
+  container.innerHTML=candidates.slice(0,8).map(c=>`<div class="suggest-swatch" style="background:${c}" title="${c}" onclick="applySuggestion('${c}')"></div>`).join('');
+}
 
+function applySuggestion(hex){
+  fgColor.value=hex;fgHex.value=hex;update();showToast('Text color updated!');
+}
 
+function swapColors(){
+  const tmp=fgColor.value;fgColor.value=bgColor.value;bgColor.value=tmp;
+  fgHex.value=fgColor.value;bgHex.value=bgColor.value;
+  update();showToast('Colors swapped!');
+}
 
+fgColor.addEventListener('input',()=>{fgHex.value=fgColor.value;update();});
+bgColor.addEventListener('input',()=>{bgHex.value=bgColor.value;update();});
+fgHex.addEventListener('input',()=>{
+  let v=fgHex.value.trim();if(v[0]!=='#')v='#'+v;
+  if(/^#[\da-f]{6}$/i.test(v)){fgColor.value=v;update();}
+});
+bgHex.addEventListener('input',()=>{
+  let v=bgHex.value.trim();if(v[0]!=='#')v='#'+v;
+  if(/^#[\da-f]{6}$/i.test(v)){bgColor.value=v;update();}
+});
 
-
-
-
-
+update();
+</script></body></html>

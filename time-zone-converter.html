@@ -5,96 +5,312 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Time Zone Converter - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:920px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:0.9rem;align-items:center;} input[type=datetime-local]{padding:0.8rem 1rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} select{padding:0.8rem 1rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);min-width:220px;} 
-		button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.result{background:#0f192b;border:1px solid var(--border);border-radius:12px;padding:1rem;display:grid;gap:0.4rem;} .label{color:var(--muted);} .val{font-size:1.3rem;font-weight:800;}
-		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		label{display:block;font-weight:700;margin-bottom:.4rem;font-size:.92rem;}
+		select,input[type=date],input[type=time]{width:100%;padding:.75rem .9rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:.95rem;font-family:inherit;transition:border-color .2s;}
+		select:focus,input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
+		.row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+		.row-3{display:grid;grid-template-columns:1fr auto 1fr;gap:.75rem;align-items:end;}
+		.btn{padding:.8rem 1.2rem;border-radius:var(--radius-sm);border:none;cursor:pointer;font-weight:700;font-size:.92rem;display:inline-flex;align-items:center;gap:.5rem;transition:transform .15s,box-shadow .2s;}
+		.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;box-shadow:var(--shadow-sm);}
+		.btn-primary:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+		.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);}
+		.btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+		.swap-btn{width:42px;height:42px;border-radius:var(--radius-full);display:grid;place-items:center;padding:0;font-size:1.1rem;margin-bottom:2px;}
+		.actions{display:flex;gap:.75rem;flex-wrap:wrap;}
+		.result-box{background:var(--bg-alt);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;display:grid;gap:.5rem;text-align:center;}
+		.result-label{color:var(--muted);font-size:.85rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+		.result-value{font-size:1.35rem;font-weight:800;line-height:1.4;}
+		.result-sub{color:var(--muted);font-size:.88rem;}
+		.diff-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--primary-glow);color:var(--primary);font-weight:700;font-size:.88rem;padding:.4rem .9rem;border-radius:var(--radius-full);margin-top:.5rem;justify-self:center;}
+		.toast{position:fixed;bottom:2rem;right:2rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-md);font-weight:700;font-size:.92rem;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:transform .35s var(--ease-bounce),opacity .3s;z-index:9999;display:flex;align-items:center;gap:.5rem;}
+		.toast.show{transform:translateY(0);opacity:1;}
+		@media(max-width:640px){.row,.row-3{grid-template-columns:1fr;}.swap-btn{justify-self:center;}}
 	</style>
 </head>
 <body>
-  
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-globe"></i> Time Zone Converter</h1>
+		<p class="muted">Convert date &amp; time between any world time zones.</p>
+	</header>
 
-  
-
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-clock"></i> Time Zone Converter</h1>
-			<p class="muted">Convert date and time between popular time zones.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<input type="datetime-local" id="datetime">
-					<select id="from"></select>
-					<select id="to"></select>
-					<button onclick="convert()">Convert</button>
+	<main>
+		<!-- Date / Time inputs -->
+		<div class="panel">
+			<div class="row">
+				<div>
+					<label for="inp-date"><i class="fas fa-calendar-day"></i> Date</label>
+					<input type="date" id="inp-date">
 				</div>
-				<div class="result">
-					<div class="label">Converted Time</div>
-					<div class="val" id="output">--</div>
+				<div>
+					<label for="inp-time"><i class="fas fa-clock"></i> Time</label>
+					<input type="time" id="inp-time" step="60">
 				</div>
 			</div>
-		</main>
-	</div>
+		</div>
 
-	<script>
-		const zones = [
-			'UTC','Europe/London','Europe/Paris','Europe/Berlin','Europe/Moscow','America/New_York','America/Chicago','America/Denver','America/Los_Angeles','America/Sao_Paulo','Asia/Kolkata','Asia/Dubai','Asia/Singapore','Asia/Tokyo','Australia/Sydney','Africa/Johannesburg'
-		];
-		const fromSel = document.getElementById('from');
-		const toSel = document.getElementById('to');
-		const dt = document.getElementById('datetime');
-		const output = document.getElementById('output');
+		<!-- Timezone selectors -->
+		<div class="panel">
+			<div class="row-3">
+				<div>
+					<label for="from-tz">From Timezone</label>
+					<select id="from-tz"></select>
+				</div>
+				<button class="btn btn-outline swap-btn" id="swap-btn" title="Swap timezones"><i class="fas fa-exchange-alt"></i></button>
+				<div>
+					<label for="to-tz">To Timezone</label>
+					<select id="to-tz"></select>
+				</div>
+			</div>
+		</div>
 
-		function populate(){
-			fromSel.innerHTML = zones.map(z=>`<option value="${z}">${z}</option>`).join('');
-			toSel.innerHTML = zones.map(z=>`<option value="${z}">${z}</option>`).join('');
-			fromSel.value = 'UTC';
-			toSel.value = 'Asia/Kolkata';
-			const now = new Date();
-			dt.value = now.toISOString().slice(0,16);
+		<!-- Actions -->
+		<div class="actions">
+			<button class="btn btn-primary" id="now-btn"><i class="fas fa-bolt"></i> Current Time</button>
+		</div>
+
+		<!-- Result -->
+		<div class="panel" id="result-panel" style="display:none;">
+			<div class="result-box">
+				<div class="result-label" id="res-from-label">From</div>
+				<div class="result-value" id="res-from-val">--</div>
+			</div>
+			<div style="text-align:center;font-size:1.4rem;color:var(--muted);"><i class="fas fa-arrow-down"></i></div>
+			<div class="result-box">
+				<div class="result-label" id="res-to-label">To</div>
+				<div class="result-value" id="res-to-val">--</div>
+				<div class="result-sub" id="res-to-sub"></div>
+			</div>
+			<div id="diff-container" style="text-align:center;"></div>
+		</div>
+	</main>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toast-msg"></span></div>
+
+<script>
+(function(){
+	'use strict';
+
+	/* ---------- Elements ---------- */
+	const inpDate   = document.getElementById('inp-date');
+	const inpTime   = document.getElementById('inp-time');
+	const fromSel   = document.getElementById('from-tz');
+	const toSel     = document.getElementById('to-tz');
+	const swapBtn   = document.getElementById('swap-btn');
+	const nowBtn    = document.getElementById('now-btn');
+	const resPanel  = document.getElementById('result-panel');
+	const resFromL  = document.getElementById('res-from-label');
+	const resFromV  = document.getElementById('res-from-val');
+	const resToL    = document.getElementById('res-to-label');
+	const resToV    = document.getElementById('res-to-val');
+	const resToSub  = document.getElementById('res-to-sub');
+	const diffBox   = document.getElementById('diff-container');
+
+	/* ---------- Timezone list ---------- */
+	const commonZones = [
+		'UTC',
+		'Pacific/Midway','Pacific/Honolulu','America/Anchorage',
+		'America/Los_Angeles','America/Denver','America/Chicago','America/New_York',
+		'America/Sao_Paulo','America/Argentina/Buenos_Aires',
+		'Atlantic/Reykjavik','Europe/London','Europe/Paris','Europe/Berlin','Europe/Helsinki',
+		'Europe/Moscow','Europe/Istanbul',
+		'Africa/Cairo','Africa/Johannesburg','Africa/Lagos',
+		'Asia/Dubai','Asia/Karachi','Asia/Kolkata','Asia/Dhaka',
+		'Asia/Bangkok','Asia/Singapore','Asia/Shanghai','Asia/Tokyo','Asia/Seoul',
+		'Australia/Perth','Australia/Sydney','Australia/Melbourne',
+		'Pacific/Auckland','Pacific/Fiji'
+	];
+
+	let tzList = commonZones;
+	try {
+		if (typeof Intl.supportedValuesOf === 'function') {
+			const supported = Intl.supportedValuesOf('timeZone');
+			if (supported.length > 30) tzList = supported;
 		}
+	} catch(e) { /* fallback */ }
 
-		function convert(){
-			const value = dt.value;
-			if(!value){ output.textContent = 'Select a date/time'; return; }
-			const fromZone = fromSel.value; const toZone = toSel.value;
-			const base = new Date(value + 'Z');
-			const options = {timeZone: toZone, year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit'};
-			const formatter = new Intl.DateTimeFormat('en-GB', options);
-			try{
-				const converted = formatter.format(base);
-				output.textContent = `${converted} (${toZone})`;
-			} catch(err){
-				output.textContent = 'Conversion error';
+	function populateSelects() {
+		const grouped = {};
+		tzList.forEach(tz => {
+			const parts = tz.split('/');
+			const region = parts.length > 1 ? parts[0] : 'Other';
+			if (!grouped[region]) grouped[region] = [];
+			grouped[region].push(tz);
+		});
+		const regions = Object.keys(grouped).sort();
+		let html = '';
+		regions.forEach(r => {
+			html += `<optgroup label="${r}">`;
+			grouped[r].forEach(tz => {
+				const label = tz.replace(/_/g,' ');
+				html += `<option value="${tz}">${label}</option>`;
+			});
+			html += '</optgroup>';
+		});
+		fromSel.innerHTML = html;
+		toSel.innerHTML = html;
+	}
+
+	populateSelects();
+
+	/* ---------- Default values ---------- */
+	function guessLocal() {
+		try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) { return 'UTC'; }
+	}
+	const localTz = guessLocal();
+	fromSel.value = tzList.includes(localTz) ? localTz : 'UTC';
+	toSel.value = 'UTC';
+	if (fromSel.value === 'UTC') toSel.value = 'Asia/Kolkata';
+
+	function setNow() {
+		const now = new Date();
+		const y = now.getFullYear();
+		const m = String(now.getMonth()+1).padStart(2,'0');
+		const d = String(now.getDate()).padStart(2,'0');
+		const h = String(now.getHours()).padStart(2,'0');
+		const mi = String(now.getMinutes()).padStart(2,'0');
+		inpDate.value = `${y}-${m}-${d}`;
+		inpTime.value = `${h}:${mi}`;
+		fromSel.value = tzList.includes(localTz) ? localTz : fromSel.value;
+	}
+	setNow();
+
+	/* ---------- Conversion logic ---------- */
+	/**
+	 * Interpret the user-entered date/time as a moment in the FROM timezone,
+	 * produce the equivalent UTC Date, then format in the TO timezone.
+	 */
+	function dateInTimezone(year, month, day, hour, minute, fromTz) {
+		// Create a rough UTC date with the same numeric values
+		const rough = new Date(Date.UTC(year, month - 1, day, hour, minute, 0));
+		// Format that rough UTC date in the FROM timezone to see what local time it maps to
+		const inTzStr = rough.toLocaleString('en-US', { timeZone: fromTz });
+		const inTz = new Date(inTzStr);
+		// Difference = how many ms the FROM timezone is shifted from the rough date
+		const diff = rough.getTime() - inTz.getTime();
+		// Adjust: the real UTC time that corresponds to the user's input in fromTz
+		return new Date(rough.getTime() + diff);
+	}
+
+	function formatInTimezone(utcDate, tz) {
+		return utcDate.toLocaleString('en-US', {
+			timeZone: tz,
+			weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+			hour: '2-digit', minute: '2-digit', second: '2-digit',
+			hour12: true, timeZoneName: 'short'
+		});
+	}
+
+	function getOffsetMinutes(utcDate, tz) {
+		const parts = new Intl.DateTimeFormat('en-US', {
+			timeZone: tz, hour: 'numeric', minute: 'numeric', hour12: false,
+			year: 'numeric', month: 'numeric', day: 'numeric'
+		}).formatToParts(utcDate);
+		let y=0, mo=0, d=0, h=0, mi=0;
+		parts.forEach(p => {
+			if (p.type==='year') y=+p.value;
+			if (p.type==='month') mo=+p.value;
+			if (p.type==='day') d=+p.value;
+			if (p.type==='hour') h=+p.value;
+			if (p.type==='minute') mi=+p.value;
+		});
+		// Build date in UTC with those values, compare to actual UTC
+		const local = Date.UTC(y, mo-1, d, h===24?0:h, mi);
+		const utcMs = utcDate.getTime();
+		return Math.round((local - utcMs) / 60000);
+	}
+
+	function convert() {
+		const dateStr = inpDate.value;
+		const timeStr = inpTime.value;
+		if (!dateStr || !timeStr) {
+			resPanel.style.display = 'none';
+			return;
+		}
+		const [year, month, day] = dateStr.split('-').map(Number);
+		const [hour, minute] = timeStr.split(':').map(Number);
+		const fromTz = fromSel.value;
+		const toTz = toSel.value;
+
+		try {
+			const utcDate = dateInTimezone(year, month, day, hour, minute, fromTz);
+			const fromFormatted = formatInTimezone(utcDate, fromTz);
+			const toFormatted = formatInTimezone(utcDate, toTz);
+
+			resFromL.textContent = fromTz.replace(/_/g,' ');
+			resFromV.textContent = fromFormatted;
+			resToL.textContent = toTz.replace(/_/g,' ');
+			resToV.textContent = toFormatted;
+
+			// Time difference
+			const offFrom = getOffsetMinutes(utcDate, fromTz);
+			const offTo   = getOffsetMinutes(utcDate, toTz);
+			const diffMin = offTo - offFrom;
+			const diffH   = Math.floor(Math.abs(diffMin) / 60);
+			const diffM   = Math.abs(diffMin) % 60;
+			let diffStr = '';
+			if (diffMin === 0) diffStr = 'Same time';
+			else {
+				const sign = diffMin > 0 ? '+' : '-';
+				diffStr = `${sign}${diffH}h`;
+				if (diffM) diffStr += ` ${diffM}m`;
 			}
+			resToSub.textContent = '';
+			diffBox.innerHTML = `<span class="diff-badge"><i class="fas fa-clock"></i> ${diffStr}</span>`;
+
+			resPanel.style.display = '';
+		} catch(e) {
+			console.error(e);
+			resPanel.style.display = '';
+			resToV.textContent = 'Conversion error';
 		}
+	}
 
-		populate();
+	/* ---------- Events ---------- */
+	[inpDate, inpTime, fromSel, toSel].forEach(el => el.addEventListener('change', convert));
+	[inpDate, inpTime].forEach(el => el.addEventListener('input', convert));
+
+	swapBtn.addEventListener('click', () => {
+		const tmp = fromSel.value;
+		fromSel.value = toSel.value;
+		toSel.value = tmp;
 		convert();
-	</script>
+		showToast('Timezones swapped');
+	});
 
+	nowBtn.addEventListener('click', () => {
+		setNow();
+		convert();
+		showToast('Set to current local time');
+	});
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+	/* ---------- Toast ---------- */
+	let toastTimer;
+	function showToast(msg) {
+		const toast = document.getElementById('toast');
+		document.getElementById('toast-msg').textContent = msg;
+		toast.classList.add('show');
+		clearTimeout(toastTimer);
+		toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+	}
 
+	/* ---------- Initial convert ---------- */
+	convert();
+})();
+</script>
+
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-

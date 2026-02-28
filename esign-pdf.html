@@ -1,162 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>eSign PDF - Multietools</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:1000px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		canvas{width:100%;max-height:640px;border:1px dashed var(--border);border-radius:12px;background:#0f192b;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} input,button{padding:0.85rem 1rem;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);} button{border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} .badge{padding:0.4rem 0.7rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--muted);} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
-		label{display:flex;flex-direction:column;color:var(--muted);font-size:0.9rem;gap:0.35rem;}
-	</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eSign PDF - Multietools</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+main{padding:1.5rem;display:grid;gap:1.25rem;}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+.panel h3{font-size:1rem;margin-bottom:.75rem;color:var(--primary);}
+.drop-zone{border:2px dashed var(--border);border-radius:var(--radius-md);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:border-color .25s,background .25s;position:relative;}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--primary);background:var(--primary-glow);}
+.drop-zone i.icon{font-size:2.5rem;color:var(--primary);margin-bottom:.75rem;display:block;}
+.drop-zone p{color:var(--muted);font-size:.95rem;}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.btn{padding:.8rem 1.2rem;border-radius:var(--radius-md);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-weight:700;font-size:.9rem;transition:transform .15s,box-shadow .25s;display:inline-flex;align-items:center;gap:.4rem;}
+.btn:hover{transform:translateY(-1px);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-outline{background:var(--surface);color:var(--primary);border:1.5px solid var(--primary);}
+.btn-sm{padding:.5rem .8rem;font-size:.8rem;}
+.btn-danger{background:linear-gradient(135deg,var(--error),#f87171);color:#fff;}
+
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border-light);margin-bottom:1rem;}
+.tab{padding:.6rem 1.2rem;font-weight:700;cursor:pointer;border:none;background:none;color:var(--muted);font-size:.85rem;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+.tab-content{display:none;} .tab-content.active{display:block;}
+
+/* Signature Pad */
+.sig-canvas{width:100%;height:150px;border:1px solid var(--border-light);border-radius:var(--radius-sm);cursor:crosshair;background:#fff;display:block;}
+.form-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-bottom:.75rem;}
+.form-row label{font-weight:600;font-size:.85rem;color:var(--muted);display:flex;align-items:center;gap:.4rem;}
+.form-row input,.form-row select{padding:.5rem .75rem;border-radius:var(--radius-sm);border:1px solid var(--border-light);background:var(--bg-alt);color:var(--text);font-size:.85rem;}
+.form-row input[type="color"]{width:40px;height:34px;padding:2px;cursor:pointer;}
+.form-row input[type="text"]{flex:1;min-width:180px;}
+
+/* PDF Preview */
+.pdf-preview-wrap{position:relative;display:inline-block;max-width:100%;overflow:auto;border:1px solid var(--border-light);border-radius:var(--radius-sm);background:#e5e5e5;}
+.pdf-preview-wrap canvas{display:block;cursor:crosshair;}
+.sig-marker{position:absolute;border:2px dashed var(--primary);pointer-events:none;}
+.page-nav{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;}
+.page-nav span{font-weight:600;font-size:.9rem;}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:.75rem;}
+.hidden{display:none;}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);padding:.75rem 1.5rem;border-radius:var(--radius-full,50px);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  </style>
 </head>
 <body>
-  
+<div class="wrap">
+  <header>
+    <a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+    <h1><i class="fas fa-signature"></i> eSign PDF</h1>
+    <p class="muted">Draw, type, or upload a signature and place it on any PDF page. Fully client-side.</p>
+  </header>
+  <main>
+    <!-- Upload Panel -->
+    <div class="panel">
+      <div class="drop-zone" id="dropZone">
+        <i class="fas fa-cloud-upload-alt icon"></i>
+        <p>Drag & drop a PDF here or click to browse</p>
+        <p id="fileName" style="margin-top:.5rem;font-weight:700;color:var(--text);"></p>
+        <input type="file" id="fileInput" accept="application/pdf">
+      </div>
+    </div>
 
-  
+    <!-- Signature Panel -->
+    <div class="panel hidden" id="sigPanel">
+      <h3><i class="fas fa-pen-nib"></i> Create Signature</h3>
+      <div class="tabs">
+        <button class="tab active" data-tab="draw" onclick="switchSigTab('draw')"><i class="fas fa-pen"></i> Draw</button>
+        <button class="tab" data-tab="type" onclick="switchSigTab('type')"><i class="fas fa-keyboard"></i> Type</button>
+        <button class="tab" data-tab="upload" onclick="switchSigTab('upload')"><i class="fas fa-image"></i> Upload</button>
+      </div>
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-signature"></i> eSign PDF</h1>
-			<p class="muted">Draw a signature and place it on pages, then download the signed PDF. Client-side only.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<input type="file" id="file" accept="application/pdf">
-					<label>Page<input type="number" id="page" min="1" value="1" style="width:90px;"></label>
-					<label>X<input type="number" id="posX" value="50" style="width:90px;"></label>
-					<label>Y<input type="number" id="posY" value="50" style="width:90px;"></label>
-					<label>Width<input type="number" id="sigW" value="180" style="width:90px;"></label>
-					<button onclick="addSignature()">Place Signature</button>
-					<button onclick="downloadPdf()">Download Signed</button>
-					<span class="badge" id="status">Waiting</span>
-				</div>
-				<div class="row">
-					<label style="flex:1;">Draw Signature (white on transparent)
-						<canvas id="sigPad" width="500" height="140"></canvas>
-					</label>
-				</div>
-				<div class="row">
-					<button onclick="clearSig()">Clear Signature</button>
-					<button onclick="prevPage()">Prev Page</button>
-					<button onclick="nextPage()">Next Page</button>
-				</div>
-				<canvas id="pdfCanvas"></canvas>
-			</div>
-		</main>
-	</div>
+      <!-- Draw -->
+      <div class="tab-content active" id="tab-draw">
+        <canvas class="sig-canvas" id="sigCanvas"></canvas>
+        <div class="form-row" style="margin-top:.5rem;">
+          <label>Color <input type="color" id="sigColor" value="#1a1a2e"></label>
+          <label>Line Width <input type="range" id="sigWidth" min="1" max="8" value="3" style="width:100px;"></label>
+          <button class="btn btn-sm btn-outline" onclick="clearSig()"><i class="fas fa-eraser"></i> Clear</button>
+        </div>
+      </div>
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-	<script>
-		const fileInput = document.getElementById('file');
-		const canvas = document.getElementById('pdfCanvas');
-		const ctx = canvas.getContext('2d');
-		const sigPad = document.getElementById('sigPad');
-		const sigCtx = sigPad.getContext('2d');
-		const pageInput = document.getElementById('page');
-		const posX = document.getElementById('posX');
-		const posY = document.getElementById('posY');
-		const sigW = document.getElementById('sigW');
-		const status = document.getElementById('status');
-		let pdfDoc = null; let currentPage = 1; let pdfData = null;
+      <!-- Type -->
+      <div class="tab-content" id="tab-type">
+        <div class="form-row">
+          <input type="text" id="sigText" placeholder="Type your signature..." oninput="renderTypedSig()">
+          <label>Color <input type="color" id="typeColor" value="#1a1a2e" oninput="renderTypedSig()"></label>
+          <label>Size <input type="number" id="typeSize" value="48" min="16" max="120" style="width:70px;" oninput="renderTypedSig()"></label>
+        </div>
+        <canvas class="sig-canvas" id="typeCanvas"></canvas>
+      </div>
 
-		// Signature drawing
-		let drawing = false;
-		sigCtx.fillStyle = 'rgba(0,0,0,0)';
-		sigCtx.fillRect(0,0,sigPad.width,sigPad.height);
-		sigCtx.strokeStyle = '#fff';
-		sigCtx.lineWidth = 3;
-		sigPad.addEventListener('mousedown',start); sigPad.addEventListener('mouseup',end); sigPad.addEventListener('mouseleave',end); sigPad.addEventListener('mousemove',draw);
-		sigPad.addEventListener('touchstart',start); sigPad.addEventListener('touchend',end); sigPad.addEventListener('touchmove',draw);
-		function getPos(e){ const rect = sigPad.getBoundingClientRect(); const clientX = e.touches?e.touches[0].clientX:e.clientX; const clientY = e.touches?e.touches[0].clientY:e.clientY; return {x:clientX-rect.left,y:clientY-rect.top}; }
-		function start(e){ e.preventDefault(); drawing=true; const p=getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x,p.y); }
-		function end(e){ e.preventDefault(); drawing=false; }
-		function draw(e){ if(!drawing) return; e.preventDefault(); const p=getPos(e); sigCtx.lineTo(p.x,p.y); sigCtx.stroke(); }
-		function clearSig(){ sigCtx.clearRect(0,0,sigPad.width,sigPad.height); sigCtx.fillRect(0,0,sigPad.width,sigPad.height); }
+      <!-- Upload -->
+      <div class="tab-content" id="tab-upload">
+        <div class="form-row">
+          <label style="cursor:pointer;" class="btn btn-outline btn-sm"><i class="fas fa-upload"></i> Choose Image
+            <input type="file" id="sigImgInput" accept="image/*" style="display:none;" onchange="loadSigImage(event)">
+          </label>
+        </div>
+        <canvas class="sig-canvas" id="uploadCanvas"></canvas>
+      </div>
+    </div>
 
-		function setStatus(msg){ status.textContent = msg; }
+    <!-- PDF Preview & Placement -->
+    <div class="panel hidden" id="previewPanel">
+      <h3><i class="fas fa-file-pdf"></i> Click on the PDF page to place signature</h3>
+      <div class="page-nav">
+        <button class="btn btn-sm btn-outline" onclick="prevPage()"><i class="fas fa-chevron-left"></i></button>
+        <span id="pageInfo">Page 1 / 1</span>
+        <button class="btn btn-sm btn-outline" onclick="nextPage()"><i class="fas fa-chevron-right"></i></button>
+        <label style="margin-left:auto;font-size:.85rem;font-weight:600;">Sig Size <input type="number" id="sigSize" value="150" min="30" max="500" style="width:75px;padding:.4rem .6rem;border-radius:var(--radius-sm);border:1px solid var(--border-light);font-size:.85rem;"> px</label>
+      </div>
+      <div class="pdf-preview-wrap" id="pdfWrap">
+        <canvas id="pdfCanvas"></canvas>
+        <div class="sig-marker hidden" id="sigMarker"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="applySignature()"><i class="fas fa-stamp"></i> Apply Signature</button>
+        <button class="btn btn-outline" onclick="downloadSigned()"><i class="fas fa-download"></i> Download Signed PDF</button>
+        <button class="btn btn-danger btn-sm" onclick="resetPlacement()"><i class="fas fa-undo"></i> Reset</button>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="js/global.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-		fileInput.addEventListener('change', async () => {
-			const file = fileInput.files?.[0];
-			if(!file){ return; }
-			setStatus('Loading PDF...');
-			pdfData = new Uint8Array(await file.arrayBuffer());
-			pdfDoc = await pdfjsLib.getDocument({data: pdfData}).promise;
-			currentPage = 1; pageInput.value = 1; await renderPage(); setStatus('Loaded');
-		});
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
-		async function renderPage(){
-			if(!pdfDoc) return;
-			const page = await pdfDoc.getPage(currentPage);
-			const viewport = page.getViewport({scale:1.5});
-			canvas.width = viewport.width; canvas.height = viewport.height;
-			const renderContext = {canvasContext: ctx, viewport};
-			await page.render(renderContext).promise;
-			pageInput.value = currentPage;
-		}
+const dropZone=document.getElementById('dropZone');
+const fileInput=document.getElementById('fileInput');
+const fileNameEl=document.getElementById('fileName');
+const sigPanel=document.getElementById('sigPanel');
+const previewPanel=document.getElementById('previewPanel');
+const pdfCanvas=document.getElementById('pdfCanvas');
+const pdfCtx=pdfCanvas.getContext('2d');
+const sigMarker=document.getElementById('sigMarker');
 
-		function prevPage(){ if(!pdfDoc) return; if(currentPage<=1) return; currentPage--; renderPage(); }
-		function nextPage(){ if(!pdfDoc) return; if(currentPage>=pdfDoc.numPages) return; currentPage++; renderPage(); }
+let currentFile=null, pdfDoc=null, currentPage=1, totalPages=0;
+let sigPlacement=null; // {x, y, pageIndex}
+let signedPdfBytes=null;
 
-		async function addSignature(){
-			if(!pdfData){ setStatus('Load a PDF first'); return; }
-			const pdfDocLib = await PDFLib.PDFDocument.load(pdfData);
-			const pages = pdfDocLib.getPages();
-			const pageIndex = Math.max(1, Math.min(parseInt(pageInput.value||'1'), pages.length)) - 1;
-			const sigImg = sigPad.toDataURL('image/png');
-			const pngImage = await pdfDocLib.embedPng(sigImg);
-			const page = pages[pageIndex];
-			const { width, height } = page.getSize();
-			const drawWidth = parseFloat(sigW.value||'180');
-			const scale = drawWidth / pngImage.width;
-			const drawHeight = pngImage.height * scale;
-			const x = parseFloat(posX.value||'0');
-			const y = parseFloat(posY.value||'0');
-			page.drawImage(pngImage, { x, y: height - y - drawHeight, width: drawWidth, height: drawHeight });
-			pdfData = await pdfDocLib.save();
-			setStatus('Signature placed');
-			await reloadPreview();
-		}
+/* --- Drag & Drop --- */
+['dragenter','dragover'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.add('dragover');}));
+['dragleave','drop'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.remove('dragover');}));
+dropZone.addEventListener('drop',ev=>{
+  const f=ev.dataTransfer.files[0];
+  if(f&&f.type==='application/pdf'){currentFile=f;loadPdf();}
+  else showToast('Please drop a valid PDF');
+});
+fileInput.addEventListener('change',()=>{currentFile=fileInput.files[0];if(currentFile)loadPdf();});
 
-		async function reloadPreview(){
-			if(!pdfData) return;
-			pdfDoc = await pdfjsLib.getDocument({data: pdfData}).promise;
-			const target = Math.max(1, Math.min(currentPage, pdfDoc.numPages));
-			currentPage = target; await renderPage();
-		}
+async function loadPdf(){
+  fileNameEl.textContent=currentFile.name;
+  const buf=await currentFile.arrayBuffer();
+  pdfDoc=await pdfjsLib.getDocument({data:buf}).promise;
+  totalPages=pdfDoc.numPages;currentPage=1;
+  sigPanel.classList.remove('hidden');
+  previewPanel.classList.remove('hidden');
+  signedPdfBytes=null;sigPlacement=null;
+  renderPage();
+}
 
-		async function downloadPdf(){
-			if(!pdfData){ setStatus('Nothing to download'); return; }
-			const blob = new Blob([pdfData], {type:'application/pdf'});
-			const url = URL.createObjectURL(blob);
-			const a = document.createElement('a'); a.href = url; a.download = 'signed.pdf'; a.click(); URL.revokeObjectURL(url);
-			setStatus('Downloaded');
-		}
-	</script>
+async function renderPage(){
+  const page=await pdfDoc.getPage(currentPage);
+  const vp=page.getViewport({scale:1.2});
+  pdfCanvas.width=vp.width;pdfCanvas.height=vp.height;
+  await page.render({canvasContext:pdfCtx,viewport:vp}).promise;
+  document.getElementById('pageInfo').textContent=`Page ${currentPage} / ${totalPages}`;
+  sigMarker.classList.add('hidden');
+}
+function prevPage(){if(currentPage>1){currentPage--;renderPage();}}
+function nextPage(){if(currentPage<totalPages){currentPage++;renderPage();}}
 
+/* --- Click placement on PDF --- */
+document.getElementById('pdfWrap').addEventListener('click',function(e){
+  const rect=pdfCanvas.getBoundingClientRect();
+  const x=e.clientX-rect.left, y=e.clientY-rect.top;
+  const sz=parseInt(document.getElementById('sigSize').value)||150;
+  sigPlacement={canvasX:x,canvasY:y,pageIndex:currentPage-1,pdfW:pdfCanvas.width,pdfH:pdfCanvas.height};
+  sigMarker.style.left=x+'px';sigMarker.style.top=y+'px';sigMarker.style.width=sz+'px';sigMarker.style.height=(sz*0.4)+'px';
+  sigMarker.classList.remove('hidden');
+});
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+/* --- Signature Tabs --- */
+function switchSigTab(name){
+  document.querySelectorAll('#sigPanel .tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('#sigPanel .tab-content').forEach(tc=>tc.classList.toggle('active',tc.id==='tab-'+name));
+}
 
+/* --- Draw Signature --- */
+const sigCanvas=document.getElementById('sigCanvas');
+const sigCtx=sigCanvas.getContext('2d');
+let drawing=false;
+function initSigCanvas(){sigCanvas.width=sigCanvas.offsetWidth;sigCanvas.height=150;sigCtx.lineCap='round';sigCtx.lineJoin='round';}
+window.addEventListener('load',initSigCanvas);window.addEventListener('resize',initSigCanvas);
+sigCanvas.addEventListener('mousedown',e=>{drawing=true;sigCtx.beginPath();sigCtx.moveTo(e.offsetX,e.offsetY);});
+sigCanvas.addEventListener('mousemove',e=>{if(!drawing)return;sigCtx.strokeStyle=document.getElementById('sigColor').value;sigCtx.lineWidth=parseInt(document.getElementById('sigWidth').value);sigCtx.lineTo(e.offsetX,e.offsetY);sigCtx.stroke();});
+sigCanvas.addEventListener('mouseup',()=>drawing=false);
+sigCanvas.addEventListener('mouseleave',()=>drawing=false);
+/* Touch */
+sigCanvas.addEventListener('touchstart',e=>{e.preventDefault();const t=e.touches[0];const r=sigCanvas.getBoundingClientRect();drawing=true;sigCtx.beginPath();sigCtx.moveTo(t.clientX-r.left,t.clientY-r.top);});
+sigCanvas.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const t=e.touches[0];const r=sigCanvas.getBoundingClientRect();sigCtx.strokeStyle=document.getElementById('sigColor').value;sigCtx.lineWidth=parseInt(document.getElementById('sigWidth').value);sigCtx.lineTo(t.clientX-r.left,t.clientY-r.top);sigCtx.stroke();});
+sigCanvas.addEventListener('touchend',()=>drawing=false);
+
+function clearSig(){sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);}
+
+/* --- Type Signature --- */
+const typeCanvas=document.getElementById('typeCanvas');
+const typeCtx=typeCanvas.getContext('2d');
+function initTypeCanvas(){typeCanvas.width=typeCanvas.offsetWidth;typeCanvas.height=150;}
+window.addEventListener('load',initTypeCanvas);window.addEventListener('resize',initTypeCanvas);
+function renderTypedSig(){
+  typeCtx.clearRect(0,0,typeCanvas.width,typeCanvas.height);
+  const txt=document.getElementById('sigText').value;
+  const sz=parseInt(document.getElementById('typeSize').value)||48;
+  const clr=document.getElementById('typeColor').value;
+  typeCtx.font=`italic ${sz}px "Brush Script MT","Segoe Script","Comic Sans MS",cursive`;
+  typeCtx.fillStyle=clr;typeCtx.textBaseline='middle';
+  typeCtx.fillText(txt,20,typeCanvas.height/2);
+}
+
+/* --- Upload Signature Image --- */
+const uploadCanvas=document.getElementById('uploadCanvas');
+const uploadCtx=uploadCanvas.getContext('2d');
+function initUploadCanvas(){uploadCanvas.width=uploadCanvas.offsetWidth;uploadCanvas.height=150;}
+window.addEventListener('load',initUploadCanvas);window.addEventListener('resize',initUploadCanvas);
+function loadSigImage(e){
+  const f=e.target.files[0];if(!f)return;
+  const img=new Image();img.onload=()=>{
+    uploadCtx.clearRect(0,0,uploadCanvas.width,uploadCanvas.height);
+    const scale=Math.min(uploadCanvas.width/img.width,uploadCanvas.height/img.height);
+    const w=img.width*scale,h=img.height*scale;
+    uploadCtx.drawImage(img,(uploadCanvas.width-w)/2,(uploadCanvas.height-h)/2,w,h);
+  };img.src=URL.createObjectURL(f);
+}
+
+/* --- Get active signature as PNG data --- */
+function getSignaturePNG(){
+  const activeTab=document.querySelector('#sigPanel .tab.active').dataset.tab;
+  let c;
+  if(activeTab==='draw')c=sigCanvas;
+  else if(activeTab==='type')c=typeCanvas;
+  else c=uploadCanvas;
+  /* Check if canvas has content */
+  const data=c.getContext('2d').getImageData(0,0,c.width,c.height).data;
+  let hasContent=false;
+  for(let i=3;i<data.length;i+=4){if(data[i]>0){hasContent=true;break;}}
+  if(!hasContent)return null;
+  return c.toDataURL('image/png');
+}
+
+/* --- Apply Signature --- */
+async function applySignature(){
+  if(!currentFile){showToast('Upload a PDF first');return;}
+  if(!sigPlacement){showToast('Click on the PDF page to position signature');return;}
+  const sigPng=getSignaturePNG();
+  if(!sigPng){showToast('Create a signature first');return;}
+
+  try{
+    const buf=await currentFile.arrayBuffer();
+    const pdfLibDoc=await PDFLib.PDFDocument.load(buf);
+    const sigBytes=Uint8Array.from(atob(sigPng.split(',')[1]),c=>c.charCodeAt(0));
+    const sigImage=await pdfLibDoc.embedPng(sigBytes);
+
+    const page=pdfLibDoc.getPages()[sigPlacement.pageIndex];
+    const pw=page.getWidth(),ph=page.getHeight();
+    const sz=parseInt(document.getElementById('sigSize').value)||150;
+    const sigH=sz*0.4;
+    /* Convert canvas coords to PDF coords */
+    const scaleX=pw/sigPlacement.pdfW, scaleY=ph/sigPlacement.pdfH;
+    const pdfX=sigPlacement.canvasX*scaleX;
+    const pdfY=ph-(sigPlacement.canvasY*scaleY)-sigH*scaleY;
+
+    page.drawImage(sigImage,{x:pdfX,y:pdfY,width:sz*scaleX,height:sigH*scaleY});
+
+    signedPdfBytes=await pdfLibDoc.save();
+    showToast('Signature applied! Click Download to save.');
+    /* Refresh preview */
+    const newDoc=await pdfjsLib.getDocument({data:signedPdfBytes}).promise;
+    pdfDoc=newDoc;renderPage();
+  }catch(e){
+    console.error(e);showToast('Error applying signature: '+e.message);
+  }
+}
+
+function downloadSigned(){
+  if(!signedPdfBytes){showToast('Apply a signature first');return;}
+  const name=currentFile.name.replace(/\.pdf$/i,'')+'_signed.pdf';
+  const blob=new Blob([signedPdfBytes],{type:'application/pdf'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
+  URL.revokeObjectURL(a.href);showToast('Downloaded '+name);
+}
+
+function resetPlacement(){
+  sigPlacement=null;sigMarker.classList.add('hidden');signedPdfBytes=null;
+  if(currentFile)loadPdf();
+  showToast('Placement reset');
+}
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-

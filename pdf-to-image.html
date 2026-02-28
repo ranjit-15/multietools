@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF to Images - Multietools</title>
+  <title>PDF to Image - Multietools</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/global.css">
   <style>
@@ -46,10 +46,11 @@ main{padding:1.5rem;display:grid;gap:1.25rem;}
 <div class="wrap">
   <header>
     <a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
-    <h1><i class="fas fa-file-export"></i> PDF to Images</h1>
-    <p class="muted">Convert PDF pages to PNG or JPEG images. Download individually or all as ZIP.</p>
+    <h1><i class="fas fa-file-image"></i> PDF to Image</h1>
+    <p class="muted">Convert each page of a PDF into high-quality PNG or JPEG images. Download individually or as ZIP.</p>
   </header>
   <main>
+    <!-- Upload -->
     <div class="panel">
       <div class="drop-zone" id="dropZone">
         <i class="fas fa-cloud-upload-alt icon"></i>
@@ -59,14 +60,10 @@ main{padding:1.5rem;display:grid;gap:1.25rem;}
       </div>
     </div>
 
+    <!-- Options & Output -->
     <div class="panel" id="optionsPanel" style="display:none;">
-      <h3><i class="fas fa-sliders-h"></i> Options</h3>
+      <h3><i class="fas fa-sliders-h"></i> Settings</h3>
       <div class="form-row">
-        <label><i class="fas fa-image"></i> Format:</label>
-        <select id="formatSelect">
-          <option value="png">PNG</option>
-          <option value="jpeg">JPEG</option>
-        </select>
         <label><i class="fas fa-expand-arrows-alt"></i> Scale:</label>
         <select id="scaleSelect">
           <option value="1">1x (72 DPI)</option>
@@ -74,16 +71,21 @@ main{padding:1.5rem;display:grid;gap:1.25rem;}
           <option value="2" selected>2x (144 DPI)</option>
           <option value="3">3x (216 DPI)</option>
         </select>
+        <label><i class="fas fa-image"></i> Format:</label>
+        <select id="formatSelect">
+          <option value="png">PNG</option>
+          <option value="jpeg">JPEG</option>
+        </select>
       </div>
       <div class="form-row" id="qualityRow">
         <label><i class="fas fa-adjust"></i> JPEG Quality:</label>
-        <input type="range" id="qualitySlider" min="10" max="100" value="85" oninput="document.getElementById('qualityVal').textContent=this.value+'%'">
-        <span class="quality-val" id="qualityVal">85%</span>
+        <input type="range" id="qualitySlider" min="10" max="100" value="90" oninput="document.getElementById('qualityVal').textContent=this.value+'%'">
+        <span class="quality-val" id="qualityVal">90%</span>
       </div>
       <div class="progress-bar" id="progressBar"><div class="fill" id="progressFill"></div></div>
       <div class="actions">
-        <button class="btn" id="convertBtn" onclick="convertPdf()"><i class="fas fa-cog"></i> Convert</button>
-        <button class="btn btn-outline" id="dlAllBtn" onclick="downloadAll()" disabled><i class="fas fa-file-archive"></i> Download All (ZIP)</button>
+        <button class="btn" id="convertBtn" onclick="convertPages()"><i class="fas fa-cog"></i> Convert All Pages</button>
+        <button class="btn btn-outline" id="dlAllBtn" onclick="downloadAllZip()" disabled><i class="fas fa-file-archive"></i> Download All (ZIP)</button>
       </div>
       <div class="gallery" id="gallery"></div>
     </div>
@@ -106,7 +108,7 @@ const gallery=document.getElementById('gallery');
 const formatSelect=document.getElementById('formatSelect');
 const qualityRow=document.getElementById('qualityRow');
 let currentFile=null;
-let pageBlobs=[]; // [{blob, name}]
+let pageBlobs=[];
 
 formatSelect.addEventListener('change',()=>{qualityRow.style.display=formatSelect.value==='jpeg'?'flex':'none';});
 
@@ -126,7 +128,7 @@ function handleFile(){
   document.getElementById('dlAllBtn').disabled=true;
 }
 
-async function convertPdf(){
+async function convertPages(){
   if(!currentFile){showToast('Upload a PDF first');return;}
   const convertBtn=document.getElementById('convertBtn');
   const dlAllBtn=document.getElementById('dlAllBtn');
@@ -163,7 +165,7 @@ async function convertPdf(){
       const name=`${baseName}_page_${i}.${ext}`;
       pageBlobs.push({blob,name});
 
-      /* Create thumbnail card */
+      /* Thumbnail */
       const card=document.createElement('div');card.className='img-card';
       const img=document.createElement('img');img.src=dataUrl;card.appendChild(img);
       const footer=document.createElement('div');footer.className='card-footer';
@@ -182,7 +184,7 @@ async function convertPdf(){
   finally{convertBtn.disabled=false;setTimeout(()=>progressBar.style.display='none',800);}
 }
 
-async function downloadAll(){
+async function downloadAllZip(){
   if(pageBlobs.length===0){showToast('Convert pages first');return;}
   showToast('Creating ZIP...');
   try{

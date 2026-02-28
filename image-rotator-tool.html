@@ -3,99 +3,717 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Image Rotator - Multietools</title>
+	<title>Image Rotator &amp; Flipper - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:860px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		canvas{max-width:100%;border:1px solid var(--border);border-radius:12px;}
-		.ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		/* ---------- Page Layout ---------- */
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+		body {
+			font-family: 'Inter', system-ui, sans-serif;
+			background: radial-gradient(circle at 12% 18%, rgba(124,58,237,0.06), transparent 30%),
+						radial-gradient(circle at 82% 8%, rgba(236,72,153,0.04), transparent 25%),
+						var(--bg);
+			color: var(--text); min-height: 100vh; padding: 1.5rem;
+		}
+		.wrap {
+			max-width: 1060px; margin: 0 auto;
+			background: var(--surface); border: 1px solid var(--border);
+			border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
+			overflow: hidden; animation: fadeInUp 0.45s var(--ease) both;
+		}
+		@keyframes fadeInUp {
+			from { opacity: 0; transform: translateY(18px); }
+			to   { opacity: 1; transform: translateY(0); }
+		}
+		header {
+			padding: 1.75rem 2rem; border-bottom: 1px solid var(--border);
+			background: var(--primary-glow);
+		}
+		h1 { font-size: 1.8rem; margin-bottom: 0.35rem; color: var(--text); }
+		h1 i { color: var(--primary); margin-right: 0.35rem; }
+		.muted { color: var(--muted); font-size: 0.95rem; }
+		.back {
+			display: inline-flex; align-items: center; gap: 0.5rem;
+			color: var(--text); text-decoration: none; font-weight: 700;
+			margin-bottom: 1rem; font-size: 0.92rem;
+			transition: color var(--duration-fast) var(--ease);
+		}
+		.back:hover { color: var(--primary); }
+		main { padding: 1.75rem 2rem; display: grid; gap: 1.25rem; }
+
+		/* ---------- Panels ---------- */
+		.panel {
+			background: var(--surface); border: 1px solid var(--border);
+			border-radius: var(--radius-md); padding: 1.5rem;
+			box-shadow: var(--shadow-xs); display: grid; gap: 1rem;
+		}
+		.panel-title {
+			font-size: 1rem; font-weight: 700; color: var(--text);
+			display: flex; align-items: center; gap: 0.5rem;
+		}
+		.panel-title i { color: var(--primary); }
+
+		/* ---------- Drop Zone ---------- */
+		.drop-zone {
+			border: 2px dashed var(--border); border-radius: var(--radius-md);
+			padding: 2.5rem 1.5rem; text-align: center; cursor: pointer;
+			transition: all var(--duration) var(--ease);
+			background: var(--bg-alt); position: relative;
+		}
+		.drop-zone:hover, .drop-zone.drag-over {
+			border-color: var(--primary); background: var(--primary-glow);
+		}
+		.drop-zone i.upload-icon {
+			font-size: 2.5rem; color: var(--primary); margin-bottom: 0.75rem;
+			display: block;
+		}
+		.drop-zone p { color: var(--muted); font-size: 0.95rem; }
+		.drop-zone p strong { color: var(--primary); }
+		.drop-zone input[type=file] {
+			position: absolute; inset: 0; opacity: 0; cursor: pointer;
+		}
+
+		/* ---------- Buttons ---------- */
+		.btn {
+			display: inline-flex; align-items: center; gap: 0.5rem;
+			padding: 0.7rem 1.2rem; border-radius: var(--radius-sm); border: none;
+			cursor: pointer; font-family: inherit; font-weight: 700;
+			font-size: 0.9rem; transition: all var(--duration-fast) var(--ease);
+		}
+		.btn-primary {
+			background: linear-gradient(135deg, var(--primary), var(--accent));
+			color: #fff; box-shadow: 0 4px 14px rgba(124,58,237,0.25);
+		}
+		.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.35); }
+		.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+		.btn-outline {
+			background: transparent; color: var(--primary);
+			border: 1.5px solid var(--primary);
+		}
+		.btn-outline:hover { background: var(--primary-glow); }
+		.btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
+		.btn-success {
+			background: var(--success); color: #fff;
+		}
+		.btn-success:hover { opacity: 0.9; transform: translateY(-1px); }
+		.btn-danger { background: var(--error); color: #fff; }
+		.btn-danger:hover { opacity: 0.9; }
+		.btn-sm { padding: 0.45rem 0.75rem; font-size: 0.82rem; }
+		.actions { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 0.25rem; }
+
+		/* ---------- Rotation Controls ---------- */
+		.rotate-btns {
+			display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;
+		}
+		.rotate-btn {
+			display: inline-flex; align-items: center; justify-content: center;
+			gap: 0.4rem; padding: 0.65rem 1rem; border-radius: var(--radius-sm);
+			border: 1.5px solid var(--border); background: var(--bg-alt);
+			color: var(--text); font-family: inherit; font-weight: 600;
+			font-size: 0.88rem; cursor: pointer;
+			transition: all var(--duration-fast) var(--ease);
+		}
+		.rotate-btn:hover {
+			border-color: var(--primary); background: var(--primary-glow);
+			color: var(--primary);
+		}
+		.rotate-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+		.rotate-btn i { font-size: 1rem; }
+
+		/* ---------- Angle Slider ---------- */
+		.angle-row {
+			display: flex; flex-wrap: wrap; align-items: center; gap: 1rem;
+		}
+		.angle-slider-wrap {
+			display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 200px;
+		}
+		.angle-slider-wrap input[type=range] {
+			flex: 1; accent-color: var(--primary); height: 6px; cursor: pointer;
+		}
+		.angle-input {
+			width: 72px; padding: 0.5rem 0.6rem; border-radius: var(--radius-sm);
+			border: 1px solid var(--border); background: var(--bg-alt);
+			color: var(--text); font-family: inherit; font-size: 0.92rem;
+			font-weight: 700; text-align: center; outline: none;
+			transition: border-color var(--duration-fast) var(--ease);
+		}
+		.angle-input:focus { border-color: var(--primary); }
+		.angle-label {
+			font-size: 0.82rem; font-weight: 600; color: var(--muted);
+			text-transform: uppercase; letter-spacing: 0.04em;
+			white-space: nowrap;
+		}
+
+		/* ---------- Flip Buttons ---------- */
+		.flip-btns {
+			display: flex; gap: 0.5rem; flex-wrap: wrap;
+		}
+
+		/* ---------- Controls Row ---------- */
+		.controls {
+			display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;
+		}
+		.control-group { display: flex; flex-direction: column; gap: 0.35rem; }
+		.control-group label {
+			font-size: 0.82rem; font-weight: 600; color: var(--muted);
+			text-transform: uppercase; letter-spacing: 0.04em;
+		}
+		.control-group select {
+			padding: 0.6rem 0.9rem; border-radius: var(--radius-sm);
+			border: 1px solid var(--border); background: var(--bg-alt);
+			color: var(--text); font-family: inherit; font-size: 0.92rem;
+			cursor: pointer; outline: none; min-width: 120px;
+			transition: border-color var(--duration-fast) var(--ease);
+		}
+		.control-group select:focus { border-color: var(--primary); }
+
+		/* ---------- Stats Bar ---------- */
+		.stats-bar {
+			display: flex; flex-wrap: wrap; gap: 0.75rem;
+		}
+		.stat {
+			display: flex; align-items: center; gap: 0.45rem;
+			padding: 0.5rem 0.85rem; border-radius: var(--radius-sm);
+			border: 1px solid var(--border); background: var(--bg-alt);
+			font-size: 0.88rem; color: var(--muted);
+		}
+		.stat strong { color: var(--text); font-weight: 700; }
+		.stat i { color: var(--primary); }
+
+		/* ---------- Preview ---------- */
+		.preview-area {
+			display: flex; flex-direction: column; gap: 0.75rem;
+		}
+		.preview-label {
+			font-size: 0.82rem; font-weight: 700; text-transform: uppercase;
+			letter-spacing: 0.04em; color: var(--muted);
+			display: flex; align-items: center; gap: 0.4rem;
+		}
+		.preview-label i { font-size: 0.75rem; }
+		.canvas-wrap {
+			border: 1px solid var(--border); border-radius: var(--radius-sm);
+			overflow: hidden; background: var(--bg-alt); min-height: 220px;
+			display: flex; align-items: center; justify-content: center;
+			position: relative;
+		}
+		/* Checkerboard for transparency */
+		.canvas-wrap.has-image {
+			background-image:
+				linear-gradient(45deg, var(--border-light) 25%, transparent 25%),
+				linear-gradient(-45deg, var(--border-light) 25%, transparent 25%),
+				linear-gradient(45deg, transparent 75%, var(--border-light) 75%),
+				linear-gradient(-45deg, transparent 75%, var(--border-light) 75%);
+			background-size: 20px 20px;
+			background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+		}
+		.canvas-wrap canvas {
+			max-width: 100%; max-height: 480px; display: block;
+		}
+		.preview-placeholder {
+			color: var(--muted); font-size: 0.88rem; text-align: center;
+			padding: 2rem;
+		}
+		.preview-placeholder i {
+			display: block; font-size: 2rem; margin-bottom: 0.5rem;
+			color: var(--border);
+		}
+
+		/* ---------- Toast ---------- */
+		#toast-container {
+			position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+			display: flex; flex-direction: column-reverse; gap: 0.5rem;
+			pointer-events: none;
+		}
+		.toast {
+			pointer-events: auto;
+			display: flex; align-items: center; gap: 0.65rem;
+			padding: 0.75rem 1.1rem; border-radius: var(--radius-sm);
+			background: var(--surface); border: 1px solid var(--border);
+			box-shadow: var(--shadow-lg); font-size: 0.9rem; color: var(--text);
+			animation: toastIn 0.35s var(--ease) both;
+			max-width: 360px;
+		}
+		.toast.toast-out { animation: toastOut 0.3s var(--ease) both; }
+		.toast i { font-size: 1.05rem; flex-shrink: 0; }
+		.toast.success i { color: var(--success); }
+		.toast.error i { color: var(--error); }
+		.toast.info i { color: var(--primary); }
+
+		@keyframes toastIn {
+			from { opacity: 0; transform: translateY(16px) scale(0.95); }
+			to   { opacity: 1; transform: translateY(0) scale(1); }
+		}
+		@keyframes toastOut {
+			from { opacity: 1; transform: translateY(0) scale(1); }
+			to   { opacity: 0; transform: translateY(16px) scale(0.92); }
+		}
+
+		/* ---------- Hidden ---------- */
+		.hidden { display: none !important; }
+
+		/* ---------- Responsive ---------- */
+		@media (max-width: 700px) {
+			body { padding: 0.75rem; }
+			header { padding: 1.25rem; }
+			main { padding: 1.25rem; }
+			.panel { padding: 1rem; }
+			h1 { font-size: 1.45rem; }
+			.rotate-btns { gap: 0.35rem; }
+			.rotate-btn { padding: 0.55rem 0.75rem; font-size: 0.82rem; }
+			.angle-row { flex-direction: column; align-items: stretch; }
+			.angle-slider-wrap { min-width: unset; }
+			.controls { flex-direction: column; align-items: stretch; }
+			.actions { flex-direction: column; }
+			.actions .btn { width: 100%; justify-content: center; }
+			.stats-bar { flex-direction: column; }
+		}
 	</style>
 </head>
 <body>
-  
 
-  
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-undo"></i> Image Rotator &amp; Flipper</h1>
+		<p class="muted">Rotate, flip, and transform your images with precision. Download in PNG, JPEG, or WEBP.</p>
+	</header>
 
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-undo"></i> Image Rotator</h1>
-			<p class="muted">Rotate images left or right and download.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<div class="row">
-					<input type="file" id="file" accept="image/*">
-					<button onclick="rotate(-90)">Rotate Left</button>
-					<button onclick="rotate(90)">Rotate Right</button>
-					<button onclick="downloadImg()">Download</button>
-				</div>
-				<canvas id="canvas"></canvas>
+	<main>
+		<!-- Upload Panel -->
+		<section class="panel" id="upload-panel">
+			<div class="panel-title"><i class="fas fa-cloud-upload-alt"></i> Upload Image</div>
+			<div class="drop-zone" id="drop-zone">
+				<i class="fas fa-image upload-icon"></i>
+				<p>Drag &amp; drop an image here or <strong>click to browse</strong></p>
+				<p style="font-size:0.82rem; margin-top:0.35rem;">Supports PNG, JPEG, WEBP, GIF, BMP, SVG</p>
+				<input type="file" id="file-input" accept="image/*">
 			</div>
-		</main>
-	</div>
+		</section>
 
-	<script>
-		const file = document.getElementById('file');
-		const canvas = document.getElementById('canvas');
-		const ctx = canvas.getContext('2d');
-		let img = new Image();
-		let angle = 0;
+		<!-- Editor Panel (hidden until image loaded) -->
+		<section class="panel hidden" id="editor-panel">
+			<div class="panel-title"><i class="fas fa-sliders-h"></i> Transform Controls</div>
 
-		file.addEventListener('change', e=>{
-			const f = e.target.files[0];
-			if(!f) return;
-			const url = URL.createObjectURL(f);
-			img = new Image();
-			img.onload = () => { angle = 0; draw(); };
-			img.src = url;
+			<!-- Quick Rotation -->
+			<div>
+				<div class="angle-label" style="margin-bottom:0.5rem;">Quick Rotate</div>
+				<div class="rotate-btns">
+					<button class="rotate-btn" id="btn-left90" title="Rotate 90° Left">
+						<i class="fas fa-undo"></i> 90° Left
+					</button>
+					<button class="rotate-btn" id="btn-right90" title="Rotate 90° Right">
+						<i class="fas fa-redo"></i> 90° Right
+					</button>
+					<button class="rotate-btn" id="btn-180" title="Rotate 180°">
+						<i class="fas fa-sync-alt"></i> 180°
+					</button>
+				</div>
+			</div>
+
+			<!-- Free Angle -->
+			<div>
+				<div class="angle-label" style="margin-bottom:0.5rem;">Free Rotation</div>
+				<div class="angle-row">
+					<div class="angle-slider-wrap">
+						<input type="range" id="angle-slider" min="0" max="360" step="1" value="0">
+					</div>
+					<div style="display:flex; align-items:center; gap:0.35rem;">
+						<input type="number" class="angle-input" id="angle-input" min="0" max="360" step="1" value="0">
+						<span style="font-weight:600; color:var(--muted);">°</span>
+					</div>
+				</div>
+			</div>
+
+			<!-- Flip -->
+			<div>
+				<div class="angle-label" style="margin-bottom:0.5rem;">Flip</div>
+				<div class="flip-btns">
+					<button class="rotate-btn" id="btn-flip-h" title="Flip Horizontal">
+						<i class="fas fa-arrows-alt-h"></i> Horizontal
+					</button>
+					<button class="rotate-btn" id="btn-flip-v" title="Flip Vertical">
+						<i class="fas fa-arrows-alt-v"></i> Vertical
+					</button>
+				</div>
+			</div>
+		</section>
+
+		<!-- Preview Panel -->
+		<section class="panel hidden" id="preview-panel">
+			<div class="panel-title"><i class="fas fa-eye"></i> Live Preview</div>
+
+			<!-- Stats -->
+			<div class="stats-bar" id="stats-bar">
+				<div class="stat"><i class="fas fa-ruler-combined"></i> Original: <strong id="stat-original">—</strong></div>
+				<div class="stat"><i class="fas fa-expand-arrows-alt"></i> Output: <strong id="stat-output">—</strong></div>
+				<div class="stat"><i class="fas fa-compass"></i> Angle: <strong id="stat-angle">0°</strong></div>
+				<div class="stat" id="stat-flip-wrap"><i class="fas fa-exchange-alt"></i> Flip: <strong id="stat-flip">None</strong></div>
+			</div>
+
+			<!-- Canvas Preview -->
+			<div class="preview-area">
+				<div class="canvas-wrap" id="canvas-wrap">
+					<div class="preview-placeholder" id="preview-placeholder">
+						<i class="fas fa-image"></i>
+						Preview will appear here
+					</div>
+					<canvas id="preview-canvas" style="display:none;"></canvas>
+				</div>
+			</div>
+		</section>
+
+		<!-- Output Panel -->
+		<section class="panel hidden" id="output-panel">
+			<div class="panel-title"><i class="fas fa-download"></i> Output</div>
+			<div class="controls">
+				<div class="control-group">
+					<label for="format-select">Format</label>
+					<select id="format-select">
+						<option value="png">PNG</option>
+						<option value="jpeg">JPEG</option>
+						<option value="webp">WEBP</option>
+					</select>
+				</div>
+			</div>
+			<div class="actions">
+				<button class="btn btn-primary" id="btn-download"><i class="fas fa-download"></i> Download</button>
+				<button class="btn btn-outline" id="btn-reset"><i class="fas fa-undo-alt"></i> Reset</button>
+				<button class="btn btn-danger btn-sm" id="btn-clear"><i class="fas fa-trash-alt"></i> Clear Image</button>
+			</div>
+		</section>
+	</main>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<script src="js/global.js"></script>
+<script>
+(function() {
+	'use strict';
+
+	/* ========== DOM Refs ========== */
+	const dropZone       = document.getElementById('drop-zone');
+	const fileInput      = document.getElementById('file-input');
+	const uploadPanel    = document.getElementById('upload-panel');
+	const editorPanel    = document.getElementById('editor-panel');
+	const previewPanel   = document.getElementById('preview-panel');
+	const outputPanel    = document.getElementById('output-panel');
+	const canvas         = document.getElementById('preview-canvas');
+	const ctx            = canvas.getContext('2d');
+	const canvasWrap     = document.getElementById('canvas-wrap');
+	const placeholder    = document.getElementById('preview-placeholder');
+	const angleSlider    = document.getElementById('angle-slider');
+	const angleInput     = document.getElementById('angle-input');
+	const formatSelect   = document.getElementById('format-select');
+
+	const btnLeft90      = document.getElementById('btn-left90');
+	const btnRight90     = document.getElementById('btn-right90');
+	const btn180         = document.getElementById('btn-180');
+	const btnFlipH       = document.getElementById('btn-flip-h');
+	const btnFlipV       = document.getElementById('btn-flip-v');
+	const btnDownload    = document.getElementById('btn-download');
+	const btnReset       = document.getElementById('btn-reset');
+	const btnClear       = document.getElementById('btn-clear');
+
+	const statOriginal   = document.getElementById('stat-original');
+	const statOutput     = document.getElementById('stat-output');
+	const statAngle      = document.getElementById('stat-angle');
+	const statFlip       = document.getElementById('stat-flip');
+
+	/* ========== State ========== */
+	let originalImage = null;   // HTMLImageElement
+	let currentAngle  = 0;      // degrees 0-360
+	let flipH         = false;
+	let flipV         = false;
+	let fileName      = 'image';
+
+	/* ========== Toast ========== */
+	function toast(msg, type) {
+		type = type || 'info';
+		const container = document.getElementById('toast-container');
+		const icons = { success: 'fa-check-circle', error: 'fa-times-circle', info: 'fa-info-circle' };
+		const el = document.createElement('div');
+		el.className = 'toast ' + type;
+		el.innerHTML = '<i class="fas ' + (icons[type] || icons.info) + '"></i><span>' + msg + '</span>';
+		container.appendChild(el);
+		setTimeout(function() {
+			el.classList.add('toast-out');
+			setTimeout(function() { el.remove(); }, 350);
+		}, 3000);
+	}
+
+	/* ========== File Loading ========== */
+	function loadFile(file) {
+		if (!file || !file.type.startsWith('image/')) {
+			toast('Please select a valid image file.', 'error');
+			return;
+		}
+		fileName = file.name.replace(/\.[^.]+$/, '');
+		const reader = new FileReader();
+		reader.onload = function(e) {
+			const img = new Image();
+			img.onload = function() {
+				originalImage = img;
+				currentAngle = 0;
+				flipH = false;
+				flipV = false;
+				angleSlider.value = 0;
+				angleInput.value = 0;
+				statOriginal.textContent = img.naturalWidth + ' × ' + img.naturalHeight;
+				showEditor();
+				renderPreview();
+				toast('Image loaded successfully!', 'success');
+			};
+			img.onerror = function() { toast('Failed to load image.', 'error'); };
+			img.src = e.target.result;
+		};
+		reader.readAsDataURL(file);
+	}
+
+	/* ========== Drag & Drop ========== */
+	['dragenter', 'dragover'].forEach(function(evt) {
+		dropZone.addEventListener(evt, function(e) {
+			e.preventDefault(); e.stopPropagation();
+			dropZone.classList.add('drag-over');
 		});
+	});
+	['dragleave', 'drop'].forEach(function(evt) {
+		dropZone.addEventListener(evt, function(e) {
+			e.preventDefault(); e.stopPropagation();
+			dropZone.classList.remove('drag-over');
+		});
+	});
+	dropZone.addEventListener('drop', function(e) {
+		const files = e.dataTransfer.files;
+		if (files.length) loadFile(files[0]);
+	});
+	fileInput.addEventListener('change', function() {
+		if (fileInput.files.length) loadFile(fileInput.files[0]);
+	});
 
-		function rotate(delta){ angle = (angle + delta) % 360; draw(); }
+	/* ========== Show/Hide Panels ========== */
+	function showEditor() {
+		editorPanel.classList.remove('hidden');
+		previewPanel.classList.remove('hidden');
+		outputPanel.classList.remove('hidden');
+	}
+	function hideEditor() {
+		editorPanel.classList.add('hidden');
+		previewPanel.classList.add('hidden');
+		outputPanel.classList.add('hidden');
+	}
 
-		function draw(){
-			if(!img.src) return;
-			const rad = angle * Math.PI/180;
-			const sin = Math.abs(Math.sin(rad)), cos = Math.abs(Math.cos(rad));
-			const newW = Math.round(img.width * cos + img.height * sin);
-			const newH = Math.round(img.width * sin + img.height * cos);
-			canvas.width = newW; canvas.height = newH;
-			ctx.clearRect(0,0,newW,newH);
-			ctx.save();
-			ctx.translate(newW/2, newH/2);
-			ctx.rotate(rad);
-			ctx.drawImage(img, -img.width/2, -img.height/2);
-			ctx.restore();
+	/* ========== Render Preview ========== */
+	function renderPreview() {
+		if (!originalImage) return;
+
+		const radians = currentAngle * Math.PI / 180;
+		const w = originalImage.naturalWidth;
+		const h = originalImage.naturalHeight;
+
+		// Calculate bounding box of rotated image
+		const absCos = Math.abs(Math.cos(radians));
+		const absSin = Math.abs(Math.sin(radians));
+		const newW = Math.ceil(w * absCos + h * absSin);
+		const newH = Math.ceil(w * absSin + h * absCos);
+
+		canvas.width = newW;
+		canvas.height = newH;
+
+		ctx.clearRect(0, 0, newW, newH);
+		ctx.save();
+
+		// Move origin to center of canvas
+		ctx.translate(newW / 2, newH / 2);
+
+		// Apply rotation
+		ctx.rotate(radians);
+
+		// Apply flip
+		const scaleX = flipH ? -1 : 1;
+		const scaleY = flipV ? -1 : 1;
+		ctx.scale(scaleX, scaleY);
+
+		// Draw image centered
+		ctx.drawImage(originalImage, -w / 2, -h / 2, w, h);
+
+		ctx.restore();
+
+		// Show canvas
+		canvas.style.display = 'block';
+		placeholder.style.display = 'none';
+		canvasWrap.classList.add('has-image');
+
+		// Update stats
+		statOutput.textContent = newW + ' × ' + newH;
+		statAngle.textContent = currentAngle + '°';
+		updateFlipStat();
+	}
+
+	function updateFlipStat() {
+		const parts = [];
+		if (flipH) parts.push('H');
+		if (flipV) parts.push('V');
+		statFlip.textContent = parts.length ? parts.join(' + ') : 'None';
+	}
+
+	/* ========== Rotation Controls ========== */
+	btnLeft90.addEventListener('click', function() {
+		currentAngle = (currentAngle - 90 + 360) % 360;
+		syncAngleUI();
+		renderPreview();
+	});
+
+	btnRight90.addEventListener('click', function() {
+		currentAngle = (currentAngle + 90) % 360;
+		syncAngleUI();
+		renderPreview();
+	});
+
+	btn180.addEventListener('click', function() {
+		currentAngle = (currentAngle + 180) % 360;
+		syncAngleUI();
+		renderPreview();
+	});
+
+	function syncAngleUI() {
+		angleSlider.value = currentAngle;
+		angleInput.value = currentAngle;
+	}
+
+	/* ========== Free Angle ========== */
+	angleSlider.addEventListener('input', function() {
+		currentAngle = parseInt(angleSlider.value, 10);
+		angleInput.value = currentAngle;
+		renderPreview();
+	});
+
+	angleInput.addEventListener('input', function() {
+		let val = parseInt(angleInput.value, 10);
+		if (isNaN(val)) val = 0;
+		if (val < 0) val = 0;
+		if (val > 360) val = 360;
+		currentAngle = val;
+		angleSlider.value = val;
+		renderPreview();
+	});
+
+	angleInput.addEventListener('blur', function() {
+		angleInput.value = currentAngle;
+	});
+
+	/* ========== Flip Controls ========== */
+	btnFlipH.addEventListener('click', function() {
+		flipH = !flipH;
+		btnFlipH.style.borderColor = flipH ? 'var(--primary)' : '';
+		btnFlipH.style.background = flipH ? 'var(--primary-glow)' : '';
+		btnFlipH.style.color = flipH ? 'var(--primary)' : '';
+		renderPreview();
+		toast(flipH ? 'Flipped horizontally' : 'Horizontal flip removed', 'info');
+	});
+
+	btnFlipV.addEventListener('click', function() {
+		flipV = !flipV;
+		btnFlipV.style.borderColor = flipV ? 'var(--primary)' : '';
+		btnFlipV.style.background = flipV ? 'var(--primary-glow)' : '';
+		btnFlipV.style.color = flipV ? 'var(--primary)' : '';
+		renderPreview();
+		toast(flipV ? 'Flipped vertically' : 'Vertical flip removed', 'info');
+	});
+
+	/* ========== Download ========== */
+	btnDownload.addEventListener('click', function() {
+		if (!originalImage) { toast('No image loaded.', 'error'); return; }
+
+		const format = formatSelect.value;
+		const mimeMap = { png: 'image/png', jpeg: 'image/jpeg', webp: 'image/webp' };
+		const mime = mimeMap[format] || 'image/png';
+		const quality = format === 'png' ? undefined : 0.92;
+
+		// Create an offscreen canvas at full resolution for download
+		const offCanvas = document.createElement('canvas');
+		const offCtx = offCanvas.getContext('2d');
+
+		const radians = currentAngle * Math.PI / 180;
+		const w = originalImage.naturalWidth;
+		const h = originalImage.naturalHeight;
+		const absCos = Math.abs(Math.cos(radians));
+		const absSin = Math.abs(Math.sin(radians));
+		const newW = Math.ceil(w * absCos + h * absSin);
+		const newH = Math.ceil(w * absSin + h * absCos);
+
+		offCanvas.width = newW;
+		offCanvas.height = newH;
+
+		// Fill white background for JPEG
+		if (format === 'jpeg') {
+			offCtx.fillStyle = '#ffffff';
+			offCtx.fillRect(0, 0, newW, newH);
 		}
 
-		function downloadImg(){
-			if(!canvas.width) return;
-			const link = document.createElement('a');
-			link.download = 'rotated.png';
-			link.href = canvas.toDataURL('image/png');
-			link.click();
+		offCtx.translate(newW / 2, newH / 2);
+		offCtx.rotate(radians);
+		offCtx.scale(flipH ? -1 : 1, flipV ? -1 : 1);
+		offCtx.drawImage(originalImage, -w / 2, -h / 2, w, h);
+
+		try {
+			const dataURL = offCanvas.toDataURL(mime, quality);
+			const a = document.createElement('a');
+			a.href = dataURL;
+			a.download = fileName + '-rotated.' + format;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			toast('Image downloaded!', 'success');
+		} catch (err) {
+			toast('Download failed: ' + err.message, 'error');
 		}
-	</script>
+	});
 
+	/* ========== Reset ========== */
+	btnReset.addEventListener('click', function() {
+		if (!originalImage) return;
+		currentAngle = 0;
+		flipH = false;
+		flipV = false;
+		syncAngleUI();
+		// Reset flip button styles
+		[btnFlipH, btnFlipV].forEach(function(btn) {
+			btn.style.borderColor = '';
+			btn.style.background = '';
+			btn.style.color = '';
+		});
+		renderPreview();
+		toast('Reset to original state.', 'info');
+	});
 
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
+	/* ========== Clear ========== */
+	btnClear.addEventListener('click', function() {
+		originalImage = null;
+		currentAngle = 0;
+		flipH = false;
+		flipV = false;
+		syncAngleUI();
+		[btnFlipH, btnFlipV].forEach(function(btn) {
+			btn.style.borderColor = '';
+			btn.style.background = '';
+			btn.style.color = '';
+		});
+		canvas.style.display = 'none';
+		placeholder.style.display = '';
+		canvasWrap.classList.remove('has-image');
+		statOriginal.textContent = '—';
+		statOutput.textContent = '—';
+		statAngle.textContent = '0°';
+		statFlip.textContent = 'None';
+		fileInput.value = '';
+		hideEditor();
+		toast('Image cleared.', 'info');
+	});
 
+})();
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-

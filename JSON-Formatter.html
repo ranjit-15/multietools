@@ -5,88 +5,135 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>JSON Formatter - Multietools</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="css/global.css">
 	<style>
-		:root{--bg:#0f172a;--card:#0b1224;--accent:#22d3ee;--text:#e2e8f0;--muted:#94a3b8;--border:#1f2937;--radius:16px;--shadow:0 18px 50px rgba(0,0,0,0.35);}*{box-sizing:border-box;margin:0;padding:0;}
-		body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 12% 18%,rgba(34,211,238,0.16),transparent 30%),radial-gradient(circle at 82% 8%,rgba(56,189,248,0.14),transparent 25%),var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
-		.wrap{max-width:980px;margin:0 auto;background:rgba(11,18,36,0.92);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-		header{padding:1.75rem;border-bottom:1px solid var(--border);background:rgba(34,211,238,0.08);} h1{font-size:1.8rem;margin-bottom:0.35rem;} .muted{color:var(--muted);} .back{display:inline-flex;align-items:center;gap:0.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
-		main{padding:1.5rem;display:grid;gap:1rem;} .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);display:grid;gap:1rem;}
-		textarea{width:100%;min-height:240px;border-radius:12px;border:1px solid var(--border);background:#0f192b;color:var(--text);padding:1rem;font-size:1rem;font-family:'JetBrains Mono','Cascadia Code',monospace;}
-		.row{display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;} button{padding:0.85rem 1rem;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),#7dd3fc);color:#0b1021;font-weight:800;box-shadow:var(--shadow);transition:transform 0.15s ease;} button:hover{transform:translateY(-1px);} 
-		.badge{padding:0.4rem 0.7rem;border-radius:10px;border:1px solid var(--border);background:#0f192b;color:var(--muted);} .ad-container{text-align:center;margin:0.5rem 0 1.5rem;}
+		*{box-sizing:border-box;margin:0;padding:0;}
+		body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;transition:background .3s,color .3s;}
+		.wrap{max-width:960px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+		header{padding:1.75rem;border-bottom:1px solid var(--border);background:var(--primary-glow);}
+		h1{font-size:1.8rem;margin-bottom:.35rem;} .muted{color:var(--muted);}
+		.back{display:inline-flex;align-items:center;gap:.5rem;color:var(--text);text-decoration:none;font-weight:700;margin-bottom:1rem;}
+		main{padding:1.5rem;display:grid;gap:1.25rem;}
+		.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:1.25rem;box-shadow:var(--shadow-xs);}
+		textarea{width:100%;min-height:200px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);padding:1rem;font-size:.9rem;font-family:'JetBrains Mono','Cascadia Code',monospace;resize:vertical;}
+		.row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:.75rem;}
+		select{padding:.65rem .9rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-alt);color:var(--text);font-size:.9rem;cursor:pointer;}
+		button{padding:.75rem 1.1rem;border-radius:var(--radius-sm);border:none;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-weight:700;font-size:.9rem;box-shadow:var(--shadow-sm);transition:transform .15s ease,box-shadow .15s ease;}
+		button:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);}
+		button.secondary{background:var(--bg-alt);color:var(--text);border:1px solid var(--border);}
+		button.secondary:hover{background:var(--border-light);}
+		.badge{padding:.4rem .75rem;border-radius:var(--radius-full,999px);border:1px solid var(--border);background:var(--bg-alt);color:var(--muted);font-size:.85rem;}
+		.error-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:var(--radius-sm);padding:.85rem 1rem;color:var(--error);font-size:.85rem;font-family:'JetBrains Mono','Cascadia Code',monospace;display:none;white-space:pre-wrap;word-break:break-word;}
+		.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--primary);color:#fff;padding:.85rem 1.5rem;border-radius:var(--radius-sm);font-weight:600;box-shadow:var(--shadow-lg);transform:translateY(120%);opacity:0;transition:transform .35s var(--ease-bounce,.34 1.56 .64 1),opacity .3s;z-index:9999;pointer-events:none;}
+		.toast.show{transform:translateY(0);opacity:1;}
 	</style>
 </head>
 <body>
-  
-
-  
-
-	<!-- Adsterra Ad -->
-	<div class="wrap">
-		<header>
-			<a class="back" href="index.html"><i class="fas fa-arrow-left"></i> Back to Home</a>
-			<h1><i class="fas fa-code"></i> JSON Formatter</h1>
-			<p class="muted">Validate, pretty-print, or minify JSON easily.</p>
-		</header>
-		<main>
-			<div class="panel">
-				<textarea id="input" placeholder="Paste JSON here..."></textarea>
-				<div class="row">
-					<button onclick="formatJson()">Pretty Print</button>
-					<button onclick="minifyJson()">Minify</button>
-					<button onclick="copyOut()"><i class="fas fa-copy"></i> Copy</button>
-					<span class="badge" id="status">Waiting for input�</span>
-				</div>
-				<textarea id="output" placeholder="Result..." readonly></textarea>
+<div class="wrap">
+	<header>
+		<a class="back" href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
+		<h1><i class="fas fa-code"></i> JSON Formatter</h1>
+		<p class="muted">Validate, pretty-print, or minify JSON with configurable indentation.</p>
+	</header>
+	<main>
+		<div class="panel">
+			<label style="font-weight:600;margin-bottom:.35rem;display:block;">Input</label>
+			<textarea id="input" placeholder="Paste raw JSON here…"></textarea>
+			<div class="row">
+				<button onclick="formatJson()"><i class="fas fa-indent"></i> Beautify</button>
+				<button onclick="minifyJson()"><i class="fas fa-compress"></i> Minify</button>
+				<button onclick="validateJson()"><i class="fas fa-check-circle"></i> Validate</button>
+				<select id="indent" title="Indent size">
+					<option value="2">2 Spaces</option>
+					<option value="4">4 Spaces</option>
+					<option value="tab">Tab</option>
+				</select>
+				<span class="badge" id="status">Waiting for input</span>
 			</div>
-		</main>
-	</div>
+			<div class="error-box" id="error"></div>
+		</div>
+		<div class="panel">
+			<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">
+				<label style="font-weight:600;">Output</label>
+				<button class="secondary" onclick="copyOut()"><i class="fas fa-copy"></i> Copy</button>
+			</div>
+			<textarea id="output" placeholder="Formatted / minified result…" readonly></textarea>
+		</div>
+	</main>
+</div>
 
-	<script>
-		const input = document.getElementById('input');
-		const output = document.getElementById('output');
-		const status = document.getElementById('status');
+<div class="toast" id="toast"></div>
 
-		function setStatus(text, ok=true){
-			status.textContent = text;
-			status.style.color = ok ? '#34d399' : '#f87171';
+<script>
+const inputEl = document.getElementById('input');
+const outputEl = document.getElementById('output');
+const statusEl = document.getElementById('status');
+const errorEl = document.getElementById('error');
+const indentSel = document.getElementById('indent');
+
+function showToast(msg, ms=2200){
+	const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+	clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),ms);
+}
+
+function getIndent(){
+	const v=indentSel.value;
+	return v==='tab'?'\t':Number(v);
+}
+
+function setStatus(text,ok=true){
+	statusEl.textContent=text;
+	statusEl.style.color=ok?'var(--success)':'var(--error)';
+}
+
+function showError(msg){
+	errorEl.textContent=msg;errorEl.style.display='block';
+}
+function hideError(){errorEl.style.display='none';}
+
+function tryParse(){
+	hideError();
+	try{return{data:JSON.parse(inputEl.value),error:null};}
+	catch(e){
+		// Try to extract line number from error
+		let msg=e.message;
+		const posMatch=msg.match(/position\s+(\d+)/i);
+		if(posMatch){
+			const pos=Number(posMatch[1]);
+			const before=inputEl.value.substring(0,pos);
+			const line=before.split('\n').length;
+			const col=pos-before.lastIndexOf('\n');
+			msg+=`  (Line ${line}, Column ${col})`;
 		}
+		return{data:null,error:msg};
+	}
+}
 
-		function parseJson(){
-			try{ return {data: JSON.parse(input.value), error: null}; }
-			catch(e){ return {data: null, error: e.message}; }
-		}
+function formatJson(){
+	const{data,error}=tryParse();
+	if(error){setStatus('Invalid JSON',false);showError(error);outputEl.value='';return;}
+	outputEl.value=JSON.stringify(data,null,getIndent());
+	setStatus('Beautified ✓');showToast('JSON beautified!');
+}
 
-		function formatJson(){
-			const {data, error} = parseJson();
-			if(error){ setStatus('Invalid JSON: ' + error, false); output.value=''; return; }
-			output.value = JSON.stringify(data, null, 2);
-			setStatus('Valid JSON ?');
-		}
+function minifyJson(){
+	const{data,error}=tryParse();
+	if(error){setStatus('Invalid JSON',false);showError(error);outputEl.value='';return;}
+	outputEl.value=JSON.stringify(data);
+	setStatus('Minified ✓');showToast('JSON minified!');
+}
 
-		function minifyJson(){
-			const {data, error} = parseJson();
-			if(error){ setStatus('Invalid JSON: ' + error, false); output.value=''; return; }
-			output.value = JSON.stringify(data);
-			setStatus('Minified ?');
-		}
+function validateJson(){
+	const{data,error}=tryParse();
+	if(error){setStatus('Invalid ✗',false);showError(error);showToast('Invalid JSON');return;}
+	setStatus('Valid JSON ✓');hideError();showToast('JSON is valid!');
+}
 
-		function copyOut(){ navigator.clipboard.writeText(output.value || ''); }
-	</script>
-
-
-<script
-  type="text/javascript"
-  src="https://pl28248119.effectivegatecpm.com/72/63/ac/7263ac6ff86f79635db7b35657f9dc51.js"
-></script>
-
+function copyOut(){
+	if(!outputEl.value){showToast('Nothing to copy');return;}
+	navigator.clipboard.writeText(outputEl.value).then(()=>showToast('Copied to clipboard!'));
+}
+</script>
+<script src="js/global.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
