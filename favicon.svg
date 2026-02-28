@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#g)"/>
+  <g transform="translate(32,32)" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round">
+    <!-- Gear teeth -->
+    <path d="M0-20v-4h0v4M14.1-14.1l2.8-2.8-0-0-2.8 2.8M20 0h4-0-4M14.1 14.1l2.8 2.8-0 0-2.8-2.8M0 20v4h0v-4M-14.1 14.1l-2.8 2.8 0 0 2.8-2.8M-20 0h-4 0 4M-14.1-14.1l-2.8-2.8 0-0 2.8 2.8" stroke-width="5" stroke-linecap="round"/>
+    <!-- Gear body -->
+    <circle r="15" stroke-width="4" fill="rgba(255,255,255,0.15)"/>
+    <circle r="6" stroke-width="3" fill="rgba(255,255,255,0.25)"/>
+  </g>
+</svg>
